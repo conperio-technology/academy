@@ -1,0 +1,4 @@
+(function(){let e=`https://cdn.jsdelivr.net/npm/pyodide@0.29.5/`,t=null;function n(){return t||=import(
+/* @vite-ignore */
+`${e}pyodide.mjs`).then(t=>t.loadPyodide({indexURL:e})),t}function r(e){self.postMessage(e)}self.onmessage=async e=>{let{preamble:t,code:i,calls:a}=e.data;try{let e=await n();r({type:`ready`});for(let n of a){let a=e.globals.get(`dict`)();a.set(`__name__`,`__main__`);try{let o=await e.runPythonAsync(`${t}${i}\nimport json\njson.dumps(${n})`,{globals:a});r({type:`result`,actualJson:typeof o==`string`?o:String(o),error:null})}catch(e){r({type:`result`,actualJson:null,error:e instanceof Error?e.message.split(`
+`).slice(-2).join(` `):String(e)})}finally{a.destroy()}}r({type:`done`})}catch(e){r({type:`failed`,error:e instanceof Error?e.message:`Failed to load Python.`})}}})();
