@@ -24,6 +24,7 @@ no client-side router: `App.tsx` keeps the selected lesson in state, mirrored in
 | `src/components/LessonView.tsx` | graded exercise page: visualizer, `LanguageRunner` (editors + `ReferenceSolution`), `ComplexityCheck` |
 | `src/components/CSharpRunner.tsx` / `PythonRunner.tsx` | editors + graders; Python runs in `pythonWorker.ts` (Pyodide from jsdelivr, version in `pyodideLoader.ts`), 5 s per test |
 | `src/csharpWasmRunner.ts`, `csharpWasmWorker.ts`, `csharpCompletion.ts`, `csharpDiagnostics.ts` | C# graded in the browser by default (runtime from `public/csharp-wasm/`, built by `../wasm-csharp/build.sh`, gitignored), 5 s per test; falls back to `/api/execute/csharp` when the runtime can't load or "Run on server" is ticked; Roslyn autocomplete and live error squiggles for the C# editor |
+| `src/monacoLoader.ts` | pins the Monaco version loaded from jsdelivr; keep `monaco-editor` in `package.json` on the same version (`overrides` lifts its bundled `dompurify` for npm audit) |
 | `src/components/ComplexityCheck.tsx` | `OPTIONS`: every complexity string the server's `ComplexityCatalog` may use |
 | `src/langTrack/` | data for the Programming in C# & Python lessons, keyed by `ToolKind` in `index.ts`, rendered by `tools/LangLesson.tsx` |
 | `src/opsTrack/` | Linux / Windows / cloud lesson data, keyed by `ToolKind` in `index.ts`, rendered by `tools/OpsLesson.tsx` |
