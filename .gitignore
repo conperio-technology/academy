@@ -1,0 +1,49 @@
+# .NET
+server/bin/
+server/obj/
+runner/bin/
+runner/obj/
+server/*.db
+server/*.db-shm
+server/*.db-wal
+
+# Node / Vite
+client/node_modules/
+client/dist/
+client/dist-static/
+
+# Secrets and local environment files (keep a committed example as .env.example)
+.env
+.env.*
+!.env.example
+
+# Logs and test output
+*.log
+TestResults/
+
+# Editor and OS files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+.DS_Store
+Thumbs.db
+
+# gstack browse session artifacts
+.gstack/
+
+
+# In-browser C# prototype: build output (wasm-csharp/build.sh)
+wasm-csharp/bin/
+wasm-csharp/obj/
+client/public/csharp-wasm/
+
+# Progress parity check (tools/progress-parity/check.mjs): build output
+tools/progress-parity/bin/
+tools/progress-parity/obj/
+
+# Claude Code: per-user settings and agent worktrees stay local
+.claude/settings.local.json
+.claude/worktrees/

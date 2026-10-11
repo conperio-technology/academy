@@ -1,0 +1,6 @@
+Welcome to the Conperio Academy Linux sandbox.
+
+This is a real (tiny) Linux system running inside your browser. Nothing you do
+here can affect anything else, and a page reload resets it completely.
+Try: ls, pwd, cat notes.txt -- and see the tasks above the terminal.
+

@@ -1,0 +1,73 @@
+namespace DsaAcademy.Content.Tools;
+
+public class AiAssistedEngineeringTool : ITool
+{
+    public string Id => "ai-assisted-engineering";
+    public string Section => "Professional Dev Skills";
+    public string Track => "working with AI";
+    public string Title => "Engineering with AI Assistants";
+    public string OneLiner => "Use AI coding tools to go faster without becoming a proxy for them: understand and verify what they write, review diffs critically, test, debug when they are wrong, and keep secrets out.";
+    public string KeyTakeaway =>
+        "You are responsible for every line you commit, whoever typed it. Use assistants for what they are good at (boilerplate, " +
+        "unfamiliar APIs, first drafts, explaining code, writing tests), give them context and small tasks, and then read the " +
+        "diff as a reviewer would: can you explain each line, does it do what was asked and nothing else, do the tests prove " +
+        "it? Never paste secrets or customer data into a tool your company hasn't approved, and write it yourself when you are " +
+        "learning, when the code is security-critical, or when explaining the task would take longer than doing it.";
+
+    public ToolKind ToolKind => ToolKind.AiAssistedEngineering;
+
+    public string Explanation =>
+        "AI coding assistants now range from autocomplete in the editor to chat in the IDE to agents that read the repository, " +
+        "edit files and run commands on their own. Used well they remove a lot of tedium. Used badly they produce code that " +
+        "nobody on the team understands, and an engineer whose real job has become copying error messages into a chat box. The " +
+        "aim of this lesson is the first without the second. For how the models themselves work and fail, see the AI & Machine " +
+        "Learning section, especially Using LLMs Well and Risks and Limits.\n\n" +
+        "What they are good at: boilerplate and repetitive edits (a DTO and its mapping, a migration, the fifth similar " +
+        "endpoint), first drafts in a language or library you know less well, translating between languages, explaining a " +
+        "confusing piece of code or an error message, writing tests for behaviour you describe, regular expressions and shell " +
+        "one-liners (which you then test), and searching a large codebase for where something happens. What they are weak at: " +
+        "anything that depends on context they don't have (your business rules, the incident last month, why that odd check " +
+        "exists), APIs newer than their training data, which they will confidently invent, subtle concurrency and security " +
+        "issues, and knowing when they are wrong. They can produce code that compiles, looks idiomatic and is wrong in a way a " +
+        "quick read misses.\n\n" +
+        "Working effectively. Give the assistant what a new colleague would need: the relevant files, the constraints, the " +
+        "conventions, an example of the style you want. Ask for small, reviewable steps rather than a whole feature at once. Ask " +
+        "it to explain its plan before it writes code, and to say what it is unsure about. When an agent is working on its own, " +
+        "give it a way to check its work (tests it can run, a build that must pass) and keep the changes on a branch you review " +
+        "before merging.\n\n" +
+        "Reviewing generated code is the core skill, and it is the same skill as reviewing a colleague's pull request, with less " +
+        "trust. Read the whole diff, not the summary. For every line ask: do I understand what this does and why it is needed? " +
+        "Check that each API it calls exists and behaves as assumed (open the docs; invented methods and wrong parameter orders " +
+        "are common). Look for what is missing: error handling, input validation, the empty, null and boundary cases, " +
+        "cancellation and timeouts, logging of sensitive data. Look for things you didn't ask for: unrelated refactors, new " +
+        "dependencies (check that a suggested package really exists and is the one you think, because attackers register " +
+        "packages under names that models tend to invent), weakened tests, a disabled check. If you can't explain a line to a " +
+        "reviewer, you are not ready to commit it.\n\n" +
+        "Testing is how you verify rather than hope. Write or ask for tests that pin down the behaviour, including edge cases, " +
+        "and read them as carefully as the code: a generated test that asserts whatever the code currently returns proves " +
+        "nothing. Watch for an assistant that makes a failing test pass by changing the test. Run the code; a plausible answer " +
+        "isn't a working one.\n\n" +
+        "When the AI is wrong, and it will be, debugging is still your job. Don't loop by pasting the same error back and " +
+        "accepting each new guess; after two failed attempts, stop and debug normally: reproduce the problem, read the actual " +
+        "error and stack trace, form a hypothesis, check it with a debugger or a log line, and narrow it down. Often the " +
+        "assistant was missing one fact you can supply once you have found it. If you don't understand the code well enough to " +
+        "debug it, that is the signal that you accepted too much at once.\n\n" +
+        "Security and privacy. Anything you paste into a tool may leave your machine. Use only tools your organisation has " +
+        "approved for its code, and never paste secrets (API keys, connection strings, passwords, tokens, private keys) or " +
+        "customer and personal data. If a secret does end up in a prompt, a commit or a log, treat it as leaked: rotate it, don't " +
+        "just delete the message. Review generated code for the usual vulnerabilities (string-built SQL, missing authorisation " +
+        "checks, unescaped output, secrets in code) with extra care, because the model learned from plenty of insecure examples. " +
+        "Agents that run commands need limits: no production credentials, review before anything destructive, and a sandbox " +
+        "where possible. Content an agent reads (a web page, an issue, a file) can contain instructions aimed at it, which is " +
+        "prompt injection.\n\n" +
+        "When to write it yourself: when you are learning (the struggle is how the skill forms, and interviews have no " +
+        "assistant), when the code is security- or money-critical and every line needs deliberate thought, when the task is " +
+        "small enough that explaining it takes longer than typing it, and when you have already corrected the assistant twice. A " +
+        "good habit is to sketch the approach yourself first, then let the tool help with the typing.\n\n" +
+        "Two things are easy to lose. Understanding: if a teammate asks why the code does something, \"the AI wrote it\" is not " +
+        "an answer, and ownership includes being able to maintain it at 2 a.m. Judgement: the assistant can suggest designs, but " +
+        "choosing between them, and knowing when none is right, is the engineer's job. Practise without the tools regularly so " +
+        "the fundamentals stay yours.\n\n" +
+        "Part 1 is a code review of an AI-generated change with planted problems to find. Part 2 is a set of everyday situations: " +
+        "pick what you would do and compare with the reasoning.";
+}

@@ -1,0 +1,44 @@
+namespace DsaAcademy.Content.Tools;
+
+public class FunctionsCallStackTool : ITool
+{
+    public string Id => "functions-call-stack";
+    public string Section => "Start Here";
+    public string Track => "foundations";
+    public int Order => 30;
+
+    public string Title => "Functions, Memory and the Call Stack";
+    public string OneLiner => "What happens in memory when one function calls another, why a copied list can change \"by itself\", and how a function can call itself (recursion).";
+    public string KeyTakeaway =>
+        "Each function call gets a stack frame holding its parameters and local variables; frames pile up on the " +
+        "call stack as calls nest and are thrown away as they return. Small values such as numbers are copied " +
+        "when assigned, but objects such as lists live elsewhere (the heap) and variables hold references to " +
+        "them, so two names can share one list. Recursion is a function calling itself on a smaller input until " +
+        "it reaches a base case it can answer directly.";
+
+    public ToolKind ToolKind => ToolKind.FunctionsCallStack;
+
+    public string Explanation =>
+        "A function is a named, reusable piece of code: you call it with some inputs (arguments, which arrive " +
+        "as its parameters), it runs, and it returns a result to whoever called it. The interesting part is the " +
+        "bookkeeping. When main calls area, and area calls multiply, the program has to remember where it was in " +
+        "each one and what its local variables were, so that when multiply returns, area carries on exactly " +
+        "where it left off.\n\n" +
+        "It does that with the call stack. Every call pushes a stack frame on top: a small block of memory with " +
+        "that call's parameters, its local variables and the place to return to. Only the top frame is running; " +
+        "the ones below are paused, waiting. When a function returns, its frame is popped off and its local " +
+        "variables disappear, which is why a local variable can't be used after its function ends. It's called a " +
+        "stack because, like a stack of plates, the last frame added is the first one removed.\n\n" +
+        "Not everything fits in a frame. Objects that can outlive a call, such as lists, dictionaries and class " +
+        "instances, live in a separate area called the heap, and a variable holds a reference to the object (in " +
+        "effect, its address) rather than the object itself. So b = a copies a number, but ys = xs copies only " +
+        "the reference: both names now point at one list, and appending through ys changes what xs sees too. " +
+        "This surprises almost everyone once. Stack vs Heap and Garbage Collection, in Concurrency & Memory, " +
+        "goes deeper.\n\n" +
+        "Recursion is a function that calls itself. It works because each call gets its own frame with its own " +
+        "copy of the parameters, so factorial(3) can call factorial(2) without the two interfering. Every " +
+        "recursive function needs a base case, an input small enough to answer directly (factorial(1) = 1), and a " +
+        "recursive case that moves toward it. Forget the base case and the frames keep piling up until the " +
+        "memory reserved for the stack runs out: a stack overflow. Step through the three programs below and watch " +
+        "the frames, then try Recursion: Factorial in Data Structures & Algorithms to write one yourself.";
+}

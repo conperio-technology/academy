@@ -1,0 +1,58 @@
+namespace DsaAcademy.Content.Tools;
+
+public class CachingTool : ITool
+{
+    public string Id => "sd-caching";
+    public string Section => "System Design";
+    public string Track => "building blocks";
+    public int Order => 3;
+    public string Title => "Caching";
+    public string OneLiner => "Keep a copy of hot data somewhere fast, and decide how stale that copy is allowed to get.";
+    public string KeyTakeaway =>
+        "A cache works because real traffic is skewed: a small set of hot keys gets most of the reads, so a " +
+        "cache much smaller than the database can absorb most of the load. The cost is staleness, so every " +
+        "cache needs an answer to \"what happens when the data changes\": a TTL, deleting on write, or both.";
+
+    public ToolKind ToolKind => ToolKind.Caching;
+
+    public string Explanation =>
+        "A cache is a faster, smaller copy of data that lives closer to whoever needs it. Caches exist at " +
+        "every layer: the browser keeps images and scripts, a CDN (content delivery network, servers spread around the world) keeps static files in a city near the user, " +
+        "the application keeps objects in its own memory, a shared cache like Redis or Memcached (in-memory key-value stores) keeps query " +
+        "results for every app server, and the database itself keeps hot pages in its buffer pool so it can " +
+        "skip the disk. In an interview, \"add a cache\" is only half an answer; say which layer, what goes in " +
+        "it, and how it gets invalidated.\n\n" +
+        "The most common pattern is cache-aside: the app checks the cache, and on a miss it reads the " +
+        "database and puts the result in the cache for next time. The cache only ever holds data someone " +
+        "asked for, and if the cache dies the app still works, just slower. Write-through writes to the " +
+        "cache and the database together on every update, so reads are always fresh but every write pays " +
+        "for both. Write-back (write-behind) writes only to the cache and flushes to the database later, " +
+        "which makes writes very fast but loses data if the cache dies before the flush.\n\n" +
+        "Part 1 shows why caches work at all. With a DB read at 50 ms and a cache hit at 1 ms, the average " +
+        "latency is set almost entirely by the hit rate: 90% hits gives about 6 ms, 50% hits about 26 ms. " +
+        "Set the skew to 0 and every key is equally popular, so a cache holding a sixth of the keys hits " +
+        "about a sixth of the time. Raise the skew to something like real traffic and a small cache hits " +
+        "most of the time. The database load drops by the same factor, which is often the real reason to add " +
+        "the cache.\n\n" +
+        "When the cache is full, the eviction policy picks what to throw out. LRU (least recently used) is " +
+        "the usual default and works well when recent use predicts future use. LFU (least frequently used) " +
+        "keeps the steady favorites even through a burst of one-off keys. Random eviction is cheap and " +
+        "surprisingly close for small caches, but it sometimes evicts a hot key. A TTL (time to live) is the " +
+        "other way entries leave: after a fixed time the entry expires and the next read goes to the " +
+        "database.\n\n" +
+        "There are only two hard things in computer science: cache invalidation and naming things. Part 2 " +
+        "shows why. If nothing tells the cache that the data changed, readers get the old value until the " +
+        "TTL runs out, so the TTL is your bound on staleness. Deleting the key on every write fixes the " +
+        "common case; delete rather than overwrite, because two concurrent writers updating the cache can " +
+        "leave the older value behind. Even then there are small race windows, which is why most systems " +
+        "keep a TTL as a safety net.\n\n" +
+        "Part 3 is the cache stampede, or thundering herd. A hot key expires and hundreds of requests miss " +
+        "at the same moment, all asking the database for the same row. The fix is request coalescing: the " +
+        "first miss loads the value while the rest wait for it. Adding random jitter to TTLs and refreshing " +
+        "hot keys shortly before they expire help too.\n\n" +
+        "Not everything should be cached. Data that must be exactly current (an account balance before a " +
+        "payment, stock levels at checkout) should be read from the source of truth. Data that is rarely read " +
+        "twice wastes cache space. Per-user private data in a shared cache needs a key that includes the user, " +
+        "or one user sees another's page. And a cache is not a database: anything stored only in the cache " +
+        "can disappear at any time.";
+}

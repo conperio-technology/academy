@@ -1,0 +1,46 @@
+namespace DsaAcademy.Content.Tools;
+
+public class TestPyramidTool : ITool
+{
+    public string Id => "test-pyramid";
+    public string Section => "Professional Dev Skills";
+    public string Track => "testing";
+    public string Title => "The Test Pyramid: Unit, Integration and End-to-End";
+    public string OneLiner => "What each level of test proves, what it costs, and why most of a healthy suite is small fast tests.";
+    public string KeyTakeaway =>
+        "Unit tests check one piece of logic in isolation and run in milliseconds. Integration tests check that your " +
+        "code works with real collaborators such as a database or the HTTP pipeline. End-to-end tests drive the whole " +
+        "system the way a user does. Moving up the pyramid buys confidence that the parts fit together, and costs speed, " +
+        "reliability and how precisely a failure points at the bug. So write many unit tests, fewer integration tests and " +
+        "a handful of end-to-end tests for the journeys that must never break.";
+
+    public ToolKind ToolKind => ToolKind.TestPyramid;
+
+    public string Explanation =>
+        "A unit test exercises a small piece of behaviour, usually a method or a class, with nothing slow or shared " +
+        "involved: no database, network, file system or clock. It runs in milliseconds, gives the same result every time, " +
+        "and when it fails the name tells you exactly what broke. An integration test checks that your code works with " +
+        "something real it depends on: the SQL your repository generates against a real database (often in a container), " +
+        "or an ASP.NET Core endpoint through the real routing, model binding and middleware using WebApplicationFactory. " +
+        "An end-to-end (E2E) test runs the deployed system from the outside, for example a Playwright script that signs " +
+        "in, adds to a basket and checks out in a real browser.\n\n" +
+        "Mike Cohn's test pyramid says to have many tests at the bottom and few at the top. Higher tests catch the bugs " +
+        "that live between components (a misconfigured connection string, a JSON field renamed on one side), but they're " +
+        "slower, need more setup, fail for reasons unrelated to your change (timeouts, test data, a flaky browser), and a " +
+        "red E2E test can mean almost anything. The inverted shape, mostly manual and E2E tests with few unit tests, is " +
+        "called the ice-cream cone, and it produces a slow, flaky build that people learn to rerun rather than read. Some " +
+        "teams prefer Kent C. Dodds' testing trophy, which puts the most weight on integration tests; the shared point is " +
+        "to put each check at the lowest level that can catch the bug.\n\n" +
+        "Every test, at any level, has the same three parts, called arrange, act, assert (AAA). Arrange builds the inputs " +
+        "and the object under test. Act performs the single behaviour being tested. Assert checks the outcome. Keeping " +
+        "one act per test means a failure points at one behaviour, and naming tests after the behaviour, such as " +
+        "Withdraw_MoreThanBalance_Throws, makes the test list read like a specification.\n\n" +
+        "In C#, xUnit is the most common framework in new .NET projects (NUnit and MSTest are the others). A [Fact] is a " +
+        "test with no parameters; a [Theory] runs once per [InlineData] row. xUnit creates a new instance of the test " +
+        "class for every test, so the constructor is per-test setup and Dispose is teardown, and tests can't leak state " +
+        "through fields. Shared expensive setup, such as one database container for a whole class, goes in a fixture " +
+        "via IClassFixture<T>. Run everything with dotnet test.\n\n" +
+        "Interview answer to \"how would you test this?\": unit tests for the logic and edge cases, an integration test " +
+        "for each boundary (database, external API, message queue) and one or two end-to-end tests for the critical " +
+        "path, then say why each level belongs where it is.";
+}

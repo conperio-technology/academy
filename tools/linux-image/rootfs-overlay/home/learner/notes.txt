@@ -1,0 +1,4 @@
+Things to remember:
+- ls lists files, ls -l shows details, ls -a shows hidden ones
+- cd moves around, pwd shows where you are
+- man pages aren't installed here, but most commands support --help

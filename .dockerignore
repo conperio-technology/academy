@@ -1,0 +1,9 @@
+.git
+**/bin
+**/obj
+**/node_modules
+client/dist
+**/*.db
+**/*.db-shm
+**/*.db-wal
+client/public/csharp-wasm

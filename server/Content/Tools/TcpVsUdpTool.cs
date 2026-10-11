@@ -1,0 +1,51 @@
+namespace DsaAcademy.Content.Tools;
+
+public class TcpVsUdpTool : ITool
+{
+    public string Id => "tcp-vs-udp";
+    public string Section => "Networking";
+    public string Track => "transport";
+    public string Title => "TCP vs UDP: Reliable vs Fire-and-Forget";
+    public string OneLiner => "Same job -- get data from one program to another over IP -- two completely different guarantees about whether it actually arrives, in order, or at all.";
+    public string KeyTakeaway =>
+        "TCP spends extra round-trips (a message there and a reply back) on a handshake, cumulative acknowledgments and automatic " +
+        "retransmission to give the application a RELIABLE, ORDERED byte stream: no gaps, duplicates or reordering while the " +
+        "connection lasts. It can still fail, with a reset or a timeout, and an ACK only means the peer's TCP got the bytes, not " +
+        "that the program on the other end processed them. UDP skips all of that and just sends " +
+        "-- faster and lower-overhead, but the receiving program has to handle loss and reordering " +
+        "itself, if it needs to at all.";
+
+    public ToolKind ToolKind => ToolKind.TcpVsUdp;
+
+    public string Explanation =>
+        "Both TCP and UDP sit at the Transport layer (see The OSI & TCP/IP Models) and both use port " +
+        "numbers to get data to the right PROGRAM once IP has gotten it to the right machine -- that's " +
+        "where the similarity ends. TCP is connection-oriented: before any real data moves, the two " +
+        "ends run a three-way handshake (SYN, SYN-ACK, ACK) to agree the connection exists, then the " +
+        "receiver acknowledges the data it gets. ACKs are cumulative: each one names the next byte the " +
+        "receiver expects, which confirms every byte before it at once, so a receiver often sends one " +
+        "ACK for every two segments rather than one per segment. If the ACK for some data doesn't come " +
+        "back in time (or repeated ACKs for the same byte show a gap), TCP assumes a segment was lost " +
+        "and retransmits it, and the receiver holds later segments back until the missing one arrives " +
+        "-- so the receiving application reads a byte stream with no gaps, duplicates or reordering.\n\n" +
+        "Two limits on that promise. An ACK means the other machine's TCP has received the bytes, not " +
+        "that the application there has read or acted on them; if the sender needs to know that, the " +
+        "application has to send its own reply. And the promise only holds while the connection lives: " +
+        "if retransmissions keep failing, or the other side resets the connection, TCP gives up and the " +
+        "application gets an error (a timeout or \"connection reset\"), without knowing how much of its " +
+        "last data the other application actually used.\n\n" +
+        "UDP is connectionless: no handshake, no " +
+        "acknowledgment, no retransmission, no ordering guarantee. A UDP datagram is sent and the " +
+        "sender moves on, with zero built-in way to know whether it arrived.\n\n" +
+        "That overhead buys TCP its reliability, but it costs latency (delay) -- the handshake alone is a full " +
+        "round-trip before any real data moves -- and makes TCP a bad fit for anything where a LATE " +
+        "packet is worse than a MISSING one. Live video/voice calls, competitive online games, and most " +
+        "DNS lookups use UDP for exactly this reason: a video call would rather drop one garbled frame " +
+        "and keep playing than pause and wait for a retransmit, which is exactly what TCP would force " +
+        "it to do. TCP is the right choice when correctness matters more than latency -- loading a web " +
+        "page, sending a file, anything where a missing or out-of-order byte would actually break the " +
+        "result.\n\n" +
+        "Try both below: send a few messages over each protocol, then simulate a dropped packet and " +
+        "watch how differently each one reacts -- TCP notices and fixes it automatically; UDP has no " +
+        "idea it happened.";
+}

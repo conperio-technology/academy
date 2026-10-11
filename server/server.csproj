@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <!-- The API itself doesn't run Roslyn any more (the runner does), but this pins one
+         Roslyn version across EF Core's design-time tooling and the runner reference. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.9.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+
+  <!-- The sandboxed C# runner (see Execution/CSharpExecutor.cs). Referenced so its build
+       output lands next to the API's, in both `dotnet run` and `dotnet publish`. -->
+  <ItemGroup>
+    <ProjectReference Include="../runner/runner.csproj" />
+  </ItemGroup>
+
+  <!-- Reference solutions (see Content/SolutionCatalog.cs). LogicalName keeps the
+       resource name readable: "Solutions/{concept-id}.csx" / ".py". -->
+  <ItemGroup>
+    <EmbeddedResource Include="Content/Solutions/*" LogicalName="Solutions/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+
+  <!-- Roslyn + the Mono WebAssembly runtime, so learner C# compiles and runs (is graded) in
+       the browser (see README.md). Build with ./build.sh, which publishes into
+       client/public/csharp-wasm/. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>DsaAcademy.CSharpWasm</RootNamespace>
+    <AssemblyName>CSharpWasm</AssemblyName>
+    <!-- No ICU data download; learner code only needs invariant culture. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Learner code calls JsonSerializer.Serialize on its own types (and so do we). -->
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <!-- Roslyn isn't annotated for trimming; the warnings are expected. -->
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <!-- Roslyn's translated diagnostics would add ~10 MB of satellite assemblies. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- Keep real exception messages (learners see ex.Message), not resource keys. -->
+    <UseSystemResourceKeys>false</UseSystemResourceKeys>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+  </ItemGroup>
+
+  <!-- The exact policy the server's runner enforces, compiled in from the same file. -->
+  <ItemGroup>
+    <Compile Include="../runner/CodePolicy.cs" Link="CodePolicy.cs" />
+    <Compile Include="../runner/RunnerProtocol.cs" Link="RunnerProtocol.cs" />
+  </ItemGroup>
+
+  <!-- Learner code may call anything public in these, and Roslyn compiles against their
+       metadata as loaded at runtime, so they must not be trimmed. -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="System.Private.CoreLib" />
+    <TrimmerRootAssembly Include="System.Runtime" />
+    <TrimmerRootAssembly Include="System.Linq" />
+    <TrimmerRootAssembly Include="System.Collections" />
+    <TrimmerRootAssembly Include="System.Runtime.Numerics" />
+    <TrimmerRootAssembly Include="System.Text.RegularExpressions" />
+    <TrimmerRootAssembly Include="System.Text.Json" />
+    <TrimmerRootAssembly Include="System.Memory" />
+    <!-- System.Collections namespace types (Queue, SortedList, ...) the server also compiles against. -->
+    <TrimmerRootAssembly Include="System.Collections.NonGeneric" />
+    <!-- Our own (tiny) assembly: RunLine is serialized via reflection. -->
+    <TrimmerRootAssembly Include="CSharpWasm" />
+  </ItemGroup>
+
+</Project>

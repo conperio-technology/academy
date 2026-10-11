@@ -1,0 +1,39 @@
+namespace DsaAcademy.Content.Tools;
+
+public class WifiBasicsTool : ITool
+{
+    public string Id => "net-wifi-basics";
+    public string Section => "Networking";
+    public string Track => "local networks";
+    public string Title => "Wi-Fi Basics: Bands, Channels, Signal and Security";
+    public string OneLiner =>
+        "Why Wi-Fi slows down when it's busy, why channels 1, 6 and 11, what -67 dBm means, and which " +
+        "security mode a company network should use.";
+    public string KeyTakeaway =>
+        "Wi-Fi is a shared radio channel: only one device on a channel transmits at a time, and overlapping " +
+        "channels turn into noise. Plan non-overlapping channels, use 5 or 6 GHz for capacity, design for a " +
+        "signal of about -67 dBm or better, and use WPA2 or WPA3 Enterprise so every user has their own " +
+        "credentials.";
+
+    public ToolKind ToolKind => ToolKind.WifiBasics;
+
+    public string Explanation =>
+        "Wi-Fi (the IEEE 802.11 standards) carries Ethernet frames over radio. An access point (AP) is the " +
+        "base station devices connect to, and the SSID is the network name it advertises. Unlike a switch " +
+        "port, the air is shared: on any one channel only one device can transmit at a time, and everyone " +
+        "else waits. More devices or more access points on the same channel means less airtime for " +
+        "each.\n\nFrequencies come in bands. 2.4 GHz travels furthest and through walls best, but only has room" +
+        " for three channels that don't overlap (1, 6 and 11), and it's shared with Bluetooth, microwave " +
+        "ovens and every neighbour. 5 GHz has around two dozen channels and much more capacity at shorter " +
+        "range, and 6 GHz (Wi-Fi 6E and Wi-Fi 7) adds a clean, wide band for newer devices. Two access points" +
+        " within earshot on overlapping channels interfere: each hears the other's transmissions as noise it " +
+        "can't decode. On the same channel they at least take turns.\n\nSignal strength is measured in dBm, " +
+        "decibels relative to one milliwatt. The numbers are negative and logarithmic: -50 is strong, -67 is " +
+        "the usual target for reliable voice and video, below -80 is barely usable, and every 10 dB is a " +
+        "factor of 10 in power. Walls, metal racking, machinery and people absorb signal, so industrial sites" +
+        " need a site survey rather than a guess.\n\nFor security, WEP is broken and must never be used. " +
+        "WPA2-Personal and WPA3-Personal use one shared passphrase (WPA3's SAE handshake resists offline " +
+        "guessing). Company networks should use Enterprise mode, 802.1X, where each user or device " +
+        "authenticates individually against a RADIUS server, so someone who leaves can be cut off without " +
+        "changing everyone's password. Plan three access points below, then see what a signal level means.";
+}

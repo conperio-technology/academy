@@ -1,0 +1,28 @@
+namespace DsaAcademy.Content.Tools;
+
+public class LangCheatSheetCSharpTool : ITool
+{
+    public string Id => "lang-cheat-csharp";
+    public string Section => "Programming in C# & Python";
+    public string Track => "cheat sheets";
+    public int Order => 5000;
+    public string Title => "C# Cheat Sheet";
+    public string OneLiner => "One searchable page of C#: syntax, strings, collections with their Big O, LINQ and yield, classes and records, exceptions, lambdas and generics, interfaces and equality, files and parsing, async, xUnit tests, spans, threads and cancellation, using, operators, pattern matching, generic math and retries, and the idioms that come up in coding interviews.";
+    public string KeyTakeaway =>
+        "Reach for List<T>, Dictionary<TKey, TValue>, HashSet<T>, Queue<T>, Stack<T> and PriorityQueue<TElement, TPriority> " +
+        "first; know which operations are O(1) and which are O(n); build strings with StringBuilder or string.Join; and " +
+        "remember that int / int truncates and int silently overflows past 2,147,483,647.";
+
+    public ToolKind ToolKind => ToolKind.LangCheatSheetCSharp;
+
+    public string Explanation =>
+        "A compact reference for everyday and interview C#. Every snippet is a complete program that compiles and runs " +
+        "as shown (paste it into a file and run dotnet run file.cs with the .NET 10 SDK), with the output in the comments. " +
+        "The three exceptions are reference entries: the exception list and the project commands are comments only, " +
+        "and the xUnit tests run in a test project (dotnet new xunit, then dotnet test). " +
+        "Search by keyword or filter by topic, copy any snippet with its button, and use Print for a paper copy: the " +
+        "controls and the sidebar are left off the printout.\n\n" +
+        "Big O figures are for the standard .NET collections: \"amortized\" means an occasional slow operation averaged " +
+        "out over many fast ones, and \"avg\" for hash-based collections means typical inputs. The Python Cheat Sheet " +
+        "covers the same ground, and the C# vs Python Translation Table puts the two side by side.";
+}

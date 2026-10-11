@@ -1,0 +1,45 @@
+namespace DsaAcademy.Content.Tools;
+
+public class IndustrialNetworkingTool : ITool
+{
+    public string Id => "industrial-networking";
+    public string Section => "Industrial & Embedded Systems";
+    public string Track => "plc";
+    public string Title => "Industrial Networking: Modbus & Deterministic Polling";
+    public string OneLiner => "How does a PLC actually talk to an HMI (human-machine interface: the operator's screen), a SCADA (supervisory control and data acquisition) system that monitors a whole site, or another PLC? Usually with a protocol built around one machine ASKING and another ANSWERING, not the general internet's anyone-can-initiate model.";
+    public string KeyTakeaway =>
+        "Modbus (and most classic industrial protocols) are MASTER-SLAVE: the master (often an HMI or " +
+        "SCADA system) always initiates every request, and a slave device (a PLC) only ever responds " +
+        "when asked -- deterministic polling, not the general internet's model where either side can " +
+        "send a request whenever it wants (see TCP vs UDP, DNS & HTTP for that model).";
+
+    public ToolKind ToolKind => ToolKind.IndustrialNetworking;
+
+    public string Explanation =>
+        "Modbus is one of the oldest and still most common industrial protocols, originally designed " +
+        "for serial connections (Modbus RTU) and later adapted to run over Ethernet (Modbus TCP) -- and " +
+        "its core model has stayed the same the whole time: a MASTER (often an HMI, a SCADA system, or " +
+        "a higher-level PLC) sends a request, and a SLAVE (often a PLC, an I/O module, or a sensor) " +
+        "only ever responds when directly asked. There's no equivalent of a web server pushing an " +
+        "update to a browser unprompted (see DNS & HTTP for that model) -- if the master doesn't poll a " +
+        "register, nothing gets sent, period. That's DETERMINISTIC POLLING: the master decides exactly " +
+        "what gets read, in what order, how often, which trades responsiveness (nothing arrives faster " +
+        "than the polling cycle) for exactly the kind of predictability PLCs need everywhere else (see " +
+        "PLCs: How They're Different From a Normal Computer's scan cycle for the same theme).\n\n" +
+        "The data itself is organized into numbered REGISTERS (and, for on/off values, COILS) -- a " +
+        "slave device exposes a fixed table of registers, and a master reads or writes them by address " +
+        "and function code (Read Holding Registers, Write Single Coil, etc.). Because classic Modbus " +
+        "registers are just 16-bit integers, values that aren't naturally whole numbers get SCALED -- a " +
+        "temperature of 72.5°F might be transmitted as the raw integer 725, with both sides agreeing to " +
+        "divide by 10 -- a real, still-common workaround for protocols designed before floating-point " +
+        "values were assumed, and a classic source of an off-by-a-factor-of-10 bug if the scaling isn't " +
+        "applied consistently on both ends.\n\n" +
+        "EtherNet/IP (the IP stands for Industrial Protocol) and other modern fieldbus protocols add more " +
+        "capability on top (faster cycle times, richer data types, built-in device discovery) but keep " +
+        "the same fundamental shape -- a controller exchanging data with field devices on a fixed cycle " +
+        "(EtherNet/IP uses producer/consumer connections rather than Modbus-style polling), layered " +
+        "on top of the same OSI/TCP-IP stack covered in Networking (Modbus TCP, for instance, is just " +
+        "Modbus's request/response messages carried inside ordinary TCP segments on port 502).\n\n" +
+        "Try the simulator below -- poll a few registers and notice every single response only exists " +
+        "because the master asked first.";
+}

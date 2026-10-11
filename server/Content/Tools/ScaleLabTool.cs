@@ -1,0 +1,50 @@
+namespace DsaAcademy.Content.Tools;
+
+public class ScaleLabTool : ITool
+{
+    public string Id => "sd-scale-lab";
+    public string Section => "System Design";
+    public string Track => "scaling and reliability";
+    public int Order => 14;
+    public string Title => "Scale It Yourself: a Traffic Simulator Lab";
+    public string OneLiner => "Add load balancers, caches, replicas, a CDN, queues and a rate limiter to a web service under rising load and failures, and watch latency, errors, saturation and cost.";
+    public string KeyTakeaway =>
+        "Scaling is finding the saturated tier and fixing that one. Stateless app servers scale out behind a load balancer; " +
+        "caches and CDNs remove work instead of adding machines for it; read replicas scale reads but not writes; queues move " +
+        "slow work off the request path but still need enough workers; rate limiters stop abuse before it costs anything; and " +
+        "timeouts with circuit breakers keep one slow dependency from tying up every server. Plan capacity for the bad day: a " +
+        "lost server, a cold cache, a spike.";
+
+    public ToolKind ToolKind => ToolKind.ScaleLab;
+
+    public string Explanation =>
+        "This lab puts the building blocks from the rest of the section together. You run a small online shop: users load " +
+        "static files (images, scripts), read product pages through an API and place orders. Each scenario sends traffic for " +
+        "two simulated minutes, sometimes with a failure partway through, and gives you a goal: a p99 latency, an error rate, " +
+        "sometimes a monthly budget. Add and configure components until the run passes, then read why the fix worked. The Sandbox " +
+        "lets you set traffic and failures yourself.\n\n" +
+        "How to read it. The chart shows traffic, p50 and p99 latency and the error rate for every second. The tier cards show " +
+        "how busy each part is at the second you pick with the time slider: utilization is offered work divided by capacity. " +
+        "Watch the card that turns red first. That tier is the bottleneck, and adding capacity anywhere else changes nothing, " +
+        "which is the most common mistake in real capacity planning and in interviews.\n\n" +
+        "Why latency explodes near 100%. A tier that is 50% busy makes a request wait about twice its own service time; at 90% " +
+        "about ten times; at 98% fifty times. That is the shape of a queue: when work arrives at random, the closer you run to " +
+        "full, the longer the line. So healthy systems run at 50% to 70% at peak, and the cost readout shows what that headroom " +
+        "costs. Past 100%, a tier can't keep up at all: the excess is rejected or times out.\n\n" +
+        "The model, stated plainly, because it is a teaching model and not a benchmark. Each app server has 4 CPU cores (4,000 " +
+        "ms of CPU per second) and can hold 100 requests open at once. A static file costs 2 ms of app CPU, a product page 6 ms " +
+        "plus 3 database queries (or one cache lookup), an order 8 ms plus 2 queries plus 60 ms of side work (resizing images, " +
+        "sending emails) unless a queue takes it. Half of product pages call a recommendations service that normally answers in " +
+        "40 ms. A database node handles 3,000 queries a second; writes go to the primary and reads to the replicas if there are " +
+        "any. The CDN serves 95% of static files from the edge. A worker runs side jobs at 4,000 ms of CPU a second. Network time " +
+        "is about 60 ms to your datacenter and 15 ms to a CDN location. Every tier's average time is its service time divided by " +
+        "(1 - utilization); a request's time in each tier is drawn from an exponential distribution with that average, 200 " +
+        "sample requests per second from a seeded generator, so the same settings always give the same result. Requests over 3 " +
+        "seconds count as errors, as do requests a saturated tier turns away. Prices are round made-up numbers for comparing " +
+        "designs, not real cloud prices.\n\n" +
+        "Things the model leaves out, which matter in real systems: autoscaling delays (new servers take minutes to start), " +
+        "replication lag and stale reads from replicas, cache invalidation, a database's write limit (only sharding raises it), " +
+        "network bandwidth, and retries, which can turn overload into a retry storm (see Timeouts, Retries, Circuit Breakers " +
+        "and Load Shedding). Use it to build intuition about bottlenecks and headroom, then check real numbers with load tests " +
+        "against your own system.";
+}

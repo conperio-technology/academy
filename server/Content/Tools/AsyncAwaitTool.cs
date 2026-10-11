@@ -1,0 +1,52 @@
+namespace DsaAcademy.Content.Tools;
+
+public class AsyncAwaitTool : ITool
+{
+    public string Id => "async-await";
+    public string Section => "Concurrency & Memory";
+    public string Track => "concurrency";
+    public int Order => 60;
+    public string Title => "async/await vs Threads";
+    public string OneLiner => "What await really does, why it lets a few threads serve thousands of I/O-bound requests, and why it does nothing for CPU-bound work.";
+    public string KeyTakeaway =>
+        "await does not start a thread. It registers the rest of the method as a continuation, returns the thread " +
+        "to its caller (ultimately the thread pool, a set of reusable worker threads), and resumes the method on a pool thread when the " +
+        "awaited operation finishes. That frees threads during I/O waits, so async multiplies throughput for " +
+        "I/O-bound work. For CPU-bound work there is no waiting to free up: you need more cores, via Task.Run " +
+        "or Parallel.For, not await.";
+
+    public ToolKind ToolKind => ToolKind.AsyncAwait;
+
+    public string Explanation =>
+        "Work is either CPU-bound (the thread is busy computing: hashing, resizing images, parsing a big file " +
+        "already in memory) or I/O-bound (the thread is waiting for something outside the CPU: a database, an " +
+        "HTTP call, a disk read). A typical web request is overwhelmingly I/O-bound: a millisecond of CPU and " +
+        "tens of milliseconds waiting on the database.\n\n" +
+        "With synchronous code, a thread that calls the database sits blocked for the whole wait, holding its " +
+        "stack and doing nothing. A server with 4 pool threads and 10 requests in flight serves 4 at a " +
+        "time; the other 6 queue up even though the CPU is almost idle. The thread pool will slowly add " +
+        "threads when it sees this, which is the thread pool starvation you get from blocking calls such as " +
+        ".Result and .Wait() inside async code.\n\n" +
+        "await changes what happens during the wait. The compiler rewrites an async method into a state " +
+        "machine. The method runs synchronously, on the caller's thread, until it reaches an await on a task " +
+        "that has not completed yet. At that point it stores its local variables in the state machine object " +
+        "(on the heap), registers \"run the rest of me\" as a continuation on that task, and returns an " +
+        "incomplete Task to its caller. The thread is now free to serve another request. The I/O itself is " +
+        "carried out by the OS and the network card; no thread sits waiting for it (on Windows it completes " +
+        "through an I/O completion port, on Linux through epoll). When the result arrives, the continuation is " +
+        "queued to the thread pool and some pool thread, not necessarily the original one, resumes the method " +
+        "right after the await.\n\n" +
+        "That is why async helps only I/O-bound work. If a request is 8 ms of computation, there is no wait to " +
+        "release the thread during, and await on a CPU-bound task just moves the same work to another thread. " +
+        "CPU-bound throughput is capped by the number of cores; to use more of them, split the work with " +
+        "Task.Run, Parallel.For or PLINQ. In a UI app, Task.Run is also how you keep heavy computation off the " +
+        "UI thread.\n\n" +
+        "Pitfalls interviewers like: blocking on async code with .Result or .Wait() wastes a thread and, " +
+        "where there is a SynchronizationContext (WinForms, WPF, old ASP.NET), can deadlock, because the " +
+        "continuation needs the very thread that is blocked waiting for it. ASP.NET Core has no " +
+        "SynchronizationContext, so there it \"only\" starves the pool. async void cannot be awaited and its " +
+        "exceptions crash the process; use it only for event handlers. Await several independent calls " +
+        "together with Task.WhenAll rather than one after another. ConfigureAwait(false) tells a library not " +
+        "to resume on the captured context. And async is not parallel by itself: one async method awaiting " +
+        "three calls in sequence still does them one at a time.";
+}

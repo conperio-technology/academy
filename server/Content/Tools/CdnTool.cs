@@ -1,0 +1,66 @@
+namespace DsaAcademy.Content.Tools;
+
+public class CdnTool : ITool
+{
+    public string Id => "sd-cdn";
+    public string Section => "System Design";
+    public string Track => "building blocks";
+    public int Order => 4;
+    public string Title => "CDNs and Edge Caching";
+    public string OneLiner => "Serve bytes from a city near the user instead of from your datacenter: points of presence, cache keys, Cache-Control headers, invalidation and origin shields.";
+    public string KeyTakeaway =>
+        "A CDN is a shared cache spread over hundreds of locations near users. Your origin decides what it may store and for how " +
+        "long with Cache-Control headers; the cache key decides which requests share an entry. Give static files content-hashed " +
+        "names and cache them for a year, keep HTML short-lived, never put personalised responses in a shared cache, and add an " +
+        "origin shield so a miss in every location doesn't become a request to your servers from every location.";
+
+    public ToolKind ToolKind => ToolKind.Cdn;
+
+    public string Explanation =>
+        "A content delivery network (CDN) is a fleet of caching servers in many points of presence (PoPs), which are datacenters " +
+        "in or near major cities, often inside the internet exchanges where networks meet. Your own servers are the origin. " +
+        "When a user in Sydney asks for an image, DNS or anycast routing (one IP address announced from every PoP, so the network " +
+        "delivers packets to the closest one) sends the request to a Sydney PoP. If the PoP has a fresh copy it answers in a few " +
+        "milliseconds; if not, it fetches the file from the origin, maybe 200 ms away, stores it and answers. The next Sydney user " +
+        "gets the local copy. CloudFront, Cloudflare, Akamai and Fastly are the names you'll hear.\n\n" +
+        "Three things decide whether a request is a hit. The cache key is what the CDN looks up: by default usually the host, the " +
+        "path and the query string. Every distinct key is a separate entry, so a tracking parameter like ?utm_source=newsletter " +
+        "turns one image into dozens of entries that each miss once; CDNs let you drop or whitelist parameters. The Vary response " +
+        "header adds request headers to the key: Vary: Accept-Encoding stores a compressed and an uncompressed variant, which is " +
+        "fine, while Vary: Cookie or Vary: User-Agent splits the cache into thousands of variants and almost nothing hits. " +
+        "Freshness says how long a stored copy may be served without asking the origin. Popularity matters too: a file requested " +
+        "once a day in each PoP will usually have expired or been evicted by the next request.\n\n" +
+        "Freshness comes from the Cache-Control response header. max-age=N lets any cache, the browser included, reuse the " +
+        "response for N seconds. s-maxage=N applies only to shared caches such as CDNs and overrides max-age there, so you can let " +
+        "the CDN keep a page for 60 seconds while browsers keep it for 0. no-cache means a cache may store the response but must " +
+        "check with the origin before every use; no-store means don't store it at all. private means only the user's browser may " +
+        "store it, never a shared cache; public allows shared caches to store responses they otherwise wouldn't. " +
+        "stale-while-revalidate=N lets a cache serve the old copy for up to N seconds after it expires while it fetches a new one " +
+        "in the background, and stale-if-error=N lets it serve the old copy if the origin is failing. immutable tells browsers the " +
+        "file will never change, so they don't even revalidate it on reload. Many CDNs also honour CDN-Cache-Control (RFC 9213) or " +
+        "a vendor header such as Surrogate-Control, which only the CDN reads.\n\n" +
+        "Revalidation saves bytes when a copy expires. The origin sent an ETag (a version identifier) or a Last-Modified date with " +
+        "the response; the cache asks again with If-None-Match or If-Modified-Since, and if nothing changed the origin answers 304 " +
+        "Not Modified with no body. The Age response header says how many seconds a copy has been in the cache, and many CDNs add a " +
+        "header saying HIT or MISS (Cache-Status, RFC 9211, is the standard one).\n\n" +
+        "Invalidation is where most CDN mistakes happen. Waiting for the TTL is free but means users see the old version until it " +
+        "expires. A purge (by URL, by prefix, or by tag, often called surrogate keys or cache tags) removes copies everywhere, " +
+        "usually within seconds, but it is an extra step in every deploy and the first request after it in every PoP goes back to " +
+        "the origin. The best answer for static files is not to invalidate at all: put a hash of the content in the file name " +
+        "(app.3f9c2b.js), cache it for a year with immutable, and give the HTML that references it a short TTL. A new deploy " +
+        "produces new names, so nothing stale can be served and nothing needs purging.\n\n" +
+        "An origin shield is an extra cache tier between the PoPs and the origin, usually one location near the origin. Without " +
+        "it, a new file is fetched from the origin once by every PoP; with it, the PoPs ask the shield and only the shield asks the " +
+        "origin. It mostly cuts origin load, not user latency. PoPs also collapse concurrent misses for the same key into one " +
+        "fetch, the CDN version of request coalescing.\n\n" +
+        "Static content (images, scripts, stylesheets, fonts, video segments) is what CDNs were built for: the same bytes for " +
+        "everyone. Dynamic content still benefits. The TCP and TLS handshakes happen with a nearby PoP, which keeps warm " +
+        "connections to the origin, and a popular but non-personal response (a product page, a scoreboard) can be micro-cached for " +
+        "1 to 10 seconds, which turns 5,000 requests a second into one origin request per PoP per second. Personalised responses " +
+        "must be private or no-store. Caching a page that contains one user's data under a shared key shows it to everyone, and " +
+        "it has happened to large sites more than once.\n\n" +
+        "Part 1 builds a Cache-Control header and explains what the browser and the CDN will do with it. Part 2 is a seeded " +
+        "teaching model: 4 PoPs and an origin in Virginia, 20 minutes of traffic over 300 files with skewed popularity, and your " +
+        "TTL, cache key and shield settings. It counts hits, origin requests and latency. Part 3 compares three ways to ship a " +
+        "changed file.";
+}

@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+# Optional local pre-commit hook: fast checks on what you are about to commit. Takes a few
+# seconds (about 20 when TypeScript is staged, for the type check). It does not replace
+# scripts/verify.sh before a PR.
+#
+# Install once, from the repo root (Git Bash, Linux, macOS):
+#   cp scripts/pre-commit "$(git rev-parse --git-path hooks)/pre-commit"
+# PowerShell:
+#   Copy-Item scripts/pre-commit "$(git rev-parse --git-path hooks)/pre-commit"
+# Skip it for one commit with `git commit --no-verify`. Delete the copied file to uninstall.
+# Git for Windows runs hooks with its own bash, so this works on Windows without WSL.
+#
+# Checks, each only when matching files are staged:
+#   - no progress databases, .env files or client/dist in the commit
+#   - no en or em dashes in added lines under server/Content and client/src
+#   - C# whitespace matches .editorconfig (dotnet format whitespace, staged .cs files)
+#   - oxlint on staged .ts/.tsx files, then the TypeScript type check (tsc -b)
+#   - glossary, Complexity Gym and PLC checks and index.css brace depth (verify.sh "checks")
+set -uo pipefail
+
+REPO="$(git rev-parse --show-toplevel)"
+cd "$REPO" || exit 1
+
+# while-read loops (not mapfile) so this also runs on the bash 3.2 that macOS ships.
+staged=()
+while IFS= read -r f; do staged+=("$f"); done < <(git diff --cached --name-only --diff-filter=ACMR)
+((${#staged[@]})) || exit 0
+
+failed=0
+fail() { echo "pre-commit: $*" >&2; failed=1; }
+pick() {
+  local re="$1" f
+  for f in "${staged[@]}"; do
+    if [[ "$f" =~ $re ]]; then printf '%s\n' "$f"; fi
+  done
+}
+
+# 1. Files that must never be committed.
+forbidden=()
+while IFS= read -r f; do forbidden+=("$f"); done < <(pick '(^|/)\.env(\..*)?$|^server/.*\.db(-shm|-wal)?$|^client/dist/')
+if ((${#forbidden[@]})); then fail "these must not be committed: ${forbidden[*]}"; fi
+
+# 2. Dashes in lesson prose (added lines only, so older text does not block you).
+content=()
+while IFS= read -r f; do content+=("$f"); done < <(pick '^(server/Content|client/src)/')
+if ((${#content[@]})); then
+  en="$(printf '\342\200\223')"; em="$(printf '\342\200\224')"   # U+2013 and U+2014 in UTF-8
+  dashes="$(git diff --cached -U0 -- "${content[@]}" | grep -E '^\+' | grep -vE '^\+\+\+ ' | grep -F -e "$en" -e "$em")"
+  if [[ -n "$dashes" ]]; then
+    fail "en or em dash in added lines (use a comma, colon, full stop or brackets):
+$dashes"
+  fi
+fi
+
+# 3. C# formatting.
+csfiles=()
+while IFS= read -r f; do csfiles+=("$f"); done < <(pick '^(server|runner)/.*\.cs$')
+if ((${#csfiles[@]})); then
+  if ! dotnet format whitespace --folder --verify-no-changes --include "${csfiles[@]}"; then
+    fail "C# whitespace. Fix with: dotnet format whitespace --folder --include ${csfiles[*]}  (then git add)"
+  fi
+fi
+
+# 4. TypeScript: lint the staged files, then type check the client.
+tsfiles=()
+while IFS= read -r f; do tsfiles+=("${f#client/}"); done < <(pick '^client/.*\.(ts|tsx)$')
+if ((${#tsfiles[@]})); then
+  (cd client && npx --no-install oxlint "${tsfiles[@]}") || fail "oxlint reported errors"
+  (cd client && npx --no-install tsc -b) || fail "TypeScript type check failed (cd client && npx tsc -b)"
+fi
+
+# 5. Client data checks.
+if ((${#content[@]})) || [[ -n "$(pick '^client/scripts/')" ]]; then
+  if ! out="$(VERIFY_STEPS=checks "$REPO/scripts/verify.sh" 2>&1)"; then
+    echo "$out" >&2
+    fail "client data checks failed"
+  fi
+fi
+
+if ((failed)); then
+  echo "pre-commit: commit stopped. Fix the above, or skip once with git commit --no-verify." >&2
+  exit 1
+fi
+exit 0

@@ -1,0 +1,16 @@
+export PATH=/usr/local/bin:/bin:/sbin:/usr/bin:/usr/sbin
+export PS1='\u@academy:\w\$ '
+export TERM=xterm-256color
+export EDITOR=vi
+alias ll='ls -la'
+stty cols 100 rows 30 2>/dev/null
+cd
+[ -f /etc/motd ] && cat /etc/motd
+
+# BusyBox's shell runs its built-in commands inside a copy of itself, so in ps a
+# background "sleep 600" would show up as "-sh". Calling them by path makes them real
+# processes with their own names, which is what the processes lesson needs to show.
+for c in sleep yes tail; do
+  for d in /bin /usr/bin; do [ -e "$d/$c" ] && alias "$c=$d/$c" && break; done
+done
+unset c d

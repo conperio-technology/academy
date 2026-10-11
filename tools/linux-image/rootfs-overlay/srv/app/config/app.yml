@@ -1,0 +1,4 @@
+app:
+  name: inventory-service
+  port: 8080
+  log_level: info

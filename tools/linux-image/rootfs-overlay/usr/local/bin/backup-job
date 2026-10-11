@@ -1,0 +1,3 @@
+#!/bin/sh
+# A "stuck" job for the processes lesson: it never finishes on its own.
+while true; do sleep 5; done

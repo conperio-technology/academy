@@ -1,0 +1,42 @@
+namespace DsaAcademy.Content.Tools;
+
+// PLC programming track (lesson). The interactive part is
+// client/src/plc/lessons.ts, keyed by this Id.
+public class PlcIecLanguagesTool : ITool
+{
+    public string Id => "plc-iec-languages";
+    public string Section => "Industrial & Embedded Systems";
+    public string Track => "plc programming";
+    public int Order => 200;
+    public string Title => "IEC 61131-3: The Standard PLC Languages";
+    public string OneLiner => "The international standard most PLCs are programmed to: five languages (LD, FBD, ST, SFC and the retired IL), shared data types and reusable function blocks, and the Structured Text this track uses.";
+    public string KeyTakeaway =>
+        "IEC 61131-3 gives every PLC the same building blocks (BOOL, INT, TIME, function blocks like TON) and five ways to write logic. Ladder is for discrete logic electricians read, FBD for signal flow, ST for calculations and sequences, SFC for structuring steps, and IL only for legacy code.";
+
+    public ToolKind ToolKind => ToolKind.PlcStLesson;
+
+    public string Explanation =>
+        "IEC 61131-3 is the international standard for programming PLCs (programmable logic controllers). It " +
+        "is part 3 of the IEC 61131 series, first published in 1993, and most PLC vendors follow it, each " +
+        "with their own extensions and gaps. It defines two things: the common elements every PLC program is " +
+        "made of (data types such as BOOL and TIME, variables, and reusable program units such as function " +
+        "blocks), and the languages the logic is written in." +
+        "\n\n" +
+        "There are five languages: two drawn, two typed, and one for structuring sequences. Ladder Diagram " +
+        "(LD) draws logic as relay rungs and is what most maintenance electricians read. Function Block " +
+        "Diagram (FBD) wires blocks together like a signal flow schematic. Structured Text (ST) is a typed " +
+        "language that looks like Pascal, with IF, CASE and loops. Sequential Function Chart (SFC) breaks a " +
+        "process into steps and the transitions between them. Instruction List (IL), a low-level language a " +
+        "bit like assembly, was deprecated in the standard's third edition in 2013 and shouldn't be used for " +
+        "new work." +
+        "\n\n" +
+        "This track teaches PLC programming through Structured Text, because text can be typed, run and " +
+        "graded right here in the browser, and it shows the equivalent ladder alongside wherever ladder is " +
+        "the more natural way to read the logic. The simulator runs a real scan cycle on a simulated clock, " +
+        "so timers behave as they would on a controller, only repeatably. It builds on the earlier lessons in " +
+        "this section, especially the scan cycle and ladder logic. Hands-on labs that move the same kind of " +
+        "programs onto Allen-Bradley Micro850 controllers are in the Micro850 labs track (Lab 0 onwards)." +
+        "\n\n" +
+        "Below: the five languages side by side, one start/stop circuit written in four of them, and the " +
+        "parts of ST used in the rest of the track.";
+}

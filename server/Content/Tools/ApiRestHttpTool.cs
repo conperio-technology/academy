@@ -1,0 +1,70 @@
+namespace DsaAcademy.Content.Tools;
+
+public class ApiRestHttpTool : ITool
+{
+    public string Id => "sd-api-rest-http";
+    public string Section => "System Design";
+    public string Track => "api design";
+    public int Order => 15;
+    public string Title => "REST Resources and HTTP Semantics";
+    public string OneLiner => "Nouns in the URL, verbs in the method, outcomes in the status code: what each HTTP method promises and why retries depend on it.";
+    public string KeyTakeaway =>
+        "Model the API as resources (nouns such as /orders/42) and let the HTTP method say what happens to them. GET, HEAD and " +
+        "OPTIONS are safe (they change nothing); GET, PUT and DELETE are also idempotent (doing them twice leaves the same state " +
+        "as doing them once), which is what lets clients, proxies and load balancers retry them. POST and PATCH are neither, so " +
+        "a retried POST can create a second order unless the API adds an idempotency key. Return the status code that matches " +
+        "the outcome: 201 with a Location header for a create, 4xx when the client must change the request, 5xx when retrying " +
+        "later might work.";
+
+    public ToolKind ToolKind => ToolKind.ApiRestHttp;
+
+    public string Explanation =>
+        "An API (application programming interface) is the contract one program offers another: which requests it accepts, " +
+        "what it returns, and what it promises about each. Most public web APIs follow REST (representational state transfer), " +
+        "a style Roy Fielding described in his 2000 dissertation. The parts that matter in practice are few. The API is a set " +
+        "of resources, each with a URL: /users/7, /users/7/orders, /orders/42. A client works with a representation of a " +
+        "resource, usually a JSON document, and acts on it with the small fixed set of HTTP methods. Each request carries " +
+        "everything the server needs to handle it (the server keeps no per-client session between requests), which is what " +
+        "lets any server behind a load balancer answer any request.\n\n" +
+        "Resource modelling comes first. URLs name things, not actions: POST /orders rather than POST /createOrder, and " +
+        "DELETE /orders/42 rather than GET /deleteOrder?id=42. Use plural collection names, put the id of one item after the " +
+        "collection, and nest only to show real ownership, one level deep: /users/7/orders is fine, " +
+        "/users/7/orders/42/items/3/options is a sign the item should be its own top-level resource. Some operations are " +
+        "genuinely verbs (cancel an order, send a password reset). Model them as a state change (PATCH /orders/42 with " +
+        "{\"status\": \"cancelled\"}), as a new resource (POST /orders/42/cancellations, which also gives you a record of who " +
+        "cancelled and why), or, as Google's API guidelines allow, as a custom method such as POST /orders/42:cancel. Filtering, " +
+        "sorting and paging go in the query string of a collection GET: /orders?status=open&sort=-created_at&limit=20.\n\n" +
+        "Each method makes promises, and the rest of the web relies on them. A safe method (GET, HEAD, OPTIONS) is read-only: " +
+        "crawlers, link prefetchers and caches call it freely, so a GET that deletes something will eventually be triggered by " +
+        "accident. An idempotent method has the same effect on the server whether it arrives once or five times. GET, PUT and " +
+        "DELETE are idempotent: PUT /users/7/email with a value replaces the whole email field, so repeating it changes nothing " +
+        "more; DELETE /orders/42 twice leaves the order deleted (the second call may answer 404, but the state is the same). " +
+        "POST is not idempotent: each POST /orders creates another order. PATCH (a partial update) is idempotent only if its body " +
+        "sets values rather than changing them relative to the current ones: {\"quantity\": 3} is safe to repeat, " +
+        "{\"op\": \"increment\"} is not. Idempotency is what makes retries safe. When a connection drops after the request was " +
+        "sent, the client cannot know whether the server acted, and HTTP libraries, proxies and service meshes automatically " +
+        "retry only the idempotent methods for exactly that reason. The Idempotency Keys lesson in this track fixes POST.\n\n" +
+        "Status codes tell the client what to do next, so pick them by the action they imply. 200 OK returns a result; 201 " +
+        "Created says a new resource exists, with its URL in the Location header; 202 Accepted means the work was queued and " +
+        "will finish later (return a status URL to poll); 204 No Content succeeds with no body. The 4xx codes mean the client " +
+        "must change something before trying again: 400 for a malformed request, 401 Unauthorized when credentials are missing " +
+        "or invalid (despite the name, it is about authentication), 403 Forbidden when the caller is known but not allowed, " +
+        "404 when the resource doesn't exist (or when you don't want to reveal that it does), 405 for a method the resource " +
+        "doesn't support, 409 Conflict when the request clashes with the current state (a username already taken, an edit " +
+        "based on an old version), 412 Precondition Failed when an If-Match check fails, 422 when the JSON is well formed but " +
+        "breaks a business rule, and 429 Too Many Requests for rate limits. The 5xx codes mean the server failed and the same " +
+        "request might work later: 500 for a bug, 502 and 504 when an upstream server failed or timed out, 503 when the " +
+        "service is overloaded or down for maintenance, ideally with a Retry-After header. Returning 200 with " +
+        "{\"error\": ...} in the body breaks every client, proxy and dashboard that counts errors by status code.\n\n" +
+        "Headers carry the rest of the contract. Content-Type says what the body is (application/json), Accept says what the " +
+        "client wants back, and Authorization carries credentials. Caching uses Cache-Control and ETag: an ETag is a version " +
+        "tag for a representation, and a client that sends If-None-Match with it gets 304 Not Modified and no body when " +
+        "nothing changed. The same tag prevents lost updates: two people load order 42 at version \"v7\", both edit, and both " +
+        "send PUT with If-Match: \"v7\". The first succeeds and moves the order to \"v8\"; the second gets 412 and must reload " +
+        "instead of silently overwriting the first edit. That is optimistic concurrency, done with plain HTTP.\n\n" +
+        "Strict REST also includes HATEOAS (hypermedia as the engine of application state): responses carry links to the " +
+        "actions now available, so clients follow links rather than building URLs. Few public APIs go that far, and " +
+        "interviewers rarely expect it; consistent resource names, correct methods and honest status codes are what they look " +
+        "for. The widget has three parts: send each method twice and watch what happens to the server's state, pick the right " +
+        "status code for eight situations, and choose the better of two endpoint designs.";
+}

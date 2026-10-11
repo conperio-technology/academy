@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Replays progress events through the server's own ProgressService (compiled in from
+       server/Data, not copied) for check.mjs, which compares the result with the static
+       site's TypeScript port in client/src/progressCore.ts. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../server/Data/ProgressService.cs" Link="Server/ProgressService.cs" />
+    <Compile Include="../../server/Data/ProgressEntry.cs" Link="Server/ProgressEntry.cs" />
+    <Compile Include="../../server/Data/AppDbContext.cs" Link="Server/AppDbContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+  </ItemGroup>
+
+</Project>

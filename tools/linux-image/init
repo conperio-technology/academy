@@ -1,0 +1,24 @@
+#!/bin/sh
+# PID 1 of the Academy's in-browser Linux (see tools/linux-image/README.md).
+# Runs entirely from the initramfs; nothing persists between page loads.
+/bin/busybox --install -s /bin
+mount -t proc proc /proc
+mount -t sysfs sys /sys
+mount -t devtmpfs dev /dev
+mkdir -p /dev/pts /tmp /run
+mount -t devpts devpts /dev/pts
+mount -t tmpfs tmpfs /tmp
+chmod 1777 /tmp
+hostname academy
+
+# ttyS1: a root shell the lesson page uses to set up exercises and check your work.
+# No echo, no prompt -- it only ever talks to the page, never shown in the terminal.
+( stty -F /dev/ttyS1 -echo -onlcr 115200
+  cd /root && exec setsid env PS1= PS2= HOME=/root sh </dev/ttyS1 >/dev/ttyS1 2>&1 ) &
+
+# ttyS0: your terminal. Log in as "learner", and start again if the shell exits.
+while true; do
+  setsid cttyhack su - learner
+  echo
+  echo "(shell exited -- starting a new one)"
+done

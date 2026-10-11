@@ -1,0 +1,33 @@
+namespace DsaAcademy.Content.Tools;
+
+public class NewsFeedInterviewTool : ITool
+{
+    public string Id => "sd-interview-news-feed";
+    public string Section => "System Design";
+    public string Track => "interview walk-throughs";
+    public int Order => 21;
+    public string Title => "Design a News Feed";
+    public string OneLiner => "The Twitter/Facebook home timeline as a 45-minute design round: fan-out, the celebrity problem and ranking.";
+    public string KeyTakeaway =>
+        "Feeds are read far more than they're written, so you precompute them, but pushing every post into every " +
+        "follower's feed is unaffordable for accounts with millions of followers. The standard answer is a hybrid: " +
+        "fan-out on write for ordinary accounts, fan-out on read for celebrities, merged at read time.";
+
+    public ToolKind ToolKind => ToolKind.DesignNewsFeed;
+
+    public string Explanation =>
+        "Same format as the URL shortener walk-through: read the prompt, write your own answer for each stage " +
+        "before revealing the model answer, then tick the points you covered. The stages follow the 45-minute " +
+        "flow (requirements, estimation, API, data model, high-level design, deep dives, wrap-up), and the timing " +
+        "next to each stage is a budget, not a suggestion.\n\n" +
+        "This problem is about one number. With 200 million posts a day and an average of 200 followers, copying " +
+        "each post into every follower's feed means about 40 billion feed writes a day, and a single post from an " +
+        "account with 100 million followers is 100 million writes on its own. The estimation stage is where you " +
+        "should discover that, and the deep dive is where you resolve it: compare fan-out on write and fan-out on " +
+        "read, then argue for the hybrid.\n\n" +
+        "Two questions in the requirements stage change everything, so interviewers watch for them: is the feed " +
+        "chronological or ranked, and how skewed is the follower distribution? Ranking adds a multi-stage scoring " +
+        "pipeline with its own latency budget; heavy skew forces the celebrity special case. As before, you're " +
+        "graded on clarifying the problem, stating trade-offs out loud, using real numbers, and adapting when the " +
+        "interviewer pushes on a weak spot (\"what happens when a user comes back after six months?\").";
+}

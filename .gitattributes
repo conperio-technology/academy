@@ -1,0 +1,8 @@
+# Keep LF in the repository and in every checkout, on Windows too. Without this, Git for
+# Windows with core.autocrlf=true writes CRLF files, and the bash scripts stop running.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.bin binary
+*.wasm binary

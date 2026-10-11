@@ -1,0 +1,31 @@
+# Editor settings shared by VS Code, Visual Studio, Rider and `dotnet format`.
+# They describe how the code is already written; see CONTRIBUTING.md ("Formatting").
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.{cs,csx,csproj,props,targets}]
+indent_size = 4
+
+[*.py]
+indent_size = 4
+
+[*.md]
+# Two trailing spaces are a Markdown line break.
+trim_trailing_whitespace = false
+
+[*.cs]
+# C# formatting `dotnet format whitespace` checks. Allman braces and the defaults, except
+# short object initializers may keep several members on one line (as the lesson data does).
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_members_in_object_initializers = false
+csharp_new_line_before_members_in_anonymous_types = false
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+dotnet_sort_system_directives_first = true

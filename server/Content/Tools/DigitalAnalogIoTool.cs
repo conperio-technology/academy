@@ -1,0 +1,37 @@
+namespace DsaAcademy.Content.Tools;
+
+public class DigitalAnalogIoTool : ITool
+{
+    public string Id => "digital-vs-analog-io";
+    public string Section => "Industrial & Embedded Systems";
+    public string Track => "plc";
+    public string Title => "Digital vs. Analog I/O: How the Physical World Becomes a Variable";
+    public string OneLiner => "A limit switch gives a PLC exactly one bit. A pressure transducer gives it a whole range -- but both start as nothing more than a voltage or a current on a wire.";
+    public string KeyTakeaway =>
+        "Analog I/O conventionally uses 4-20mA, not 0-20mA, specifically so 0mA is never a valid " +
+        "reading -- it's a \"live zero,\" meaning 4mA IS the sensor's zero, so a PLC reading exactly " +
+        "0mA knows immediately that's a broken wire or a disconnected sensor, not a real measurement.";
+
+    public ToolKind ToolKind => ToolKind.DigitalAnalogIo;
+
+    public string Explanation =>
+        "Digital I/O is the simple case: a physical input (a limit switch, a push button, a proximity " +
+        "sensor) is either passing voltage or not -- ON or OFF, a single bit, read directly into the " +
+        "PLC's input image table each scan (see PLCs: How They're Different From a Normal Computer). " +
+        "There's no \"in between\": either the circuit is complete and the PLC reads 1, or it isn't and " +
+        "the PLC reads 0.\n\n" +
+        "Analog I/O represents a continuous physical quantity -- pressure, temperature, flow, level -- " +
+        "as a continuous electrical signal instead, most commonly a 4-20mA current loop: 4mA represents " +
+        "the sensor's minimum reading (say, 0 PSI), 20mA represents its maximum (say, 100 PSI), and " +
+        "everything in between scales linearly. The PLC's analog input module reads the raw current, " +
+        "and the PLC program (or the module itself) converts it into an engineering value using that " +
+        "same linear scale. Critically, the range starts at 4mA, not 0mA -- a \"live zero.\" That gap " +
+        "between 0 and 4mA isn't wasted: it's reserved specifically so 0mA is never a valid reading. A " +
+        "cut wire, a disconnected sensor, or a dead transmitter all read as 0mA, and because a healthy " +
+        "loop NEVER reports 0, the PLC can immediately flag that as a fault instead of silently " +
+        "treating it as \"0 PSI\" and potentially making a dangerous decision on bad data.\n\n" +
+        "Try both below -- flip the digital switch to see the single bit it produces, or drag the " +
+        "analog slider to see a raw current value scale into an engineering reading, and watch what " +
+        "happens right at the bottom of the range where 0mA and 4mA look deceptively similar but mean " +
+        "completely different things.";
+}

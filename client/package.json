@@ -1,0 +1,31 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:static": "node scripts/build-static.mjs",
+    "build:csharp-wasm": "../wasm-csharp/build.sh",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "preview:static": "vite preview --mode static"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@xterm/xterm": "^5.5.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "v86": "^0.5.470"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "oxlint": "^1.81.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}

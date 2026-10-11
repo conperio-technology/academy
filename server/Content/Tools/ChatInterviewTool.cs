@@ -1,0 +1,33 @@
+namespace DsaAcademy.Content.Tools;
+
+public class ChatInterviewTool : ITool
+{
+    public string Id => "sd-interview-chat";
+    public string Section => "System Design";
+    public string Track => "interview walk-throughs";
+    public int Order => 22;
+    public string Title => "Design a Chat App";
+    public string OneLiner => "WhatsApp or Messenger as a 45-minute design round: long-lived connections, ordering, receipts and offline delivery.";
+    public string KeyTakeaway =>
+        "A chat system is millions of stateful connections in front of a stateless service and an append-only " +
+        "message store. Persist before you acknowledge, order by a per-conversation sequence number rather than " +
+        "clocks, and deliver at least once with client-side dedupe so users see each message exactly once.";
+
+    public ToolKind ToolKind => ToolKind.DesignChat;
+
+    public string Explanation =>
+        "Same format as the other walk-throughs: write your answer for each stage first, then compare it with the " +
+        "model answer and tick what you covered. The 45-minute flow is the same; what changes is where the " +
+        "difficulty sits.\n\n" +
+        "Unlike the URL shortener and the news feed, chat is not mostly about caching reads. The hard parts are " +
+        "keeping around 150 million WebSocket connections open at once, finding which server holds a recipient's " +
+        "connection, and making precise promises about messages: none lost once the server acknowledges them, the " +
+        "same order for everyone in a conversation, and a clear meaning for sent, delivered and read. The number " +
+        "candidates most often forget in the estimation stage is concurrent connections, and it's the one that " +
+        "sizes the gateway fleet.\n\n" +
+        "Interviewers usually steer the deep dive towards one or two of: connection handling and reconnect storms, " +
+        "message ordering and IDs, delivery guarantees with offline sync and push notifications, group fan-out, " +
+        "and presence. You won't have time for all five, so pick the ones they react to, explain the mechanism, and " +
+        "say what it costs. As always, the grade comes from clarified requirements, stated trade-offs, real numbers, " +
+        "and calm handling of follow-ups such as \"the gateway crashed halfway through sending: what does the user see?\"";
+}

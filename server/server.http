@@ -1,0 +1,27 @@
+# Sample requests for the API (VS Code REST Client, Rider or Visual Studio). Start it with
+# `dotnet run` in server/ first. All endpoints are in Program.cs.
+@server_HostAddress = http://localhost:5095
+
+### Who the server thinks you are ("guest" unless a proxy sets the identity header)
+GET {{server_HostAddress}}/api/me
+
+### Sidebar: every lesson and exercise with your progress
+GET {{server_HostAddress}}/api/lessons
+
+### One graded exercise
+GET {{server_HostAddress}}/api/lessons/hashmap-two-sum
+
+### One tool lesson
+GET {{server_HostAddress}}/api/tools/big-o-notation
+
+### Due for review
+GET {{server_HostAddress}}/api/review
+
+### Your progress rows
+GET {{server_HostAddress}}/api/progress
+
+### Grade C# on the server (the fallback grader); records progress like the UI does
+POST {{server_HostAddress}}/api/execute/csharp
+Content-Type: application/json
+
+{ "lessonId": "hashmap-two-sum", "code": "// paste a solution here" }
