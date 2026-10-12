@@ -38,11 +38,11 @@ import { STUDY_PATHS, type StudyPathId } from "../../studyPathData";
 import { ItCsPlan } from "./ItCsPlan";
 
 // The interview prep plan and readiness view. Everything here is derived: lesson completion and
-// how each lesson was passed (guided or bare, reference seen or not, timed) come from the server,
-// and drill, mixed-set, mock-round, walk-through, story-bank, pattern quiz, flash card and
+// how each lesson was passed (guided or bare, reference seen or not, timed) come from the progress
+// store, and drill, mixed-set, mock-round, walk-through, story-bank, pattern quiz, flash card and
 // "lessons opened" activity from this browser (see practiceHistory.ts). Besides the plan itself
 // (learner settings, start date, tasks ticked by hand), the only thing this tool stores is which
-// tool lessons the learner marked as worked through, since tools have no server completion.
+// tool lessons the learner marked as worked through, since tools have no graded completion.
 //
 // Readiness is shown as separate kinds of evidence rather than one score per area: coverage
 // (seen it), assisted practice (passed with help or self-assessed against a model answer),

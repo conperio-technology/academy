@@ -1,27 +1,21 @@
-// The page side of csharpWasmWorker.ts: grades C# in this browser (the default) and shapes
-// the outcome exactly like the server's /api/execute/csharp response, so CSharpRunner.tsx
-// renders both paths the same way. Mirrors CSharpExecutor.cs's timeout/crash/skip
-// messages and PythonRunner.tsx's worker handling.
-//
-// The server runner stays as the fallback: if the runtime can't load (not built, no
-// WebAssembly, worker fails to start), runCSharpInBrowser throws CSharpWasmUnavailable and
-// the caller posts to the server instead. Learners can also pick the server themselves
-// (setCSharpRunMode), which is remembered in this browser.
+// The page side of csharpWasmWorker.ts: grades C# in this browser and shapes the outcome as
+// an ExecuteResponse for CSharpRunner.tsx. Mirrors PythonRunner.tsx's worker handling. If the
+// runtime can't load (not built, no WebAssembly, worker fails to start), runCSharpInBrowser
+// throws CSharpWasmUnavailable and the page says C# can't be graded here.
 import type { CSharpCompletion, CSharpDiagnostic, CSharpWasmRequest, CSharpWasmWorkerMessage } from "./csharpWasmWorker";
 import { jsonEquals } from "./jsonEquals";
 import type { ExecuteResponse, TestCaseDisplay } from "./types";
-import { STATIC_MODE } from "./staticMode";
 
-// Same per-test limit as the server runner. Loading the runtime doesn't count; compiling
-// gets a bigger budget, like the server's FirstTestTimeout.
+// Per-test limit, the same as Python's. Loading the runtime doesn't count; compiling gets a
+// bigger budget.
 export const TEST_TIMEOUT_MS = 5000;
 const COMPILE_TIMEOUT_MS = 60000;
-// Same as the server's RunnerOptions.MaxCodeLength. (Results are capped inside the
-// runtime at RunnerLimits.MaxResultChars, the same constant the server runner uses.)
+// Longest submission accepted. (Results are capped inside the runtime at
+// RunnerLimits.MaxResultChars, wasm-csharp/RunnerProtocol.cs.)
 const MAX_CODE_LENGTH = 20_000;
 const COMPLETION_TIMEOUT_MS = 3000;
 const DIAGNOSE_TIMEOUT_MS = 10000;
-// A runtime that hasn't started after this long is treated as unavailable (server fallback).
+// A runtime that hasn't started after this long is treated as unavailable.
 const LOAD_TIMEOUT_MS = 120000;
 
 export interface CSharpWasmMetrics {
@@ -36,30 +30,16 @@ export interface CSharpWasmMetrics {
 
 export class CSharpWasmUnavailable extends Error {}
 
-// ---- Status (for the loading indicator) and the learner's choice of path ----
+// ---- Status (for the loading indicator) ----
 
-export type CSharpRunMode = "browser" | "server";
 export type CSharpRuntimeState = "idle" | "loading" | "ready" | "unavailable";
 
 export interface CSharpRuntimeStatus {
-  mode: CSharpRunMode;
   state: CSharpRuntimeState;
   // Why the browser path isn't available, when state is "unavailable".
   reason: string | null;
   // Set after a run was stopped (timeout or crash) and the runtime restarted.
   restarted: boolean;
-}
-
-const MODE_KEY = "academy.csharpRunMode";
-
-function readMode(): CSharpRunMode {
-  // The static site has no server to pick (staticMode.ts).
-  if (STATIC_MODE) return "browser";
-  try {
-    return localStorage.getItem(MODE_KEY) === "server" ? "server" : "browser";
-  } catch {
-    return "browser";
-  }
 }
 
 function unsupportedReason(): string | null {
@@ -69,7 +49,6 @@ function unsupportedReason(): string | null {
 }
 
 let status: CSharpRuntimeStatus = {
-  mode: readMode(),
   state: unsupportedReason() ? "unavailable" : "idle",
   reason: unsupportedReason(),
   restarted: false,
@@ -90,20 +69,9 @@ export function getCSharpRuntimeStatus() {
   return status;
 }
 
-export function setCSharpRunMode(mode: CSharpRunMode) {
-  try {
-    localStorage.setItem(MODE_KEY, mode);
-  } catch {
-    // Not remembered (private window, blocked storage); still applies to this tab.
-  }
-  setStatus({ mode });
-  if (mode === "browser") warmCSharpRuntime();
-}
-
-// True when a run should go to the browser (the learner hasn't picked the server, and the
-// runtime hasn't already failed to load in this tab).
+// False once the runtime has failed to load in this tab (or can't run here at all).
 export function browserCSharpEnabled() {
-  return status.mode === "browser" && status.state !== "unavailable";
+  return status.state !== "unavailable";
 }
 
 // ---- The worker ----
@@ -186,7 +154,7 @@ function restartWorker() {
   worker = null;
   flushCompletions();
   setStatus({ state: "idle", restarted: true });
-  if (status.mode === "browser") warmCSharpRuntime();
+  warmCSharpRuntime();
 }
 
 // Starts loading (and warming up) the runtime in the background, e.g. when a C# exercise
@@ -255,8 +223,7 @@ function runInWorker(code: string, calls: string[], onReady: () => void): Promis
         finish(false);
         reject(new CSharpWasmUnavailable(message));
       } else if (compiled) {
-        // The runtime died mid-test (very deep recursion, out of memory): like the
-        // server's crashed child process.
+        // The runtime died mid-test (very deep recursion, out of memory).
         finish(true);
         outputs.push({ actualJson: null, error: "The run crashed (very deep recursion, or using too much memory?)" });
         resolve({ compileError: null, outputs, metrics });
@@ -310,7 +277,7 @@ function runInWorker(code: string, calls: string[], onReady: () => void): Promis
 }
 
 // Grades one submission in the browser. Throws CSharpWasmUnavailable when the runtime
-// can't be used here (the caller then grades on the server).
+// can't be used here.
 export async function runCSharpInBrowser(
   code: string,
   preamble: string | null,
@@ -323,7 +290,7 @@ export async function runCSharpInBrowser(
     const compileError = `Code is too long (limit ${MAX_CODE_LENGTH.toLocaleString("en-US")} characters).`;
     return { response: { allPassed: false, results: [], compileError }, metrics: null };
   }
-  // Exactly what CSharpExecutor.RunTests sends the runner.
+  // The lesson preamble, then the learner's code; one call per test.
   const fullCode = (preamble ? preamble + "\n" : "") + code;
   const calls = testCases.map((t) => callTemplate.replace("{input}", t.inputDisplay));
   const { compileError, outputs, metrics } = await runInWorker(fullCode, calls, onReady);
@@ -369,8 +336,8 @@ export function completeCSharp(preamble: string | null, code: string, offset: nu
 
 // Compile errors, warnings and CodePolicy violations for the learner's code, compiled with
 // the lesson preamble and the tests' calls exactly as a run would be (offsets are into
-// `code`). Null when there's no answer right now: the runtime isn't loaded and warm, the
-// learner picked the server, or a run is in progress (grading always goes first). Never
+// `code`). Null when there's no answer right now: the runtime isn't loaded and warm, or
+// a run is in progress (grading always goes first). Never
 // starts the runtime by itself.
 export function diagnoseCSharp(preamble: string | null, code: string, calls: string[]): Promise<CSharpDiagnostic[] | null> {
   if (!browserCSharpEnabled() || !worker || status.state !== "ready" || activeRun) return Promise.resolve(null);

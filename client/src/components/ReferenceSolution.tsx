@@ -2,7 +2,7 @@ import Editor from "@monaco-editor/react";
 import { useState } from "react";
 
 // How many runs before the solution unlocks without passing. Counted across languages,
-// and persisted server-side (ConceptDetail.attempts), so a reload doesn't reset it.
+// and saved with the progress (ConceptDetail.attempts), so a reload doesn't reset it.
 export const UNLOCK_AFTER_ATTEMPTS = 3;
 
 interface Props {

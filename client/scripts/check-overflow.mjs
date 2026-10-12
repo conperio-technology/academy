@@ -3,22 +3,20 @@
 // Content inside a scrolling or clipping box (overflow-x: auto/hidden, e.g. a wide table in
 // its own scroller) is fine; only the page itself must not overflow.
 //
-//   node scripts/check-overflow.mjs --base http://localhost:5495 [--widths 390,1300] [--only id1,id2] [--pages 4] [--static]
+//   node scripts/check-overflow.mjs --base http://localhost:5802/academy/ [--widths 390,1300] [--only id1,id2] [--pages 4]
 //
-// --base is any running copy of the app: the API serving a built client (scripts/verify.sh)
-// or the Vite dev server. Only each lesson's initial state is checked, not every state its
+// --base is any running copy of the app: a served build (scripts/serve.mjs, as
+// ../scripts/verify.sh does) or the Vite dev server (http://localhost:5173/). Only each lesson's initial state is checked, not every state its
 // widget can be clicked into. Playwright is found via NODE_PATH (see playwright.mjs).
 import { arg, loadPlaywright } from "./playwright.mjs";
 
-const base = arg("base", "http://localhost:5173").replace(/\/$/, "");
+const base = arg("base", "http://localhost:5173/").replace(/\/?$/, "/");
 const widths = arg("widths", "390,1300").split(",").map(Number);
 const only = arg("only", "").split(",").filter(Boolean);
 const pageCount = Number(arg("pages", "4"));
 
-// --static: the static site (npm run build:static), whose lesson list is a file, e.g.
-// --base http://localhost:5802/academy --static
-const navPath = process.argv.includes("--static") ? "/content/lessons.json" : "/api/lessons";
-const nav = await fetch(`${base}${navPath}`).then((r) => {
+const navPath = "content/lessons.json";
+const nav = await fetch(new URL(navPath, base)).then((r) => {
   if (!r.ok) throw new Error(`GET ${navPath}: ${r.status}`);
   return r.json();
 });
@@ -63,7 +61,7 @@ for (const width of widths) {
   const queue = [{ id: null, title: null }, ...items];
   const worker = async () => {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
-    await page.goto(`${base}/`);
+    await page.goto(base);
     await page.waitForSelector(".main-content");
     for (let item = queue.shift(); item; item = queue.shift()) {
       const name = item.id ?? "(dashboard)";

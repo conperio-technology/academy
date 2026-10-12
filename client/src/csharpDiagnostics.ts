@@ -1,9 +1,8 @@
 // Live error squiggles for the C# editors: a short pause after typing, the in-browser C#
 // worker compiles the code exactly as a run would (lesson preamble + learner code + the
 // tests' calls, see wasm-csharp/Program.cs Diagnose) and checks it with CodePolicy, and the
-// errors and warnings become Monaco markers on the learner's own lines. Only while
-// in-browser C# is on and its runtime is warm; with "Run on server" or no runtime it does
-// nothing (and clears any markers). One request per editor is in flight at a time, edits
+// errors and warnings become Monaco markers on the learner's own lines. Only while the
+// runtime is warm; with no runtime it does nothing (and clears any markers). One request per editor is in flight at a time, edits
 // made meanwhile are checked when it returns, and a run always goes before a check.
 import type { Monaco, OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor } from "monaco-editor";
@@ -26,7 +25,7 @@ export function attachCSharpDiagnostics(editor: Editor, monaco: Monaco, preamble
 
   const enabled = () => {
     const s = getCSharpRuntimeStatus();
-    return s.mode === "browser" && s.state !== "unavailable";
+    return s.state !== "unavailable";
   };
   const schedule = (ms: number) => {
     clearTimeout(timer);

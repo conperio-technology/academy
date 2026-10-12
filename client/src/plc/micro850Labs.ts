@@ -1,7 +1,7 @@
 // Hands-on lab guides for the Allen-Bradley Micro850 controllers, programmed with
 // Rockwell's Connected Components Workbench (CCW). Each lab maps back to lessons and
 // exercises in the vendor-neutral simulator track (lessons.ts, exercises.ts). The intro
-// prose for each lab is in its server ITool file (server/Content/Tools/M850*Tool.cs);
+// prose for each lab is in its ITool file (content/Tools/M850*Tool.cs);
 // this is what renders under "Try it".
 //
 // Accuracy rule for this file: menu names, terminal names, variable names and protocol

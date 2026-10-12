@@ -1,6 +1,6 @@
 # First-time setup on Windows (Linux/macOS: scripts/setup.sh). Checks the tools, installs the
-# client's packages with `npm ci`, builds the server and the client, and runs the fast data
-# checks. Safe to run again at any time. Changes nothing outside the repo.
+# client's packages with `npm ci`, builds the in-browser C# grader (with Git Bash) and the site
+# (which exports the lesson content from content/), and runs the fast data checks. Safe to run again at any time. Changes nothing outside the repo.
 # Works in Windows PowerShell 5.1 and PowerShell 7. From the repo root:
 #
 #   powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
@@ -64,8 +64,14 @@ function Step($label, [scriptblock]$action) {
 }
 
 Step 'npm ci (client packages)' { npm --prefix $Client ci --no-audit --no-fund }
-Step 'dotnet build (server + runner)' { dotnet build (Join-Path $Repo 'server/server.csproj') --nologo -v quiet }
-Step 'client build (type check + Vite)' { npm --prefix $Client run build }
+# wasm-csharp/build.sh is a bash script; Git for Windows brings bash. Without it C# exercises
+# can't be graded locally (everything else works).
+if (Has 'bash') {
+    Step 'in-browser C# grader (wasm-csharp/build.sh, about a minute the first time)' { bash (Join-Path $Repo 'wasm-csharp/build.sh') }
+} else {
+    Note 'bash not found, so the in-browser C# grader was not built. From Git Bash: ./wasm-csharp/build.sh'
+}
+Step 'site build (content export + type check + Vite)' { npm --prefix $Client run build }
 
 Push-Location $Client
 try {
@@ -88,7 +94,6 @@ try {
 }
 
 Write-Host ''
-Write-Host 'setup: done. Start the app in two terminals:'
-Write-Host '  cd server; dotnet run          # API on http://localhost:5095'
-Write-Host '  cd client; npm run dev         # UI on http://localhost:5173'
+Write-Host 'setup: done. Start the app:'
+Write-Host '  cd client; npm run dev         # http://localhost:5173'
 Write-Host 'Next: docs/onboarding.md'

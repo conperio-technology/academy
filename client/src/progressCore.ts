@@ -1,14 +1,13 @@
-// The static site's progress rules: a line-by-line TypeScript port of
-// server/Data/ProgressService.cs, so a learner's progress behaves the same with or without the
-// server (docs/adr/0010-static-hosting-mode.md). Pure functions over plain rows with the
-// current time passed in; progressStore.ts keeps the rows (IndexedDB) and localBackend.ts
-// calls these. tools/progress-parity/ runs the same event sequences through both and
-// compares the results, so change the two together.
+// The progress rules: what a run, a pass or opening a reference solution records, how a pass
+// is classified (assisted, independent, timed), and when a lesson is due for review. Pure
+// functions over plain rows with the current time passed in; progressStore.ts keeps the rows
+// (IndexedDB) and localBackend.ts calls these. Originally a port of the retired server's
+// ProgressService.cs (docs/adr/0013).
 //
-// No imports on purpose: the parity script loads this file straight into Node.
+// No imports on purpose, so a Node script can load this file directly.
 
-// One row per (lesson, language) touched, the same fields as the server's ProgressEntry
-// (camelCase, dates as ISO strings). `id` orders rows like the server's primary key.
+// One row per (lesson, language) touched (dates as ISO strings). `id` orders rows by
+// creation, and a progress export from the retired server imports as these.
 export interface ProgressRow {
   id: number;
   conceptId: string;
@@ -46,7 +45,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const REVIEW_DAYS = [1, 3, 7, 14, 30];
 // A pass counts as independent only from the bare or timed starter with no reference
-// solution shown in any language of the lesson in this long (ProgressService.RevealCooldown).
+// solution shown in any language of the lesson in this long.
 export const REVEAL_COOLDOWN_MS = 7 * DAY_MS;
 
 const ms = (iso: string) => Date.parse(iso);
@@ -89,7 +88,7 @@ function newRow(rows: ProgressRow[], conceptId: string, language: string, now: n
   };
 }
 
-// ProgressService.RecordAttempt. Mutates `rows` (adding a row if needed) and returns the row.
+// A graded run finished. Mutates `rows` (adding a row if needed) and returns the row.
 export function recordAttempt(
   rows: ProgressRow[],
   conceptId: string,
@@ -136,7 +135,7 @@ export function recordAttempt(
   return entry;
 }
 
-// ProgressService.RecordReveal: the reference solution was opened (latest time per language).
+// The reference solution was opened (latest time per language).
 export function recordReveal(rows: ProgressRow[], conceptId: string, language: string, now: number): ProgressRow {
   let entry = rows.find((r) => r.conceptId === conceptId && r.language === language);
   if (!entry) {
@@ -148,7 +147,7 @@ export function recordReveal(rows: ProgressRow[], conceptId: string, language: s
   return entry;
 }
 
-// ProgressService.Evidence: what one lesson's rows (all languages) show.
+// What one lesson's rows (all languages) show.
 export function evidence(conceptId: string, rows: ProgressRow[]): Evidence {
   return {
     conceptId,
@@ -172,7 +171,7 @@ export function groupByConcept(rows: ProgressRow[]): Map<string, ProgressRow[]> 
   return groups;
 }
 
-// ProgressService.GetDue: a lesson is due only when every language it was completed in is due.
+// The review queue: a lesson is due only when every language it was completed in is due.
 export function getDue(rows: ProgressRow[], now: number): DueReview[] {
   const completed = [...rows].sort((a, b) => a.id - b.id).filter((r) => r.completedAt !== null);
   const due: { conceptId: string; next: number; stage: number }[] = [];

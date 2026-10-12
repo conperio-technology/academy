@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { recordReveal } from "../api";
 import { bareStarter, type ExerciseMode } from "../bareStarter";
+import { REVEAL_COOLDOWN_MS } from "../progressCore";
 import type { ConceptDetail } from "../types";
 import { CSharpRunner } from "./CSharpRunner";
 import { PythonRunner } from "./PythonRunner";
@@ -22,8 +23,6 @@ const LANGUAGE_LABELS: Record<string, string> = {
 };
 
 const MODE_KEY = "exercise-mode";
-// Matches ProgressService.RevealCooldown on the server.
-const REVEAL_COOLDOWN_MS = 7 * 24 * 3600 * 1000;
 
 // The Programming in C# & Python exercises teach a language feature, and their TODO comments
 // state the task itself, so they keep the guided starter only.
@@ -54,17 +53,17 @@ export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedM
   const bareAllowed = !fixedMode && lesson.section !== GUIDED_ONLY_SECTION;
   const [chosenMode, setChosenMode] = useState<ExerciseMode>(loadMode);
   const mode: ExerciseMode = fixedMode ?? (bareAllowed ? chosenMode : "guided");
-  // Runs and passes made since this lesson was loaded, on top of what the server already
-  // knew (lesson.attempts / lesson.completed) -- so the reference solution unlocks the
+  // Runs and passes made since this lesson was loaded, on top of what the saved progress
+  // already had (lesson.attempts / lesson.completed) -- so the reference solution unlocks the
   // moment a run qualifies, without re-fetching the lesson.
   const [localRuns, setLocalRuns] = useState(0);
   const [passedHere, setPassedHere] = useState<ExerciseMode | null>(null);
   const [revealedHere, setRevealedHere] = useState(false);
   const attempts = lesson.attempts + localRuns;
   const solutionUnlocked = lesson.completed || passedHere !== null || attempts >= UNLOCK_AFTER_ATTEMPTS;
-  // SQLite hands back UTC times without a zone suffix; read them as UTC, not local time.
+  // An ISO time with its zone (progressCore.ts stores them that way; an import normalizes them).
   const revealedAt = lesson.evidence?.lastRevealedAt;
-  const lastReveal = revealedAt ? new Date(/[zZ]|[+-]\d\d:\d\d$/.test(revealedAt) ? revealedAt : revealedAt + "Z").getTime() : null;
+  const lastReveal = revealedAt ? Date.parse(revealedAt) : null;
   const [loadedAt] = useState(() => Date.now());
   const sawReference = revealedHere || (lastReveal !== null && loadedAt - lastReveal < REVEAL_COOLDOWN_MS);
 

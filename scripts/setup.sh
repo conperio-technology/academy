@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # First-time setup on Linux or macOS (Windows: scripts/setup.ps1). Checks the tools, installs
-# the client's packages with `npm ci`, builds the server and the client, and runs the fast
-# data checks. Safe to run again at any time. Changes nothing outside the repo.
+# the client's packages with `npm ci`, builds the in-browser C# grader and the site (which
+# exports the lesson content from content/), and runs the fast data checks. Safe to run again at any time. Changes nothing outside the repo.
 #
 #   scripts/setup.sh
 set -uo pipefail
@@ -60,8 +60,8 @@ step() {
 }
 
 step "npm ci (client packages)" npm --prefix "$REPO/client" ci --no-audit --no-fund
-step "dotnet build (server + runner)" dotnet build "$REPO/server/server.csproj" --nologo -v quiet
-step "client build (type check + Vite)" npm --prefix "$REPO/client" run build
+step "in-browser C# grader (wasm-csharp/build.sh, about a minute the first time)" "$REPO/wasm-csharp/build.sh"
+step "site build (content export + type check + Vite)" npm --prefix "$REPO/client" run build
 step "fast data checks" env VERIFY_STEPS=checks "$REPO/scripts/verify.sh"
 
 echo
@@ -76,6 +76,5 @@ fi
 
 echo
 echo "setup: done. Start the app:"
-echo "  cd server && dotnet run          # API on http://localhost:5095"
-echo "  cd client && npm run dev         # UI on http://localhost:5173"
+echo "  cd client && npm run dev         # http://localhost:5173"
 echo "Next: docs/onboarding.md"

@@ -7,7 +7,7 @@ import type { NavItem, ReviewItem } from "../../types";
 
 // The "Well-rounded IT & CS" path: the same readiness and week-by-week plan views as the FAANG
 // plan, built from the topic families in studyPathData.ts. Graded lessons tick themselves when
-// solved on the server; tool lessons count once marked worked through, shared with the FAANG
+// solved; tool lessons count once marked worked through, shared with the FAANG
 // plan's CS foundations list (history:worked-through), so a lesson ticked in one shows in both.
 
 const PLAN_KEY = "study-path:it-cs";

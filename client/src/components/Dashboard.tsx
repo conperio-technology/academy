@@ -1,5 +1,4 @@
 import { SECTION_INFO } from "../sectionInfo";
-import { STATIC_MODE } from "../staticMode";
 import { ProgressBackup } from "./ProgressBackup";
 import type { NavItem, ReviewItem } from "../types";
 
@@ -7,7 +6,7 @@ interface Props {
   items: NavItem[];
   review: ReviewItem[];
   onSelect: (id: string) => void;
-  // Static mode: after a progress file was imported.
+  // After a progress file was imported.
   onProgressImported?: () => void;
 }
 
@@ -35,7 +34,7 @@ export function Dashboard({ items, review, onSelect, onProgressImported }: Props
         )}
       </p>
 
-      {STATIC_MODE && <ProgressBackup onImported={() => onProgressImported?.()} />}
+      <ProgressBackup onImported={() => onProgressImported?.()} />
 
       {review.length > 0 && (
         <div className="review-panel">

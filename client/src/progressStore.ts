@@ -1,8 +1,8 @@
-// Where the static site keeps graded progress: one IndexedDB object store of ProgressRow
+// Where graded progress is kept: one IndexedDB object store of ProgressRow
 // (progressCore.ts). Every read and change reads the store afresh (it is a few hundred rows
 // at most), so two open tabs don't overwrite each other's progress. If IndexedDB
 // can't be opened (a private window, blocked site data, an old browser) progress is kept in
-// memory for this tab only, and `storageKind()` says so. Only used in static mode.
+// memory for this tab only, and `storageKind()` says so.
 import type { ProgressRow } from "./progressCore";
 
 const DB_NAME = "conperio-academy";

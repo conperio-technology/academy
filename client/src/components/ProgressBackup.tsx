@@ -7,8 +7,8 @@ interface Props {
   onImported: () => void;
 }
 
-// Static mode only (staticMode.ts): progress lives in this browser, so the dashboard offers a
-// file to keep it, move it to another browser, or bring it back after clearing site data.
+// Progress lives in this browser, so the dashboard offers a file to keep it, move it to
+// another browser, or bring it back after clearing site data.
 export function ProgressBackup({ onImported }: Props) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
@@ -48,7 +48,7 @@ export function ProgressBackup({ onImported }: Props) {
     <div className="progress-backup">
       <h2>Your progress</h2>
       <p className="gate-note">
-        This copy of the Academy has no server: your progress is saved in this browser only
+        Your progress is saved in this browser only
         {storageKind() === "memory" ? " (and this browser isn't keeping it, so it lasts until you close the tab)" : ""}.
         Clearing site data or switching browsers loses it, so export it now and then.
       </p>

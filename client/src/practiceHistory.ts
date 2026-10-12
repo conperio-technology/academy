@@ -1,4 +1,4 @@
-// Small records of practice that has no server-side progress (the drills, the mixed set,
+// Small records of practice outside the graded-lesson progress store (the drills, the mixed set,
 // behavioral mock rounds, the design pattern quiz, the Complexity Gym, tool lessons marked as worked through), kept in this browser so the Interview Prep readiness view can
 // use them. Every read tolerates missing or blocked storage and returns an empty result.
 
@@ -122,7 +122,7 @@ export function recordPatternQuizRun(run: PatternQuizRun) {
   write(PATTERN_QUIZ_KEY, [...loadPatternQuizHistory(), run].slice(-LIMIT));
 }
 
-// ---- Tool lessons the learner marked as worked through (tools have no server completion) ----
+// ---- Tool lessons the learner marked as worked through (tools have no graded completion) ----
 
 export function loadWorkedThrough(): string[] {
   const ids = read<string[]>(WORKED_KEY, []);
@@ -200,8 +200,8 @@ export function resetGymHistory() {
   write(GYM_EXPLAIN_KEY, []);
 }
 
-// ---- PLC programming exercises (graded in the browser, so tracked here rather than on the
-// server; the readiness view doesn't use them) ----
+// ---- PLC programming exercises (graded by the PLC simulator, so tracked here rather than in
+// the graded-lesson progress store; the readiness view doesn't use them) ----
 
 export interface PlcExerciseProgress {
   attempts: number;
@@ -254,7 +254,7 @@ export function resetMicro850Checks(labId: string) {
 }
 
 // ---- Graded lessons opened in this browser: coverage evidence for the readiness view (the
-// server only learns about a lesson once code is run or the reference is opened) ----
+// progress store only records a lesson once code is run or the reference is opened) ----
 
 const OPENED_KEY = "history:opened-lessons";
 

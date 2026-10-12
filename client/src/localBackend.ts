@@ -1,13 +1,12 @@
-// The static site's stand-in for the API (docs/adr/0010-static-hosting-mode.md). api.ts calls
-// these instead of fetch("/api/...") when STATIC_MODE is set. Lesson content is the JSON the
-// server exported at build time (ContentExport.cs: the API's own responses for a user with
-// no progress); the per-user fields are filled in here from progress kept in this browser,
-// the way Program.cs fills them in from the database.
+// The app's backend, in the browser (docs/adr/0013); api.ts re-exports it. Lesson content is
+// the JSON exported from the C# lesson classes at build time (content/ContentExport.cs, with
+// the per-learner fields empty); those fields are filled in here from the progress kept in
+// this browser (progressStore.ts, rules in progressCore.ts).
 import type { ExerciseMode } from "./bareStarter";
 import * as core from "./progressCore";
 import type { ProgressRow } from "./progressCore";
 import { readRows, replaceRows, updateRows } from "./progressStore";
-import { siteUrl } from "./staticMode";
+import { siteUrl } from "./siteUrl";
 import type { ConceptDetail, LessonEvidence, NavItem, ReviewItem, ToolDetail } from "./types";
 
 async function getContent<T>(path: string, what: string): Promise<T> {
@@ -31,14 +30,14 @@ async function requirePractice(lessonId: string) {
   if (!items.some((i) => i.kind === "practice" && i.id === lessonId)) throw new Error(`No graded lesson ${lessonId}`);
 }
 
-// GET /api/lessons
+// The sidebar listing, with completed lessons marked.
 export async function fetchLessons(): Promise<NavItem[]> {
   const [items, rows] = await Promise.all([nav(), readRows()]);
   const completed = new Set(rows.filter((r) => r.completedAt !== null).map((r) => r.conceptId));
   return items.map((i) => ({ ...i, completed: i.kind === "practice" && completed.has(i.id) }));
 }
 
-// GET /api/lessons/{id}
+// One graded exercise, with this learner's attempts and evidence.
 export async function fetchLesson(id: string): Promise<ConceptDetail> {
   const [detail, rows] = await Promise.all([getContent<ConceptDetail>(`lessons/${id}.json`, `lesson ${id}`), readRows()]);
   const mine = rows.filter((r) => r.conceptId === id);
@@ -50,12 +49,12 @@ export async function fetchLesson(id: string): Promise<ConceptDetail> {
   };
 }
 
-// GET /api/tools/{id}
+// One tool lesson.
 export function fetchTool(id: string): Promise<ToolDetail> {
   return getContent<ToolDetail>(`tools/${id}.json`, `tool ${id}`);
 }
 
-// GET /api/review: titles and tracks from the lesson list, like Program.cs does from the registry.
+// The spaced-repetition queue, with titles and tracks from the lesson list.
 export async function fetchReview(): Promise<ReviewItem[]> {
   const [items, rows] = await Promise.all([nav(), readRows()]);
   const byId = new Map(items.filter((i) => i.kind === "practice").map((i) => [i.id, i]));
@@ -65,13 +64,13 @@ export async function fetchReview(): Promise<ReviewItem[]> {
   });
 }
 
-// GET /api/progress/evidence
+// Per-lesson evidence for the readiness views; lessons never touched are absent.
 export async function fetchEvidence(): Promise<LessonEvidence[]> {
   const rows = await readRows();
   return [...core.groupByConcept(rows)].map(([id, g]) => core.evidence(id, g));
 }
 
-// POST /api/progress/record
+// A graded run finished (C# or Python, both graded in the browser).
 export async function recordProgress(lessonId: string, language: string, code: string, passed: boolean, mode: ExerciseMode) {
   await requirePractice(lessonId);
   await updateRows((rows) => {
@@ -79,7 +78,7 @@ export async function recordProgress(lessonId: string, language: string, code: s
   });
 }
 
-// POST /api/progress/reveal
+// The learner opened the reference solution: passes in the next week count as assisted.
 export async function recordReveal(lessonId: string, language: string) {
   await requirePractice(lessonId);
   await updateRows((rows) => {
@@ -87,7 +86,7 @@ export async function recordReveal(lessonId: string, language: string) {
   });
 }
 
-// DELETE /api/progress/{id} and DELETE /api/progress
+// Reset one lesson (all languages), or everything.
 export function resetLessonProgress(lessonId: string) {
   return updateRows((rows) => rows.filter((r) => r.conceptId !== lessonId));
 }
@@ -134,14 +133,14 @@ export async function exportProgress(): Promise<string> {
   return JSON.stringify({ format: BACKUP_FORMAT, version: 1, exportedAt: new Date().toISOString(), entries, localStorage: localEntries() }, null, 2);
 }
 
-// A date the server wrote (SQLite keeps no time zone, so GET /api/progress has none) is UTC.
+// A date with no time zone (the old server's export had none) is UTC.
 function date(value: unknown): string | null {
   if (typeof value !== "string" || value === "") return null;
   const t = Date.parse(/[zZ]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}Z`);
   return Number.isNaN(t) ? null : new Date(t).toISOString();
 }
 
-// Accepts this site's own export, or the array GET /api/progress returns on the server.
+// Accepts this site's own export, or the progress array the retired server exported.
 // Replaces all graded progress; browser storage keys in the file are written over.
 export async function importProgress(text: string): Promise<{ entries: number; keys: number }> {
   let data: unknown;

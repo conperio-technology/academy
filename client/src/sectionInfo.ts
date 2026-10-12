@@ -1,5 +1,5 @@
 // Plain-language purpose for each top-level section, shown on the dashboard. Keyed by the
-// section name the server sends; an unlisted section just renders without a blurb.
+// section name in the exported content; an unlisted section just renders without a blurb.
 export const SECTION_INFO: Record<string, { blurb: string; why: string }> = {
   "Start Here": {
     blurb: "Foundations for anyone without a computer science background: a week-by-week Well-rounded IT & CS study path through the whole academy, the math behind Big O, data types and overflow, and what functions, the call stack and recursion do in memory.",

@@ -1,16 +1,17 @@
-// End-to-end check of the static site (npm run build:static) served by a plain static file
-// server, ideally under a subpath, in headless Chromium:
+// End-to-end check of the built site served by a plain static file server under a subpath,
+// in headless Chromium:
 //
-//   python3 -m http.server 5802 --directory <dir holding academy -> client/dist-static>
-//   node scripts/check-static.mjs --base http://localhost:5802/academy/
+//   npm run build && node scripts/serve.mjs --port 5802      (serves dist/ at /academy/)
+//   node scripts/check-site.mjs --base http://localhost:5802/academy/
 //
-// Checks: the lesson list loads and nothing requests /api; a tool lesson and a graded lesson
-// open; a C# reference solution passes in the browser and is recorded; progress survives a
-// reload; a pass after opening the reference counts as assisted, one without as independent;
-// the review queue shows a lesson once it is due; export, reset all and import restore
-// progress; a deep link survives a reload. Monaco comes from jsdelivr in the app; when that is
-// blocked the local monaco-editor package (client/node_modules) is served in its place.
-// Playwright is found via NODE_PATH (see playwright.mjs).
+// Checks: the lesson list loads and every request to the site stays under its base path; a
+// tool lesson and a graded lesson open; a C# reference solution passes in the browser and is
+// recorded; progress survives a reload; a pass after opening the reference counts as
+// assisted, one without as independent; the review queue shows a lesson once it is due;
+// export, reset all and import restore progress; a deep link survives a reload; without the
+// C# runtime the page says C# can't be graded. Monaco comes from jsdelivr in the app; when
+// that is blocked the local monaco-editor package (client/node_modules) is served in its
+// place. Playwright is found via NODE_PATH (see playwright.mjs).
 import { readFileSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -46,11 +47,16 @@ console.log(`${nav.length} lessons in content/lessons.json; tool ${tool.id}, gra
 const { chromium } = loadPlaywright();
 const browser = await chromium.launch();
 const context = await browser.newContext({ acceptDownloads: true });
-const apiRequests = [];
+// Requests to the site's own origin outside its base path: a fetch with a leading "/" (which
+// breaks under a subpath) or a call to a server that doesn't exist.
+const basePath = new URL(base).pathname;
+const strayRequests = [];
+const watchStray = (r) => {
+  const url = new URL(r.url());
+  if (url.origin === new URL(base).origin && !url.pathname.startsWith(basePath)) strayRequests.push(r.url());
+};
 const failedRequests = [];
-context.on("request", (r) => {
-  if (new URL(r.url()).pathname.includes("/api/")) apiRequests.push(r.url());
-});
+context.on("request", watchStray);
 context.on("requestfailed", (r) => failedRequests.push(`${r.url()} (${r.failure()?.errorText})`));
 context.on("response", (r) => {
   if (r.status() >= 400) failedRequests.push(`${r.url()} (${r.status()})`);
@@ -121,13 +127,13 @@ async function solveInCSharp(lesson) {
 }
 const rowsFor = async (id) => (await idb("read")).filter((r) => r.conceptId === id);
 
-// ---- 1. Lesson list, no /api ----
+// ---- 1. Lesson list ----
 await page.goto(base);
 await page.waitForFunction(() => document.querySelectorAll(".lesson-list .section-toggle").length > 3, null, { timeout: 30000 });
 const dashboardText = await page.locator(".main-content").textContent();
 check(dashboardText.includes(`of ${nav.filter((n) => n.kind === "practice").length} practice lessons`), "dashboard counts every graded lesson");
 check(await page.locator(".progress-backup").isVisible(), "dashboard shows the progress export/import panel");
-check(!(await page.locator(".sidebar").textContent()).includes("Can't reach"), "no 'can't reach the API' error");
+check(!(await page.locator(".sidebar").textContent()).includes("Couldn't load"), "no 'couldn't load the lesson list' error");
 
 // ---- 2. A tool lesson and a graded lesson open ----
 await open(tool.id, tool.title);
@@ -135,7 +141,6 @@ ok(`tool lesson opens (${tool.id})`);
 check(page.url().endsWith(`#/${tool.id}`), "the open lesson is in the URL hash", page.url());
 await open(first.id, first.title);
 ok(`graded lesson opens (${first.id})`);
-check(!(await page.locator("text=Run on server").count()), "no 'Run on server' toggle");
 
 // ---- 3. C# reference solution passes in the browser, recorded; bare without reveal = independent ----
 await page.evaluate(() => localStorage.setItem("exercise-mode", "bare"));
@@ -188,7 +193,7 @@ check(reviewText.includes(first.title) && reviewText.includes("2 days overdue") 
 
 // ---- 7. Export, reset all, import ----
 const before = (await idb("read")).sort((a, b) => a.id - b.id);
-const dir = mkdtempSync(join(tmpdir(), "academy-static-"));
+const dir = mkdtempSync(join(tmpdir(), "academy-site-"));
 try {
   const [download] = await Promise.all([page.waitForEvent("download"), page.locator("button", { hasText: "Export progress" }).click()]);
   const file = join(dir, "progress.json");
@@ -229,28 +234,26 @@ await deep.goBack();
 await deep.waitForFunction((t) => [...document.querySelectorAll(".main-content h1")].some((h) => h.textContent === t), tool.title, { timeout: 30000 });
 ok("Back returns to the previous lesson");
 
-check(apiRequests.length === 0, "no request went to /api", apiRequests.slice(0, 5).join(", "));
+check(strayRequests.length === 0, `every request to the site stayed under ${basePath}`, strayRequests.slice(0, 5).join(", "));
 // jsdelivr (Monaco, Pyodide, sql.js) is the CDN the app always uses; a stand-in copy of
-// Monaco may be a different version, so its misses say nothing about the static site.
+// Monaco may be a different version, so its misses say nothing about the site.
 const unexpected = failedRequests.filter((u) => !u.startsWith("https://cdn.jsdelivr.net/"));
 check(unexpected.length === 0, "no failed requests to the site itself", unexpected.slice(0, 5).join(", "));
 
-// ---- 9. Without the C# runtime: a clear message, no server fallback ----
+// ---- 9. Without the C# runtime: a clear message ----
 const bare = await browser.newContext();
 await bare.route(/\/csharp-wasm\//, (route) => route.fulfill({ status: 404, body: "" }));
-bare.on("request", (r) => {
-  if (new URL(r.url()).pathname.includes("/api/")) apiRequests.push(r.url());
-});
+bare.on("request", watchStray);
 const noWasm = await bare.newPage();
 await noWasm.goto(`${base}#/${first.id}`);
-await noWasm.locator(".run-in-browser-status", { hasText: "no server" }).waitFor({ timeout: 30000 });
+await noWasm.locator(".run-in-browser-status", { hasText: "can't be graded" }).waitFor({ timeout: 30000 });
 await noWasm.locator(".code-runner-actions button:visible", { hasText: "Run Tests" }).click();
 await noWasm.locator(".compile-error").waitFor({ timeout: 30000 });
 const message = await noWasm.locator(".compile-error").textContent();
 check(message.includes("can't be graded") && !(await noWasm.locator(".all-passed").count()), "without the C# runtime a run says C# can't be graded here", message);
 await bare.close();
 
-check(apiRequests.length === 0, "still no request went to /api", apiRequests.slice(0, 5).join(", "));
+check(strayRequests.length === 0, `still every request stayed under ${basePath}`, strayRequests.slice(0, 5).join(", "));
 await browser.close();
-console.log(failures.length ? `\n${failures.length} check(s) failed` : "\nAll static site checks passed");
+console.log(failures.length ? `\n${failures.length} check(s) failed` : "\nAll site checks passed");
 process.exit(failures.length ? 1 : 0);
