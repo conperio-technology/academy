@@ -24,7 +24,7 @@ Accuracy matters most: learners trust what the app tells them.
 - **Exercises.** The tests cover edge cases (empty input, one element, duplicates, negatives,
   large values). The starter code fails them; the reference solutions pass them. The
   complexity answer matches the reference solution. Graded C# stays inside
-  `runner/CodePolicy.cs`.
+  `wasm-csharp/CodePolicy.cs`.
 - **Wiring.** Lesson ids are unique and lowercase-hyphenated. The section and `Order` fit the
   neighbouring lessons. The lesson is in `studyPathData.ts` / `prepPlanData.ts` where it
   belongs, with the id spelled exactly. Glossary `seeAlso` and `lessonId` values exist.
@@ -35,13 +35,14 @@ Accuracy matters most: learners trust what the app tells them.
 The `content-reviewer` Claude Code agent (`.claude/agents/content-reviewer.md`) checks the same
 list and is a good first pass. It does not replace your review.
 
-## Code (server, runner, client, scripts)
+## Code (content exporter, C# grader, client, scripts)
 
 - **Correctness.** Does it do what the PR says? Edge cases, error paths, null handling.
-- **Security.** Anything touching `runner/CodePolicy.cs`, the runner limits in
-  `server/Execution/`, the identity header (`UserHeader`), CORS, or the `Dockerfile` is a security
-  change and must say so in the PR. Learner code must never get files, network, processes or
-  reflection.
+- **Security.** Anything touching `wasm-csharp/CodePolicy.cs`, the grader limits
+  (`client/src/csharpWasmRunner.ts`, `RunnerLimits`), or what the site loads from outside
+  (CDN versions, new third-party files) is a security change and must say so in the PR.
+  Learner code must never get files, network, processes or reflection. Anything that would
+  add a server, an API call or a login back needs an ADR first (docs/adr/0013).
 - **Scope.** The diff only contains what the PR is about. No drive-by reformatting, no
   unrelated renames. Append-style lists (`ToolRegistry.cs`, `types.ts`, `ToolView.tsx`,
   `index.css`, ...) keep everyone else's entries.
@@ -51,8 +52,8 @@ list and is a good first pass. It does not replace your review.
   are never added to `client/package.json`.
 - **Docs.** README.md, a `CLAUDE.md` or an ADR updated when the change alters how
   something works or why.
-- **Hygiene.** No secrets, `.env`, `progress.db*`, `client/dist/`, temporary Vite configs,
-  or debugging leftovers.
+- **Hygiene.** No secrets, `.env`, `client/dist/`, `client/public/content/`, temporary Vite
+  configs, or debugging leftovers.
 
 ## Leaving the review
 

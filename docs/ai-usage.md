@@ -10,7 +10,7 @@ Claude Code reads these files automatically, so it follows the same rules you do
 | File | What it gives Claude |
 | --- | --- |
 | `CLAUDE.md` (root) | Layout, how to run and check the app, recipes, conventions, merge gotchas, what not to do |
-| `server/`, `client/`, `runner/`, `tools/linux-image/` `CLAUDE.md` | Details for that folder |
+| `content/`, `client/`, `tools/linux-image/` `CLAUDE.md` | Details for that folder |
 | `.claude/skills/add-lesson/`, `add-graded-exercise/`, `verify/` | Step lists, run as `/add-lesson`, `/add-graded-exercise`, `/verify` |
 | `.claude/agents/content-reviewer.md` | A reviewer agent that checks new lesson content for accuracy, wiring and style, and reports without editing |
 | `.claude/settings.json` | Shared permissions (below) |

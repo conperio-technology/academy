@@ -1,6 +1,6 @@
 # 0011. Publish the static site on GitHub Pages, by hand
 
-Status: Accepted (supersedes the "nobody deploys" part of [0009](0009-no-deploy-no-ci-yet.md) for the static site only)
+Status: Accepted (supersedes the "nobody deploys" part of [0009](0009-no-deploy-no-ci-yet.md) for the static site only). Since [0013](0013-static-only.md) the build output is `client/dist/` (`npm run build`), with no `.br` copies to drop.
 Date: 2026-10-11
 
 ## Context

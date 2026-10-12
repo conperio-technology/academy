@@ -11,7 +11,7 @@ Related: [docs/code-review.md](docs/code-review.md) (what reviewers look for),
 | Tool | Version | Notes |
 | --- | --- | --- |
 | Git | any recent | On Windows, [Git for Windows](https://git-scm.com/download/win). It includes Git Bash, which runs the `.sh` scripts and the pre-commit hook. |
-| .NET SDK | 10 | `dotnet --list-sdks` should show a `10.x` line. |
+| .NET SDK | 10 | `dotnet --list-sdks` should show a `10.x` line. The lesson content is C# exported to JSON at build time, and the in-browser C# grader is built with it. |
 | Node.js | 24 (22.18 or later works) | npm comes with it. The check scripts import `.ts` files directly, which needs 22.18+. |
 | Editor | VS Code, Visual Studio or Rider | All three read `.editorconfig`. |
 | Claude Code | optional | See [docs/ai-usage.md](docs/ai-usage.md). |
@@ -30,17 +30,18 @@ powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
 scripts/setup.sh
 ```
 
-Both check the tools, run `npm ci` in `client/`, build the server and client, and run the
-fast data checks. Run them again any time (after a big merge, say).
+Both check the tools, run `npm ci` in `client/`, build the in-browser C# grader and the
+site, and run the fast data checks. Run them again any time (after a big merge, say).
 
-Run the app in two terminals:
+Run the app:
 
 ```bash
-cd server && dotnet run      # API, http://localhost:5095, creates server/progress.db
-cd client && npm run dev     # UI, http://localhost:5173 (open this one)
+cd client && npm run dev     # http://localhost:5173
 ```
 
-Windows PowerShell 5.1 has no `&&`; use `;` there (`cd server; dotnet run`).
+`npm run dev` exports the lesson content from `content/` first; after editing a lesson's C#,
+run `npm run content` and reload. There is no server: the site is static files, and progress
+lives in your browser. Windows PowerShell 5.1 has no `&&`; use `;` there.
 
 Line endings: `.gitattributes` keeps every file LF, on Windows too. Don't change it, and don't
 commit CRLF files (the bash scripts break).
@@ -60,8 +61,8 @@ commit CRLF files (the bash scripts break).
    The usual conflict spots and how to resolve them are under "Merge gotchas" in
    [CLAUDE.md](CLAUDE.md).
 
-Never push to master directly, never force-push a shared branch, and never deploy (no
-`docker push`, no `kubectl apply`). There is no CI: the checks run on your machine, and the
+Never push to master directly, never force-push a shared branch, and never deploy (the
+GitHub Pages site is published by hand with the owner's go, see README.md). There is no CI: the checks run on your machine, and the
 PR checklist records that you ran them.
 
 ## 4. Adding content
@@ -81,7 +82,7 @@ The short version of each recipe, placement rules and house style are in
 - No en or em dashes, and no spaced ` - ` dashes, in lesson prose.
 - Every code sample and predicted output is run to get the output shown.
 - Nothing scrolls sideways at a 390px wide viewport.
-- Graded C# may only use what `runner/CodePolicy.cs` allows.
+- Graded C# may only use what `wasm-csharp/CodePolicy.cs` allows.
 - Wire new lessons into `client/src/studyPathData.ts` and `client/src/prepPlanData.ts`
   where they fit; unknown ids are skipped silently, so check the spelling.
 
@@ -91,18 +92,17 @@ There is no unit test project; these scripts are the test suite.
 
 | Command (run from) | Checks | Time |
 | --- | --- | --- |
-| `dotnet build server/server.csproj` (root) | API and runner compile | under a minute |
-| `npm run build` (`client/`) | TypeScript type check and production build | under a minute |
+| `dotnet build content/content.csproj` (root) | lesson content compiles | under a minute |
+| `npm run build` (`client/`) | content export, TypeScript type check and production build | under a minute |
 | `npm run lint` (`client/`) | oxlint; warnings are known, errors are not allowed | ~1 s |
 | `node scripts/check-glossary.mjs` (`client/`) | glossary terms, links, lesson ids, dashes | ~1 s |
 | `node scripts/check-complexity-gym.mjs` (`client/`) | Complexity Gym snippets | ~1 s |
 | `node scripts/check-plc-st.mjs` (`client/`) | PLC Structured Text interpreter and exercises | ~1 s |
-| `scripts/verify.sh` (root, bash) | all of the above plus every reference solution through both graders and the 390px / 1300px overflow check | 3 to 5 min |
-| `node tools/progress-parity/check.mjs` (root) | the static site's progress rules match the server's; run when you touch `ProgressService.cs` or `client/src/progressCore.ts` | ~10 s |
+| `scripts/verify.sh` (root, bash) | all of the above plus every reference solution through the in-browser C# and Python graders, the 390px / 1300px overflow check, and an end-to-end check of progress, review, export/import and deep links | 3 to 5 min |
 
-`scripts/verify.sh` starts its own throwaway server on port 5495, so it doesn't touch your
-`progress.db` or a server you have running. Its last two steps need Playwright with
-Chromium, which is deliberately not a dependency of the app. Install it once, outside the repo:
+`scripts/verify.sh` serves the built site on port 5495 under `/academy/` (its own small static
+server, stopped at the end), so it doesn't touch a dev server you have running. Its last
+three steps need Playwright with Chromium, which is deliberately not a dependency of the app. Install it once, outside the repo:
 
 ```bash
 npm install --prefix ~/pw playwright && npx --prefix ~/pw playwright install chromium
@@ -119,21 +119,16 @@ $env:NODE_PATH = "$HOME\pw\node_modules"
 
 `verify.sh` is used daily on Linux but has not been tried on Windows yet. If it fails there
 for a reason that isn't your change, run the steps by hand (build, the three `check-*`
-scripts, then start a server and run the two Playwright scripts as shown in
+scripts, then serve the build and run the three Playwright scripts as shown in
 [.claude/skills/verify/SKILL.md](.claude/skills/verify/SKILL.md)) and tell the team what broke.
-
-If your change touches the static site (`client/src/api.ts`, `localBackend.ts`, anything that
-loads files from `public/`), also build it and run its check against a static server:
-`npm run build:static` in `client/`, serve `dist-static/` under a subpath (README, "As a
-static site"), then `node scripts/check-static.mjs --base http://localhost:5802/academy/`.
 
 Useful variations: `VERIFY_STEPS=checks scripts/verify.sh` (fast checks only, seconds) and
 `SKIP_BUILD=1 scripts/verify.sh` (reuse the last build).
 
 ### Optional pre-commit hook
 
-`scripts/pre-commit` runs the fast checks on the files you are committing: no databases,
-`.env` files or `client/dist` in the commit, no en/em dashes in added content lines, C#
+`scripts/pre-commit` runs the fast checks on the files you are committing: no `.env` files,
+`client/dist` or generated `client/public` folders in the commit, no en/em dashes in added content lines, C#
 whitespace, oxlint and the type check for staged TypeScript, and the client data checks.
 Install it once from the repo root:
 
@@ -156,8 +151,8 @@ the copied file to remove it. Re-copy it when `scripts/pre-commit` changes.
   it that way:
 
   ```bash
-  dotnet format whitespace server/server.csproj --verify-no-changes   # check (also runner/runner.csproj)
-  dotnet format whitespace server/server.csproj                       # fix
+  dotnet format whitespace content/content.csproj --verify-no-changes   # check (also wasm-csharp/CSharpWasm.csproj)
+  dotnet format whitespace content/content.csproj                       # fix
   dotnet format whitespace --folder --include <file.cs> [<file.cs>]   # just your files, fast
   ```
 
@@ -182,6 +177,6 @@ A change is ready to merge when:
       `studyPathData.ts` / `prepPlanData.ts` where they fit, and new terms are in the glossary.
 - [ ] Docs that describe what you changed (README.md lesson list, a `CLAUDE.md`, a new ADR
       for a big design decision) are updated.
-- [ ] No secrets, `.env` files, `server/progress.db*`, `client/dist/` or temporary Vite
+- [ ] No secrets, `.env` files, `client/dist/`, `client/public/content/` or temporary Vite
       configs are committed.
 - [ ] A human reviewer other than the author approved it.

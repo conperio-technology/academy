@@ -1,7 +1,9 @@
 # In-browser C# prototype: results
 
-*The prototype measured here is now the default for every C# exercise; see
-[README.md](README.md) for how it works today. The numbers below are from the prototype.*
+*A historical record. The prototype measured here became the default C# grader
+(docs/adr/0012), and later the only one when the server, its runner and the "Run on server"
+fallback were removed (docs/adr/0013). See [README.md](README.md) for how it works today. The
+numbers and file paths below are from the prototype and refer to the retired server.*
 
 **Verdict: it works.** On a fast connection the first run costs about 2 s, and every
 run after that takes about 0.2 s. The server path takes 1.7 to 2.0 s on every run.

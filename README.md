@@ -1,13 +1,14 @@
 # Conperio Academy
 
-**Try it: https://conperio-technology.github.io/academy/** (the static build, no sign-up;
-progress stays in your browser).
+**Try it: https://conperio-technology.github.io/academy/** (no sign-up; progress stays in
+your browser).
 
 An app for learning computing from the ground up, from logic gates and electronics to data
 structures and algorithms, system design, Linux, networking, security and PLCs: 243 lessons
 with interactive widgets and 166 graded coding exercises in C# and Python, with visuals, a
-built-in code editor, and progress that persists between sessions. It runs as a static site
-or as a small server you host yourself. Third-party licences:
+built-in code editor, and progress that persists between sessions. It is a static site: no
+server, no account, no database. Lessons load as files, both languages are graded in your
+browser, and your progress is kept in your browser. Third-party licences:
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Design decisions: [docs/adr/](docs/adr/README.md).
 
 ## Licence
@@ -17,74 +18,64 @@ MIT, see [LICENSE](LICENSE). Bundled third-party parts keep their own licences, 
 
 ## Running it
 
-Two processes, both local, no Docker/DB server needed:
+You need the .NET 10 SDK (the lesson content is written in C# and exported to JSON at build
+time, and the in-browser C# grader is built with it) and Node.js 22.18 or later (24
+recommended). Then:
 
 ```bash
-# Terminal 1 — API (http://localhost:5095), creates server/progress.db on first run
-cd server
-dotnet run
+git clone https://github.com/conperio-technology/academy.git
+cd academy
+./scripts/setup.sh           # Windows: powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
+cd client && npm run dev     # http://localhost:5173
+```
 
-# Terminal 2 — UI (http://localhost:5173)
+`scripts/setup.sh` checks the tools, runs `npm ci`, builds the in-browser C# grader and the
+site, and runs the fast checks. The minimal version by hand:
+
+```bash
+./wasm-csharp/build.sh       # once, about a minute: the in-browser C# grader
 cd client
-npm install   # first time only
-npm run dev
+npm ci
+npm run dev                  # exports the lesson content, then starts Vite on port 5173
 ```
 
-C# exercises are graded in your browser by default, by Roslyn running on .NET WebAssembly.
-That runtime is built, not committed: run `./wasm-csharp/build.sh` once (about a minute, needs
-only the .NET 10 SDK; `npm run build:csharp-wasm` from `client/` does the same) and again after
-changing `wasm-csharp/` or `runner/CodePolicy.cs`. Without it everything still works: C# is
-then graded by the server's runner, and the exercise page says so. A **Run on server**
-checkbox next to "Run Tests" forces the server path. Details:
-[wasm-csharp/README.md](wasm-csharp/README.md).
+`npm run dev` first runs `scripts/export-content.mjs` (the `predev` step), which runs the C#
+exporter in `content/` and writes the lessons as JSON into `client/public/content/`
+(gitignored); Vite serves that folder like any other static file. After editing a lesson's
+C#, run `npm run content` and reload the page.
 
-The UI (Vite) is bound to all network interfaces, so the app is also reachable from other
-devices on the same LAN — `npm run dev`'s output prints the exact URLs (e.g.
-`http://192.168.x.x:5173`), or use this machine's name (`http://your-computer-name:5173`).
-If another device can't connect, check that the machine's firewall allows inbound TCP on
-5173. Vite's host check is off (`server.allowedHosts: true`) so a hostname works as well as an
-IP, and the server's CORS policy admits any origin on port 5173. Only 5173 needs to be
-reachable: Vite forwards `/api` to the API on this machine, so the browser never calls
-5095 itself (which also keeps Chrome's Private Network Access checks out of the way). The API
-listens on `localhost:5095` only, so other machines can't submit code to it directly.
+C# exercises are graded in your browser by Roslyn running on .NET WebAssembly. That runtime is
+built, not committed: run `./wasm-csharp/build.sh` once (`npm run build:csharp-wasm` from
+`client/` does the same) and again after changing `wasm-csharp/`. Without it everything else
+works, and C# exercises say they can't be graded here. Python is graded by Pyodide, loaded from
+jsdelivr. Details: [wasm-csharp/README.md](wasm-csharp/README.md).
 
-### As one container
+The dev server listens on all network interfaces, so the app is also reachable from other
+devices on the same LAN: `npm run dev` prints the exact URLs (e.g. `http://192.168.x.x:5173`),
+or use this machine's name (`http://your-computer-name:5173`). If another device can't
+connect, check that the machine's firewall allows inbound TCP on 5173.
+
+### Building the site
 
 ```bash
-docker build -t conperio-academy .
-docker run -p 8080:8080 -v academy-data:/data conperio-academy
-```
-
-Then open http://localhost:8080 -- in the image the API serves the built client itself,
-so it's one origin and one port. The image build also publishes the in-browser C# runtime
-(a `csharp-wasm` build stage) and the API serves it brotli-compressed with long-lived caching.
-
-### As a static site (no server, no database)
-
-The same app also builds as plain files for static hosting: lesson content is exported from
-the server's C# classes as JSON at build time, progress is kept in the browser (IndexedDB),
-and C# is graded only in the browser. Decision and trade-offs:
-[docs/adr/0010-static-hosting-mode.md](docs/adr/0010-static-hosting-mode.md).
-
-```bash
-./wasm-csharp/build.sh          # first, so C# can be graded (there is no server to fall back to)
+./wasm-csharp/build.sh       # first, so C# can be graded
 cd client
-npm run build:static            # client/dist-static/ (about 33 MB), works at / or under a subpath
-npm run preview:static          # http://localhost:4173, or any static file server:
-# mkdir -p /tmp/site && ln -s "$PWD/dist-static" /tmp/site/academy
-# python3 -m http.server 5802 --directory /tmp/site   -> http://localhost:5802/academy/
+npm run build                # client/dist/ (about 28 MB), works at / or under a subpath
+npm run preview              # http://localhost:4173, or any static file server:
+node scripts/serve.mjs       # serves dist/ at http://localhost:5802/academy/
 ```
 
-`VITE_BASE=/academy/ npm run build:static` pins an absolute base path instead of the default
-relative one. Lesson links use the URL hash (`#/two-sum`), so deep links and reloads work on
-any static host. On the dashboard, **Your progress** exports and imports progress as a JSON
-file, because it lives in that one browser: clearing site data or switching browsers loses
-it. Pyodide (Python grading), sql.js and the Monaco editor still load from jsdelivr.
-`node scripts/check-static.mjs --base <url>` (from `client/`) checks a served build end to end.
+`npm run build` (`client/scripts/build.mjs`) exports the lesson content, type checks, and runs
+the Vite build. `VITE_BASE=/academy/ npm run build` pins an absolute base path instead of the
+default relative one. Lesson links use the URL hash (`#/two-sum`), so deep links and reloads
+work on any static host. On the dashboard, **Your progress** exports and imports progress as
+a JSON file, because it lives in that one browser: clearing site data or switching browsers
+loses it. Pyodide (Python grading), sql.js and the Monaco editor load from jsdelivr.
+Decision and trade-offs: [docs/adr/0013](docs/adr/0013-static-only.md).
 
-`client/dist-static/` works on any static host. The build writes `.nojekyll`, which GitHub
-Pages needs to serve `csharp-wasm/_framework/`, and `THIRD_PARTY_NOTICES.txt`, which the
-sidebar and the Linux lab link to.
+`client/dist/` works on any static host. The build writes `.nojekyll`, which GitHub Pages
+needs to serve `csharp-wasm/_framework/`, and `THIRD_PARTY_NOTICES.txt`, which the sidebar and
+the Linux lab link to.
 
 ### Publishing to GitHub Pages
 
@@ -95,47 +86,41 @@ the `gh-pages` branch, which holds only build output
 
 ```bash
 ./wasm-csharp/build.sh
-(cd client && npm ci && npm run build:static)   # then serve it and run check-static.mjs (above)
+(cd client && npm ci && npm run build)   # then check it: scripts/verify.sh (SKIP_BUILD=1 reuses this build)
 git fetch origin gh-pages
 git worktree add -B gh-pages ../academy-gh-pages origin/gh-pages
 cd ../academy-gh-pages
-git rm -rq . && cp -a ../academy/client/dist-static/. .   # ../academy: your checkout
-find . -name '*.br' -not -path './.git/*' -delete         # Pages doesn't use the .br copies
+git rm -rq . && cp -a ../academy/client/dist/. .   # ../academy: your checkout
 git add -A && git commit -m "Static site build from master $(git -C ../academy rev-parse --short HEAD)"
-git push origin gh-pages                                  # Pages updates within a few minutes
+git push origin gh-pages                           # Pages updates within a few minutes
 cd - && git worktree remove ../academy-gh-pages
 ```
 
-For the two-process dev setup above, open http://localhost:5173. Below a 768px viewport (a phone on the LAN, say) the
-sidebar becomes a slide-out drawer instead of a permanent column — tap the ☰ button to
-open it, tap the dimmed backdrop or pick a lesson to close it again.
+### Using it
 
-The landing page is a dashboard: overall progress, a "next up" shortcut, one card per section
-explaining what it's for, and a **Due for review** queue. Review is spaced repetition -- a lesson
-you solved comes due after 1 day, and each time you re-solve it while due the gap grows (3, 7, 14,
-then 30 days). Sidebar sections are collapsed by default and remember which you've opened.
+Below a 768px viewport (a phone, say) the sidebar becomes a slide-out drawer instead of a
+permanent column: tap the ☰ button to open it, tap the dimmed backdrop or pick a lesson to
+close it again.
 
-Progress is per-user, but there's no real login: the server trusts whatever identity an
-upstream reverse proxy already injected in a request header (`UserHeader` setting,
-default `x-ms-client-principal-name`),
-and falls back to a shared `"guest"` bucket when nothing set it, which is every local
-or LAN run. The sidebar footer always shows whose progress you're looking at. See
-[ADR 0006](docs/adr/0006-trusted-header-identity.md) for the design and why there's no
-actual authentication here on purpose.
+The landing page is a dashboard: overall progress, a "next up" shortcut, the progress export
+and import, one card per section explaining what it's for, and a **Due for review** queue.
+Review is spaced repetition: a lesson you solved comes due after 1 day, and each time you
+re-solve it while due the gap grows (3, 7, 14, then 30 days). Sidebar sections are collapsed
+by default and remember which you've opened.
 
 ## Working on this repo with Claude
 
 The repo is set up for [Claude Code](https://claude.com/claude-code):
 
-- `CLAUDE.md` (root, plus `server/`, `client/`, `runner/`, `tools/linux-image/`): how the app is
-  laid out, how to run and check it, the recipes for adding content, and what not to do.
+- `CLAUDE.md` (root, plus `content/`, `client/`, `tools/linux-image/`): how the app is laid
+  out, how to run and check it, the recipes for adding content, and what not to do.
 - Skills in `.claude/skills/`: `/add-lesson` (a tool lesson, wired end to end),
   `/add-graded-exercise` (an exercise with tests, complexity answer and reference solutions),
   and `/verify`.
-- `scripts/verify.sh`, which `/verify` runs (server mode; the static site has its own
-  `client/scripts/check-static.mjs`, see "As a static site" above): builds both sides, runs the client check scripts,
-  starts a throwaway API on port 5495, runs every reference solution through the C# and Python
-  graders, and checks every lesson for horizontal overflow at 390px and 1300px. It needs
+- `scripts/verify.sh`, which `/verify` runs: builds the site, runs the client check scripts,
+  serves the build on port 5495 under `/academy/`, runs every reference solution through the
+  in-browser C# and Python graders, checks every lesson for horizontal overflow at 390px and
+  1300px, and runs an end-to-end check of progress, review, export and import. It needs
   Playwright with Chromium on `NODE_PATH` (it isn't a dependency of the app); see
   `client/scripts/playwright.mjs`.
 - `.claude/agents/content-reviewer.md`: a reviewer for new lesson content.
@@ -153,9 +138,17 @@ decision records in [docs/adr/](docs/adr/README.md).
 
 ## What's here
 
-Sidebar sections, in display order (`server/Content/SectionOrder.cs` controls this):
+Sidebar sections, in display order (`content/SectionOrder.cs` controls this):
 
-### Computer Fundamentals (leads — this is the lowest layer, hardware up)
+### Start Here
+
+- **Study Path: Well-rounded IT & CS**: a week-by-week route through the whole academy (see
+  "Two study paths" under Interview Prep)
+- **The Math You Need: Powers, Logarithms and Sums**, **Data Types: Numbers, Text and
+  True/False** and **Functions, Memory and the Call Stack**: the foundations the other sections
+  assume
+
+### Computer Fundamentals (the lowest layer, hardware up)
 
 - **Computer Architecture: CPU, RAM, Storage & the OS** — clickable component cards
   (Your Code → OS → CPU/RAM/Storage/Motherboard) plus a memory-hierarchy latency table
@@ -223,7 +216,7 @@ side, C# only or Python only (remembered per browser).
   chunks with `yield` (including an endless input), an endless Fibonacci generator, distinct
   points with a record or frozen dataclass, change a copy of a grid without touching the
   original, format a report line, and parse key=value settings. Async and test frameworks are
-  taught but not graded: the C# runner's allowlist has no `System.Threading.Tasks`, and test
+  taught but not graded: the C# grader's allowlist has no `System.Threading.Tasks`, and test
   frameworks can't run in the exercise editor
 - **Eleven advanced lessons**: Memory, Allocations and Span<T>; Threads, Locks, the GIL and
   Parallelism; Async in Depth (cancellation, timeouts, async streams); Decorators, Context
@@ -238,7 +231,7 @@ side, C# only or Python only (remembered per browser).
   property patterns, run-length encoding of a lazy input, retry with capped backoff, a result
   type for parsing, a slow active-orders report to speed up (a 200,000 item test), and semantic
   version sorting. Threads, tasks and reflection are taught but not graded, because the C#
-  runner's allowlist blocks them
+  grader's allowlist blocks them
 - **Cheat sheets**: C#, Python, and a C# vs Python translation table, all from one data set
   (`cheatSheet.ts`): search, topic filters, copy buttons, Big O notes, and a print layout. Stage 2
   added `yield` and more LINQ, plus four topics: lambdas and generics, interfaces and equality,
@@ -269,7 +262,7 @@ compiled C# console program) to get the outputs shown.
   and a **Well-rounded IT & CS** path (also listed in Start Here as `it-cs-study-path`). That path
   is built from topic families in `studyPathData.ts` (fundamentals, programming, algorithms,
   operating systems, Linux, Windows, networking, security, industrial, databases, Git, cloud,
-  system design, AI), each a list of lesson ids; ids the server doesn't have are skipped, so adding
+  system design, AI), each a list of lesson ids; unknown ids are skipped, so adding
   a lesson to a family adds it to the plan. Five phases over 8, 12, 16 or 24 weeks, plus subnetting
   drills and flash-card sessions. The FAANG plan keeps its `prep-plan` storage key; the new path
   uses `study-path:it-cs` and the chosen path `study-path:selected`.
@@ -332,7 +325,7 @@ Then Fundamentals (11 concepts) + Trees (6) + Graphs (4) + Sorting (5) + Dynamic
 Programming (4) + a Patterns track (70) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
 125 gradable concepts in total, each with a
 canned step-through visualizer, a "key takeaway" callout, a Monaco editor, and
-test-driven completion tracking in SQLite (plus one reference Tool, Hashing, slotted
+test-driven completion tracking (plus one reference Tool, Hashing, slotted
 in right after Two Sum, and a Pattern Recognition Drill at the end of the section):
 
 - Fundamentals: Array Traversal (Sum, Find Max), Array Reversal (two pointers), Linked
@@ -421,11 +414,11 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   Sum of Two Integers and All Subsets by Counting Bitmasks. Each graded lesson calls out where C#
   and Python differ (int overflow, negative %, >> vs >>>, unbounded Python ints)
 
-- **Pattern Recognition Drill**: 87 plain-English problem statements and no code editor: pick
+- **Pattern Recognition Drill**: 86 plain-English problem statements and no code editor: pick
   the technique, then see the signal phrases that gave it away and the sibling technique it's
   most often confused with. The end screen lists what you missed and can re-drill only those
 
-- **Mixed Interview Set** -- random graded problems (54 of them, from Patterns, Graphs and DP) with
+- **Mixed Interview Set** -- random graded problems (73 of them, mostly from Patterns, plus a few from Fundamentals, Graphs, DP and Greedy) with
   the title, explanation, visualizer, TODO hints and reference solution hidden, on a 25, 30 or
   45 minute clock. You name the technique before the editor opens, solve against the lesson's
   real tests (a pass counts as lesson progress), and the summary links back to each lesson.
@@ -435,15 +428,15 @@ Every practice lesson also has two optional extras: **Interview mode** (a 20-min
 seven-step interview checklist, and a notepad for your plan -- notes stay in your browser) and a
 **Name the complexity** check under the editor that reveals the standard solution's time and
 space with the reasoning. Under the editor, a **Reference solution** (C# and Python, one file
-each in `server/Content/Solutions/`) unlocks once you pass, or after three runs -- or straight
+each in `content/Solutions/`) unlocks once you pass, or after three runs -- or straight
 away with a deliberate "Stuck? Show it anyway" click.
 
 **Guided or bare.** Above the editor of every DSA exercise a switch picks the starter: guided
 (the step-by-step TODO comments) or bare (signature and return stub only, derived from the
 guided starter by `client/src/bareStarter.ts`, with the mixed set's hand-written signatures as
-overrides). Each pass is recorded on the server as assisted (guided, or the reference solution
-opened in the previous 7 days) or independent (bare, no recent reference), and passes inside the
-mixed set also as timed (`ProgressEntry` columns added through `Data/SchemaUpgrade.cs`). The
+overrides). Each pass is recorded as assisted (guided, or the reference solution opened in the
+previous 7 days) or independent (bare, no recent reference), and passes inside the mixed set
+also as timed (`client/src/progressCore.ts`). The
 Programming in C# & Python exercises stay guided-only, since their TODOs state the task.
 
 **Transfer exercises** follow an existing lesson with a changed requirement or an unfamiliar
@@ -463,7 +456,7 @@ Product Subarray (after Kadane's Maximum Subarray).
 
 Seven visualizer kinds: Array, LinkedList, Stack, HashMap, CallStack, Tree, and Graph.
 CallStack is a literal trace of real recursive push/pop execution (see
-`Content/Concepts/RecursionFactorial.cs` — the steps come from *instrumenting the
+`content/Concepts/RecursionFactorial.cs` — the steps come from *instrumenting the
 actual recursive calls*, not a canned animation), which is why the same renderer works
 unmodified for linear recursion (factorial), branching recursion (backtracking,
 Fibonacci), and memoized recursion (cache hits render as instantly-returning frames).
@@ -474,8 +467,9 @@ Graph is a fixed hand-laid-out SVG diagram (both node positions and edges are st
 not derived from the data) that colors each node by visited/frontier/current state as
 BFS's queue or DFS's recursion stack moves through the same fixed sample graph.
 
-Every lesson works in **C#** (executed server-side via Roslyn) and **Python** (executed
-client-side via Pyodide/WASM, no install needed) with a tab switcher between them.
+Every lesson works in **C#** (compiled and run in the browser by Roslyn on .NET WebAssembly)
+and **Python** (run in the browser by Pyodide), no install needed, with a tab switcher between
+them.
 Progress can be reset per-lesson or entirely from the sidebar.
 
 ### Software Design & OOP
@@ -528,9 +522,8 @@ Then the "object-oriented design" track: the "design the classes for X" intervie
 ### Professional Dev Skills
 
 Job-readiness skills a working dev needs regardless of language — a different axis
-again from DSA or OOP. Started with SQL; Git and (lower-priority) Postman/API testing
-are planned next. All three are reference Tools, each with a real interactive
-playground rather than a static explanation:
+again from DSA or OOP: SQL, Git, testing and working with AI assistants. All are reference
+Tools, each with a real interactive playground rather than a static explanation:
 
 - **SQL Basics: SELECT, WHERE, ORDER BY, LIMIT** — the logical execution order
   (FROM → WHERE → ORDER BY → LIMIT → SELECT) vs. the order you type clauses in, with a
@@ -552,8 +545,8 @@ playground rather than a static explanation:
 
 The first three share one canned `employees`/`departments` dataset (10 employees, 3
 departments) and run entirely client-side via **sql.js** (WASM SQLite, loaded lazily
-from a CDN the same way Pyodide is) — nothing typed here touches this app's real
-backend or database, and the "reset data" button rebuilds a fresh in-memory database
+from a CDN the same way Pyodide is): nothing typed here touches your saved progress,
+and the "reset data" button rebuilds a fresh in-memory database
 from the same seed at any time.
 
 Plus a **git** track, same treatment, no embedded real-git engine (nothing as
@@ -600,6 +593,9 @@ check your work. Restart machine boots a fresh one. The image is built by
   a generated web-app log
 - **Processes and Signals** — ps, background jobs, kill and signals, nice/renice
 
+Then **Containers and Kubernetes** (track "containers"): what a container image really is (layers
+and the build cache), and how Kubernetes keeps an app running when things break.
+
 Eight administration lessons share one data-driven renderer (`client/src/opsTrack/`, rendered by
 `OpsLesson.tsx`), with a simulator, a quiz and pitfalls each, and a VM lab where BusyBox allows:
 
@@ -630,6 +626,8 @@ against the documentation and marked as typical output in the page.
 
 ### Networking
 
+- **How the Internet Works, End to End**: follow one web request from your laptop to a server
+  and back (addresses, routers, packets, DNS and the protocols that make it work)
 - **The OSI & TCP/IP Models: How Network Layers Stack** — click through the 7 OSI
   layers grouped under the 4 TCP/IP layers they actually map to, each with its data
   unit (bits/frames/packets/segments/data) and example protocols
@@ -695,6 +693,10 @@ Interactive models of the building blocks, then full interview walk-throughs.
   queue with workers, a rate limiter and timeouts, then watch latency percentiles, errors,
   per-tier saturation and cost through seven guided scenarios and a sandbox). The models live in
   `client/src/scaleLabModel.ts` and `client/src/resilienceModel.ts`
+- **API design** track: **REST Resources and HTTP Semantics**, **REST vs gRPC vs GraphQL**,
+  **Pagination: Offset vs Cursor**, **Idempotency Keys and Safe Retries**, **Versioning,
+  Compatibility and Error Formats**, **API Keys, OAuth Scopes, Rate Limits and Quotas**, and
+  **Design the API for a Photo-Sharing App** (an API design round, stage by stage)
 - **Design a URL Shortener / News Feed / Chat App / Rate Limiter / Key-Value Store / Web
   Crawler / Notification System / Video Streaming Service / Ride-Sharing Service / Distributed Job
   Scheduler / Payment System** — seven-stage, 45-minute interview
@@ -706,7 +708,7 @@ After System Design: where those building blocks run, and how code gets there.
 
 - **Cloud Fundamentals**: IaaS, PaaS and SaaS, a shared responsibility explorer, and a zones and
   regions failure simulator
-- **Container Images and Registries**: tags vs digests simulator, this repo's multi-stage Dockerfile
+- **Container Images and Registries**: tags vs digests simulator, a multi-stage Dockerfile for a React client and an ASP.NET Core API
 - **Kubernetes in Practice**: label selectors and readiness, probes, requests and limits, pod statuses
 - **CI/CD Pipelines**: a GitHub Actions workflow (passes actionlint) and a pipeline simulator
 - **Infrastructure as Code: Terraform and Bicep**: real Terraform 1.9.8 plans for create, update,
@@ -741,7 +743,7 @@ Every demo is deterministic client-side React; nothing calls a real model.
   a cost and latency calculator, and where ML fits on a plant floor, linking to Safety &
   Redundancy
 - **AI Glossary Quiz**: the Glossary's Term Quiz fixed to its new "AI and machine learning" topic
-  (44 terms)
+  (78 terms)
 
 ### Behavioral Interviews
 
@@ -757,7 +759,7 @@ Every demo is deterministic client-side React; nothing calls a real model.
 
 ### Glossary
 
-- **Glossary of Industry Terms**: about 1,000 terms across fourteen topics (DSA, system design, databases,
+- **Glossary of Industry Terms**: about 1,270 terms across fourteen topics (DSA, system design, databases,
   data and analytics, networking, web and APIs, Linux and operating systems, security, cloud and DevOps,
   IT operations and Windows, software engineering, industrial automation, AI and machine learning, and
   interviews and career), each with a one or two sentence definition, related terms you can jump to,
@@ -770,8 +772,8 @@ Every demo is deterministic client-side React; nothing calls a real model.
 
 ### Security
 
-- **Authentication vs. Authorization** — follow a request through the ingress login and the
-  app's rules, including a forged identity header and the network policy that stops it
+- **Authentication vs. Authorization** — follow a request through a typical internal app's
+  ingress login and the app's rules, including a forged identity header and the network policy that stops it
 - **Hashing vs. Encryption (and Storing Passwords)** — the browser's real Web Crypto: SHA-256's
   avalanche effect, AES-GCM with the right and wrong key, and a stolen password table stored
   plain, as SHA-256, and as salted PBKDF2
@@ -838,81 +840,49 @@ simulated clock, steppable read/execute/write phases, a live ladder view and a t
 
 ## Architecture
 
-- `server/` — ASP.NET Core minimal API.
-  - `Content/Concepts/` — one file per practice concept, each implementing `IConcept`
-    (explanation, starter code per language, test cases, visualization steps). Adding a
-    concept means adding a file here and listing it in `ConceptRegistry.cs` — nothing
-    else changes.
-  - `Content/Tools/` — one file per reference/calculator lesson, each implementing
-    `ITool`. Deliberately a separate interface from `IConcept` — no code editor, no test
-    cases, no completion tracking, since "used the calculator" isn't pass/fail. See
-    `server/Content/ITool.cs`.
-  - `Content/SectionOrder.cs` + the `Order` property on both interfaces — control which
-    Section leads, and which item leads within its section, independently.
-  - `Execution/CSharpExecutor.cs`: the fallback C# grader (C# normally runs in the
-    browser, see `wasm-csharp/` below): runs submitted C# against a concept's test cases in a
-    separate, short-lived `runner` process per submission (see below), comparing results
-    as parsed JSON (so it works for `int`, `int[]`, nested lists, etc., not just one
-    return shape). The child is killed on a per-test timeout, gets a capped GC heap, and
-    at most 4 run at once (`Runner` settings in `RunnerOptions`).
-  - `Content/ComplexityCatalog.cs` — canonical time/space complexity (plus accepted alternatives
-    and a reason) for every concept, behind the "Name the complexity" check.
-  - `Data/` — EF Core + SQLite progress store, one row per (user, concept, language)
-    attempted, plus the spaced-repetition rung and next-review date. `Data/SchemaUpgrade.cs` adds
-    columns to an existing database in place (the app uses `EnsureCreated`, not migrations).
-    `UserId` comes from `Program.cs`'s `CurrentUserId()`, never
-    authenticated by this app itself (see [ADR 0006](docs/adr/0006-trusted-header-identity.md)).
-- `runner/` — the sandboxed C# runner (Roslyn scripting). `CodePolicy.cs` rejects any
-  code that reaches outside plain computation (files, network, processes, reflection,
-  threads, `dynamic`, `#r`) before it runs, using Roslyn's semantic model against a
-  namespace allowlist. An infinite loop, stack overflow, or runaway allocation only ever
-  takes down the runner, never the API.
-- `wasm-csharp/`: the default C# grader, the same compile (Roslyn) and the same
-  `CodePolicy.cs`, published for the .NET WebAssembly runtime and run in a Web Worker in the
-  learner's browser (`client/src/csharpWasmWorker.ts` / `csharpWasmRunner.ts`), with a 5 s
-  per-test timeout that terminates the worker. It also answers the C# editor's autocomplete
-  and its live error squiggles.
-  `build.sh` publishes it into `client/public/csharp-wasm/` (gitignored). See its README.
-- `client/` — React + TypeScript + Vite.
-  - `useStepScrubber.ts` + `ScrubberControls.tsx` — the generic play/pause/step
-    machinery every visualizer sits on top of.
+The app is a static site. There is no server: everything below runs either at build time or
+in the learner's browser ([docs/adr/0013](docs/adr/0013-static-only.md)).
+
+- `content/`: the lesson content, as C# classes, and a small console app that exports it.
+  - `Concepts/`: one file per practice concept, each implementing `IConcept` (explanation,
+    starter code per language, test cases, visualization steps). Adding a concept means adding
+    a file here and listing it in `ConceptRegistry.cs`; nothing else changes.
+  - `Tools/`: one file per reference/calculator lesson, each implementing `ITool`.
+    Deliberately a separate interface from `IConcept`: no code editor, no test cases, no
+    completion tracking, since "used the calculator" isn't pass/fail. See `content/ITool.cs`.
+  - `SectionOrder.cs` + the `Order` property on both interfaces: control which Section leads,
+    and which item leads within its section, independently.
+  - `ComplexityCatalog.cs`: canonical time/space complexity (plus accepted alternatives and a
+    reason) for every concept, behind the "Name the complexity" check.
+  - `Solutions/`: one reference solution per concept and language (`<id>.csx`, `<id>.py`).
+  - `ContentExport.cs`: writes `lessons.json`, `lessons/<id>.json` and `tools/<id>.json`.
+    `client/scripts/export-content.mjs` runs it into `client/public/content/` before
+    `npm run dev` and `npm run build`.
+- `wasm-csharp/`: the C# grader, Roslyn published for the .NET WebAssembly runtime and run in a
+  Web Worker in the learner's browser (`client/src/csharpWasmWorker.ts` /
+  `csharpWasmRunner.ts`), with a 5 s per-test timeout that terminates the worker.
+  `CodePolicy.cs` rejects any code that reaches outside plain computation (files, network,
+  processes, reflection, threads, `dynamic`, `#r`) before it runs, using Roslyn's semantic
+  model against a namespace allowlist. It also answers the C# editor's autocomplete and its
+  live error squiggles. `build.sh` publishes it into `client/public/csharp-wasm/`
+  (gitignored). See its README.
+- `client/`: React + TypeScript + Vite.
+  - `api.ts` / `localBackend.ts`: the data layer. Lesson content comes from the exported JSON;
+    progress lives in IndexedDB (`progressStore.ts`), with the rules (attempts, assisted and
+    independent passes, the review ladder) in `progressCore.ts`.
+  - `useStepScrubber.ts` + `ScrubberControls.tsx`: the generic play/pause/step machinery
+    every visualizer sits on top of.
   - `ArrayVisualizer.tsx` / `LinkedListVisualizer.tsx` / `StackVisualizer.tsx` /
     `HashMapVisualizer.tsx` / `CallStackVisualizer.tsx` / `TreeVisualizer.tsx` /
-    `GraphVisualizer.tsx` — picked at runtime by the lesson's `visualizerKind`.
-  - `components/tools/` — one component per `ToolKind` (the folder has them all; early ones
-    include BigOChart, LogicGates,
-    ComputerArchitecture, DynamicArrayGrowth, PlcScanCycle, LadderLogicBasics,
-    DigitalAnalogIo, PlcMemoryAddressing, IndustrialNetworking, PlcSafetyRedundancy,
-    OopBasics, InterfacesAbstraction, ServicesDependencyInjection,
-    CommonDesignPatterns, SolidPrinciples, DesignPatternCatalog (one component for the
-    three pattern family lessons), DesignPatternQuiz, NetworkLayers, TcpVsUdp, DnsHttpTrace, HashTableSim,
-    BitCalculator, FloatCalculator, EndiannessCalculator, IpSubnetCalculator,
-    ComplexityAnalysis, PatternDrill (its questions live in `patternDrillData.ts`),
-    MixedSet (its problem pool lives in `mixedSetData.ts`), PrepPlan, SqlBasics,
-    SqlJoins, SqlAggregation — the SQL three all thin wrappers around one
-    shared `SqlPlayground.tsx` engine — plus GitBasics and GitBranching, both
-    self-contained React-state simulations with no execution engine underneath).
-  - `sqljsLoader.ts` — lazy CDN loader for sql.js (WASM SQLite), same pattern as
-    `pyodideLoader.ts`. `sqlSampleData.ts` — the one shared employees/departments
-    dataset reused by all three SQL tools.
-  - `CSharpRunner.tsx` / `PythonRunner.tsx` / `LanguageRunner.tsx` — the editor + test
-    runner per language, and the tab switcher between them. `CSharpRunner` grades in the
-    browser (`csharpWasmRunner.ts`), falls back to `POST /api/execute/csharp` when the
-    runtime can't load, and offers a "Run on server" switch. `PythonRunner` runs entirely
-    in-browser, in a Web Worker (`pythonWorker.ts`, loading Pyodide via
-    `pyodideLoader.ts`) with fresh globals per test and a 5 s per-test timeout that
-    terminates the worker, and reports results to `POST /api/progress/record` (there's
-    no server round trip for Python execution).
-
-## Next up
-
-All of Phase 2's original DSA gaps (Trees, Heap, Hashing, Graphs, Dynamic Programming),
-the full PLC/Industrial track, the Software Design & OOP section's first four lessons,
-nine more Patterns (fast/slow pointers, prefix sums, merge intervals, top-K/heap,
-monotonic stack, binary search on answer, union-find, 0/1 knapsack, topological sort),
-the SQL & Databases and Git tracks (Professional Dev Skills, a new top-level section),
-the DP/Graph coverage gaps (LIS, interval DP, Dijkstra), and the learning loop around
-them (spaced-repetition review queue, the complexity-analysis lesson and per-lesson
-complexity check, the pattern-recognition drill, interview mode, a dashboard, and
-collapsible navigation) are now done. Still open: an AI-generated practice-problem feature (blocked on an API
-key/cost decision and on defining a minimal admin role).
+    `GraphVisualizer.tsx`: picked at runtime by the lesson's `visualizerKind`.
+  - `components/tools/`: one component per `ToolKind` (lessons whose content is a data file,
+    such as the language, ops and PLC tracks, share one renderer per track).
+  - `sqljsLoader.ts`: lazy CDN loader for sql.js (WASM SQLite), same pattern as
+    `pyodideLoader.ts`. `sqlSampleData.ts`: the one shared employees/departments dataset
+    reused by the SQL tools.
+  - `CSharpRunner.tsx` / `PythonRunner.tsx` / `LanguageRunner.tsx`: the editor + test runner
+    per language, and the tab switcher between them. Both graders run in Web Workers (C# in
+    `csharpWasmWorker.ts`, Python in `pythonWorker.ts` with Pyodide via `pyodideLoader.ts`),
+    with a 5 s per-test timeout that terminates the worker, and record the result in this
+    browser's progress.
+- `tools/linux-image/`: builds the kernel and initrd for the in-browser Linux VM (v86).
