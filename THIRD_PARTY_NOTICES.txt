@@ -128,13 +128,6 @@ the repository or the site's files.
 | Pyodide (`pyodide`) | 0.29.5 | MPL-2.0 (bundled CPython and packages under their own licences) | grading Python |
 | sql.js (`sql.js`) | 1.14.2 | MIT (SQLite is public domain) | the SQL lessons |
 
-## 5. Server mode only
-
-The ASP.NET Core server and the C# runner (not part of the static site) use .NET 10,
-ASP.NET Core and Entity Framework Core 10.0.12 with SQLite, and Roslyn scripting 5.9.0, all
-MIT, restored from NuGet at build time. The container image built from `Dockerfile` also
-contains the Microsoft .NET base images and their licences.
-
 ## Licence texts
 
 MIT licence (as used by the MIT packages above, with their copyright lines):
