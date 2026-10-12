@@ -29,9 +29,9 @@ public class ServicesDependencyInjectionTool : ITool
         "FakeEmailService directly; it just calls `.Send()` (or `.Notify()`) on whatever it was handed. " +
         "That single change is what makes it possible to hand a real service in production and a fake, " +
         "no-op service in a test, with the exact same class code running unmodified either way.\n\n" +
-        "This app does exactly this in its own Program.cs: " +
+        "ASP.NET Core apps do exactly this in Program.cs: " +
         "`builder.Services.AddDbContext<AppDbContext>(...)` registers the database context as a " +
-        "service, and every endpoint that needs it just asks for an AppDbContext parameter -- ASP.NET " +
+        "service, and every endpoint that needs it just asks for an AppDbContext parameter. ASP.NET " +
         "Core's built-in DI container constructs it and hands it over, and the endpoint code never " +
         "calls `new AppDbContext()` itself.\n\n" +
         "Try it below -- the SAME \"complete order\" call runs against either a real or a fake " +

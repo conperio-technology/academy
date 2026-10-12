@@ -27,7 +27,7 @@ public class BehavioralStoryBankTool : ITool
         "launches that slipped, disagreements about design or priorities, people you helped, and things you " +
         "changed that nobody asked you to. Write the Action part in detail even though you'll only say a fraction " +
         "of it; the detail is what you'll need for follow-up questions.\n\n" +
-        "Your stories are saved in this browser only, not on the server. Use \"Copy all as text\" to keep a copy " +
+        "Your stories are saved in this browser only (the dashboard's progress export includes them). Use \"Copy all as text\" to keep a copy " +
         "somewhere safer. The Behavioral Mock Round uses these stories, so you can practise choosing the right one " +
         "for each question.";
 }

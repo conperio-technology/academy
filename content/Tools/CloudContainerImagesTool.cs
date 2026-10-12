@@ -13,7 +13,7 @@ public class CloudContainerImagesTool : ITool
     public ToolKind ToolKind => ToolKind.CloudContainerImages;
 
     public string Explanation =>
-        "Containers package an app with everything it needs, and registries are where those packages live between the build and the server. This lesson covers how images are named and versioned, why :latest causes surprises, and the habits that keep production images small and safe, using this academy's own multi-stage Dockerfile as the example." +
+        "Containers package an app with everything it needs, and registries are where those packages live between the build and the server. This lesson covers how images are named and versioned, why :latest causes surprises, and the habits that keep production images small and safe, using a multi-stage Dockerfile for a React client and an ASP.NET Core API as the example." +
         "\n\n" +
         "It builds on the Containers and Kubernetes lesson in the Linux section, which explains layers and the build cache. Docker can't run in this app, so the commands are shown without captured output.";
 }

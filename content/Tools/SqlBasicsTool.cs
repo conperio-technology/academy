@@ -35,10 +35,9 @@ public class SqlBasicsTool : ITool
         "sort by a column you didn't select (`SELECT name FROM employees ORDER BY salary DESC`), because " +
         "the sort is applied over the source rows, not only over the selected columns. The SQL standard " +
         "and engines such as SQLite, the one running below, allow that.\n\n" +
-        "This app's own backend does the exact same kind of filtering -- " +
-        "`db.ProgressEntries.Where(p => p.UserId == userId)...OrderByDescending(p => p.UpdatedAt)` is " +
-        "EF Core building this exact WHERE-then-ORDER-BY shape into a real SQL query underneath, just " +
-        "written as C# instead of SQL text.\n\n" +
+        "C# code often writes this same shape without any SQL text: with EF Core, " +
+        "`db.Orders.Where(o => o.CustomerId == id).OrderByDescending(o => o.PlacedAt)` is turned into " +
+        "exactly this WHERE then ORDER BY query underneath.\n\n" +
         "Try it below -- a real, tiny SQL database (two tables: employees and departments) actually " +
         "runs whatever you type. Edit the query and run it again; nothing you do here can break " +
         "anything outside this one browser tab.";

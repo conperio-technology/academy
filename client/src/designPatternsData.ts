@@ -43,7 +43,7 @@ export interface PatternInfo {
   confusedWith: string;
 }
 
-// Lesson ids, matching the ITool classes in server/Content/Tools.
+// Lesson ids, matching the ITool classes in content/Tools.
 export const SOLID_LESSON_ID = "solid-principles";
 export const QUIZ_LESSON_ID = "design-pattern-quiz";
 export const FAMILY_LESSON_ID: Record<PatternFamily, string> = {
@@ -263,7 +263,7 @@ var mail = new EmailBuilder()
     .Body("<b>All green</b>", html: true)
     .Build();`,
     inTheWild: [
-      "This app's Program.cs: `WebApplication.CreateBuilder(args)` collects services and configuration over many lines, then `builder.Build()` produces the app.",
+      "An ASP.NET Core app's Program.cs: `WebApplication.CreateBuilder(args)` collects services and configuration over many lines, then `builder.Build()` produces the app.",
       "`StringBuilder` accumulates appends cheaply, then `ToString()` produces the immutable string.",
       "`DbContextOptionsBuilder` (the `options => options.UseSqlite(...)` lambda in Program.cs), `UriBuilder`, `ConfigurationBuilder` and `HostBuilder`.",
     ],
@@ -322,7 +322,7 @@ public sealed class ReportService(ISettingsCache settings)
     public string ApiUrl => settings.Get("ApiUrl"); // a test passes a fake
 }`,
     inTheWild: [
-      "This app: `CSharpExecutor` is registered with `AddSingleton` in Program.cs, so the whole API shares one instance and one SemaphoreSlim that caps concurrent code runs, with no static Instance property anywhere.",
+      "ASP.NET Core: a service registered with `AddSingleton` in Program.cs is one instance shared by the whole app (for example one SemaphoreSlim that caps concurrent jobs), handed to whoever asks for it, with no static Instance property anywhere.",
       "This app: `ConceptRegistry` and `ToolRegistry` are static classes holding one shared list. That is singleton shaped, and fine here because the data is immutable and never needs faking.",
       ".NET: `ArrayPool<T>.Shared`, `TimeProvider.System`, and the advice to reuse one `HttpClient` (or use IHttpClientFactory) instead of creating one per request.",
     ],
@@ -558,7 +558,7 @@ Inventory  Payments   Shipping    Email
     inTheWild: [
       "EF Core's `DbContext` is a facade over connections, change tracking, SQL generation and transactions. It is also a Unit of Work (`SaveChanges` commits every tracked change in one transaction), and each `DbSet<T>` behaves like a Repository.",
       "`File.ReadAllText(path)` hides FileStream, StreamReader, encoding detection and disposal behind one call.",
-      "This app: the functions in `client/src/api.ts` (such as `fetchLessons()`) hide URLs, fetch options and JSON parsing from components, and `CSharpExecutor.RunTests` hides process startup, JSON over stdin and stdout, and timeouts behind one call.",
+      "This app: the functions in `client/src/api.ts` (such as `fetchLessons()`) hide where lessons and progress come from (JSON files, IndexedDB) from components, and `runCSharpInBrowser` in `csharpWasmRunner.ts` hides the Web Worker, loading the .NET runtime, and timeouts behind one call.",
     ],
     interview:
       "Facade is easy to define, so the probe is usually how it differs from Adapter (a facade simplifies many objects behind a new interface; an adapter makes one object fit an interface that already exists) and whether you know its failure mode, the god class. Describing a service layer or an API gateway as a facade is a good bridge into system design.",
@@ -1006,7 +1006,7 @@ public sealed class CsvImporter : DataImporter
 }`,
     inTheWild: [
       "`BackgroundService` in ASP.NET Core: `StartAsync` and `StopAsync` are written once in the base class and call your `ExecuteAsync` override at the right time.",
-      "EF Core's `DbContext` calls your `OnModelCreating` and `OnConfiguring` overrides at fixed points; this app's AppDbContext overrides OnModelCreating.",
+      "EF Core's `DbContext` calls your `OnModelCreating` and `OnConfiguring` overrides at fixed points; an app's own DbContext subclass overrides OnModelCreating to describe its tables.",
       "`Stream`: the base class implements helpers such as `CopyTo` and `ReadByte` in terms of the abstract `Read` that each concrete stream provides.",
     ],
     interview:
@@ -1149,7 +1149,7 @@ var chain = new TeamLead();
 chain.SetNext(new Director());
 chain.Approve(12_000); // "Director approved $12,000.00"`,
     inTheWild: [
-      "ASP.NET Core middleware: this app's Program.cs chains `UseCors`, `UseDefaultFiles` and `UseStaticFiles`. Static files stops the chain when it finds a matching file; otherwise the request carries on to the API endpoints.",
+      "ASP.NET Core middleware: a typical Program.cs chains `UseCors`, `UseDefaultFiles` and `UseStaticFiles`. Static files stops the chain when it finds a matching file; otherwise the request carries on to the API endpoints.",
       "`DelegatingHandler` pipelines in HttpClient: each handler calls `base.SendAsync` to pass the request on, or returns early (a cached response, a circuit breaker).",
       "Event bubbling in the browser DOM: a click goes from the target up through its ancestors until a handler calls `stopPropagation()`.",
     ],
@@ -1234,7 +1234,7 @@ public class BillingService(
     whyBetter:
       "Tax rules, the database schema and the email template change for different reasons, on different schedules, at the request of different people. Now each change touches one class, and the tax math can be unit tested without a database or a mail server.",
     inTheWild:
-      "This app: each lesson is its own class in `server/Content/Tools`, the registry only lists them, and Program.cs only serves them. Changing a lesson's text never touches routing.",
+      "This app: each lesson is its own class in `content/Tools`, the registry only lists them, and the exporter only writes them out as files. Changing a lesson's text never touches the exporter or the sidebar.",
     interview:
       "Single Responsibility is about reasons to change, not do one thing. A class with five small methods can satisfy it, and a single 300 line method can violate it. Asking who would request this change is the test interviewers want to hear.",
   },
@@ -1287,7 +1287,7 @@ public class PriceCalculator
     whyBetter:
       "Tested code stays untouched when a new discount ships, so it cannot break. This is exactly the Strategy pattern, and it is the reason Strategy exists.",
     inTheWild:
-      "This app: adding a lesson is a new ITool class plus one registry line, and the lesson listing endpoint and sidebar never change. ToolView's list of `toolKind` cases is the one place that does grow, a deliberate, contained tradeoff.",
+      "This app: adding a lesson is a new ITool class plus one registry line, and the exporter and sidebar never change. ToolView's list of `toolKind` cases is the one place that does grow, a deliberate, contained tradeoff.",
     interview:
       "Do not claim code can be closed to every change. The skill is predicting the likely axis of change (new discount types) and making that axis cheap. One switch inside one factory is fine; the same switch copied in five places is the smell.",
   },
@@ -1453,7 +1453,7 @@ builder.Services.AddSingleton(TimeProvider.System);`,
     whyBetter:
       "The business rule no longer knows about SQL, SMTP or the system clock. Tests pass fakes (including a fake TimeProvider to test a renewal at the end of a month), and swapping the email provider is a one line change in Program.cs.",
     inTheWild:
-      "This app: Program.cs registers `AppDbContext` and `CSharpExecutor` with the container, and endpoints receive them as parameters instead of constructing them. Services & Dependency Injection walks through the same idea.",
+      "ASP.NET Core: Program.cs registers services such as a DbContext with the container, and endpoints receive them as parameters instead of constructing them. Services & Dependency Injection walks through the same idea.",
     interview:
       "Separate the three terms interviewers hear mixed up: Dependency Inversion is the principle (depend on abstractions you own), Dependency Injection is the technique (pass dependencies in), and the DI container is the tool that automates it. Ownership is the subtle part: the interface lives with the code that uses it, not with the implementation.",
   },

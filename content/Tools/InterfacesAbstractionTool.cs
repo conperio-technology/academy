@@ -26,8 +26,8 @@ public class InterfacesAbstractionTool : ITool
         "it below: the SAME calling function (shown underneath) runs unchanged no matter which animal " +
         "you pick, because it was written against IAnimal, not against Dog specifically.\n\n" +
         "This app is its own real example, not just a toy one: every practice lesson implements " +
-        "IConcept, every reference lesson implements ITool (see server/Content/IConcept.cs and " +
-        "ITool.cs), and the API, the executor, and the sidebar are all written against those interfaces. " +
+        "IConcept, every reference lesson implements ITool (see content/IConcept.cs and " +
+        "ITool.cs), and the exporter that turns lessons into the site's files is written against those interfaces. " +
         "None of them contain a single line of code that knows about BstInsert or PlcScanCycle by " +
         "name. That's exactly why this app could keep growing one brand-new lesson at a time as " +
         "\"one new file, nothing else touched\": the same property adding a Triangle demonstrated in " +

@@ -30,7 +30,7 @@ export const containerImages: OpsLessonData = {
     },
     {
       kind: "code",
-      title: "A real multi-stage Dockerfile: this academy's own",
+      title: "A real multi-stage Dockerfile: a React client and an ASP.NET Core API",
       blocks: [
         {
           lang: "dockerfile",

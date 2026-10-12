@@ -1,8 +1,7 @@
 namespace DsaAcademy.Content.Tools;
 
-// "Programming in C# & Python" section. Stage 1 is the "basics" track plus the
-// "cheat sheets" track; later stages add "intermediate" and "advanced" tracks, which
-// slot in between by Order (basics 0 to 999, intermediate 1000s, advanced 2000s, cheat
+// "Programming in C# & Python" section: the "basics", "intermediate", "advanced" and
+// "cheat sheets" tracks, ordered by Order (basics 0 to 999, intermediate 1000s, advanced 2000s, cheat
 // sheets 5000s). The interactive content lives in client/src/langTrack/.
 public class LangStartHereTool : ITool
 {

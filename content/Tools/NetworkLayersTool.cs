@@ -23,7 +23,7 @@ public class NetworkLayersTool : ITool
         "care whether the Wi-Fi or the Ethernet cable underneath it is doing the actual carrying, and " +
         "the Application layer doesn't know or care whether TCP is retransmitting a lost segment " +
         "underneath it. That separation is the same idea as this app's own IConcept/ITool interfaces " +
-        "(see Interfaces & Abstraction on the roadmap) -- program to a boundary, not the details behind " +
+        "(see Interfaces & Abstraction): program to a boundary, not the details behind " +
         "it. OSI's 7-layer version is the textbook teaching model; real network stacks (and what a " +
         "packet-capture tool like Wireshark actually shows you) implement the simpler 4-layer TCP/IP " +
         "model instead, which folds OSI's top three layers into one \"Application\" layer and its bottom " +

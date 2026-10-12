@@ -42,7 +42,7 @@ public class PrepPlanTool : ITool
         "what produced it, and where nothing measures a kind (nothing here can judge a design you produced alone) " +
         "it says so. It's a guide to what to practise next, not a prediction of the outcome. The \"Focus next\" " +
         "list links straight to the most useful next step, such as redoing an assisted pass from the bare starter.\n\n" +
-        "Your plan and practice history are kept in this browser. Lesson progress is on the server as usual.\n\n" +
+        "Your plan, practice history and lesson progress are kept in this browser; the dashboard's Export progress button saves them all to a file.\n\n" +
         "Not preparing for a big-tech interview? Switch to the second path at the top, Well-rounded IT & CS: the same " +
         "plan and progress views over a broad route through hardware, programming, operating systems, networking, " +
         "security, Linux, databases, Git, system design basics and AI. Each path keeps its own plan.";
