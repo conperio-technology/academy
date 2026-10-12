@@ -25,7 +25,7 @@ public enum VisualizerKind
 }
 
 // A test case is one call: a literal that's valid source in C#, Python, AND as JSON
-// (see Content/Lit.cs) for the argument(s), plus the expected return value as JSON. The
+// (see Lit.cs) for the argument(s), plus the expected return value as JSON. The
 // executor compares actual vs. expected as *parsed* JSON, not raw text, so formatting
 // differences (spacing, Python's `True` vs C#'s `true` both lowering to JSON `true`)
 // don't cause false failures. Multi-argument calls just join their literals with a
@@ -35,8 +35,8 @@ public record TestCase(string InputLiteral, string ExpectedJson);
 public record TestResult(string InputDisplay, string ExpectedJson, string? ActualJson, bool Passed, string? Error);
 
 // One row in the sidebar, covering both lesson kinds (IConcept "practice" lessons and
-// ITool "tool" lessons) -- Kind tells the frontend which detail endpoint to call
-// (/api/lessons/{id} vs /api/tools/{id}) and which view component to render.
+// ITool "tool" lessons) -- Kind tells the frontend which detail file to load
+// (lessons/{id}.json vs tools/{id}.json) and which view component to render.
 // Completed is always false for tools; there's no pass/fail for a calculator.
 public record NavItem(string Id, string Kind, string Section, string Track, string Title, string OneLiner, bool Completed);
 
@@ -58,8 +58,7 @@ public record ConceptDetail(
     bool Completed,
     string? PythonHarnessPreamble,
     string? PythonCallTemplate,
-    // Only used by the "Run in browser (beta)" C# prototype (wasm-csharp/), which needs
-    // what the server runner gets: the C# preamble and how to call the solution.
+    // For the in-browser C# grader (wasm-csharp/): the C# preamble and how to call the solution.
     string? CSharpHarnessPreamble,
     string? CSharpCallTemplate,
     // Patterns-track-only content (empty for ordinary Fundamentals concepts): the
@@ -75,10 +74,24 @@ public record ConceptDetail(
     // Total runs across languages for the current user -- drives that unlock.
     int Attempts,
     // How the current user has practised it (guided or bare passes, reference seen).
-    DsaAcademy.Data.LessonEvidence Evidence,
+    LessonEvidence Evidence,
     // Transfer exercises: the lesson this one follows, and the one that follows this.
     LessonLink? TransferOf,
     LessonLink? TransferNext
 );
 
 public record LessonLink(string Id, string Title);
+
+// How a learner has practised a lesson (guided or bare passes, reference seen). The export
+// writes it empty; client/src/progressCore.ts computes the real values from local progress.
+public record LessonEvidence(
+    string ConceptId,
+    bool Attempted,
+    DateTime? LastRevealedAt,
+    bool AssistedPass,
+    bool IndependentPass,
+    bool TimedPass,
+    bool UnrecordedPass)
+{
+    public static LessonEvidence None(string conceptId) => new(conceptId, false, null, false, false, false, false);
+}

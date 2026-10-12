@@ -1,32 +1,30 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DsaAcademy.Data;
 
 namespace DsaAcademy.Content;
 
-// The lesson content as static JSON files, for the static site (docs/adr/0010): the exact
-// bodies GET /api/lessons, /api/lessons/{id} and /api/tools/{id} return for a user with no
-// progress. The static client reads these and fills in the per-user fields (completed,
-// attempts, evidence) from progress kept in the browser.
+// The lesson content as JSON files, which the site loads (client/src/localBackend.ts):
 //
-//   dotnet run --project server/server.csproj --no-launch-profile -- --export-content <dir>
+//   dotnet run --project content -- <dir>
 //
-// writes <dir>/lessons.json, <dir>/lessons/<id>.json and <dir>/tools/<id>.json.
+// writes <dir>/lessons.json (the sidebar listing), <dir>/lessons/<id>.json (one graded
+// exercise each) and <dir>/tools/<id>.json (one tool lesson each). The per-learner fields
+// (completed, attempts, evidence) are written empty; the client fills them in from the
+// progress kept in the browser.
 public static class ContentExport
 {
-    // The same output as the API: web defaults (camelCase) and enums as camelCase strings
-    // (see ConfigureHttpJsonOptions in Program.cs).
+    // Web defaults (camelCase) and enums as camelCase strings, as the client's types.ts expects.
     public static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
     };
 
-    // The sidebar listing, shared with GET /api/lessons. Stable OrderBy: ties (most items, at
-    // the default Order = 100) keep their registry position.
-    public static List<NavItem> NavItems(Func<string, bool> completed)
+    // The sidebar listing. Stable OrderBy: ties (most items, at the default Order = 100) keep
+    // their registry position.
+    public static List<NavItem> NavItems()
     {
         var practiceItems = ConceptRegistry.GetAll()
-            .Select(c => (c.Order, Item: new NavItem(c.Id, "practice", c.Section, c.Track, c.Title, c.OneLiner, completed(c.Id))));
+            .Select(c => (c.Order, Item: new NavItem(c.Id, "practice", c.Section, c.Track, c.Title, c.OneLiner, false)));
         var toolItems = ToolRegistry.GetAll()
             .Select(t => (t.Order, Item: new NavItem(t.Id, "tool", t.Section, t.Track, t.Title, t.OneLiner, false)));
 
@@ -46,10 +44,10 @@ public static class ContentExport
         void Save(string relative, object value) =>
             File.WriteAllText(Path.Combine(root, relative), JsonSerializer.Serialize(value, JsonOptions));
 
-        Save("lessons.json", NavItems(_ => false));
+        Save("lessons.json", NavItems());
         var concepts = ConceptRegistry.GetAll();
         foreach (var c in concepts)
-            Save(Path.Combine("lessons", $"{c.Id}.json"), c.ToDetail(false, 0, ProgressService.Evidence(c.Id, [])));
+            Save(Path.Combine("lessons", $"{c.Id}.json"), c.ToDetail(false, 0, LessonEvidence.None(c.Id)));
         var tools = ToolRegistry.GetAll();
         foreach (var t in tools)
             Save(Path.Combine("tools", $"{t.Id}.json"), t.ToDetail());

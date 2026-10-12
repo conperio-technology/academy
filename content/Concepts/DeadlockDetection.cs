@@ -1,7 +1,7 @@
 namespace DsaAcademy.Content.Concepts;
 
 // A graph problem dressed as a concurrency one: no threads run here. The wait-for graph is
-// plain data, which keeps it inside the runner sandbox (see runner/CodePolicy.cs).
+// plain data, which keeps it inside the C# sandbox (see wasm-csharp/CodePolicy.cs).
 public class DeadlockDetection : IConcept
 {
     public string Id => "deadlock-detection";

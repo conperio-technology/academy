@@ -4,11 +4,11 @@ namespace DsaAcademy.Content;
 
 // One reference solution per (concept, language), revealed under the editor once you've
 // passed the lesson or tried it a few times (see the client's ReferenceSolution.tsx).
-// Each lives as a real source file in Content/Solutions/ -- {id}.csx for C#, {id}.py
+// Each lives as a real source file in Solutions/ -- {id}.csx for C#, {id}.py
 // for Python -- embedded into the assembly, rather than as a string property on each
 // concept: multi-line solutions read and edit far better as files with syntax
 // highlighting than as escaped "...\n" + chains. (.csx so MSBuild doesn't try to compile
-// them into the API itself.) Every solution should pass its own concept's tests.
+// them into the exporter itself.) Every solution should pass its own concept's tests.
 public static class SolutionCatalog
 {
     private static readonly Dictionary<string, string> Extensions = new()

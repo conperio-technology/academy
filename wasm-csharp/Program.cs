@@ -16,22 +16,21 @@ Console.WriteLine("csharp-wasm ready");
 
 namespace DsaAcademy.CSharpWasm
 {
-    // The browser-side twin of runner/Program.cs: compiles the learner's code the same way
-    // (a C# *script*, same imports, same `return JsonSerializer.Serialize(call)` per test),
-    // rejects it with the same CodePolicy.cs (linked in from runner/), then runs the tests
-    // one at a time. It runs inside a Web Worker; the page enforces the per-test timeout by
-    // terminating that worker, exactly like the Python runner.
+    // Grades learner C# in the browser: compiles the code as a C# *script* (fixed imports,
+    // `return JsonSerializer.Serialize(call)` per test), rejects it with CodePolicy.cs, then
+    // runs the tests one at a time. It runs inside a Web Worker; the page enforces the
+    // per-test timeout by terminating that worker, exactly like the Python runner.
     //
-    // One difference in mechanics, not results: the server compiles one script per test.
-    // Here the code is compiled ONCE into a script that returns one lambda per test, and
-    // every test loads that assembly afresh (Assembly.Load of the same bytes), so each test
-    // still starts with fresh statics and re-runs the learner's top-level statements, as on
-    // the server, without paying for N compiles.
+    // The code is compiled ONCE into a script that returns one lambda per test, and every
+    // test loads that assembly afresh (Assembly.Load of the same bytes), so each test starts
+    // with fresh statics and re-runs the learner's top-level statements without paying for
+    // N compiles. (This matches the retired server runner, which compiled one script per
+    // test; see docs/adr/0012.)
     public static partial class Runner
     {
         private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-        // The same imports runner/Program.cs gives every script.
+        // The imports every script gets.
         private static readonly string[] Imports = ["System", "System.Linq", "System.Collections.Generic", "System.Text.Json"];
 
         private static List<MetadataReference>? _references;
@@ -57,9 +56,9 @@ namespace DsaAcademy.CSharpWasm
                 Assembly.Load("System.Memory"),
                 Assembly.Load("System.Collections.NonGeneric"),            // Queue, SortedList (System.Collections)
             ];
-            // Plus everything those reference, transitively, as far as it's in the bundle: the
-            // server's Roslyn scripting resolves the same closure from its references, so the
-            // same code compiles (or fails with the same message) on both paths. The ones
+            // Plus everything those reference, transitively, as far as it's in the bundle (the
+            // closure Roslyn scripting on desktop .NET would resolve), so code compiles (or
+            // fails) the way it would there. The ones
             // holding allowed namespaces are rooted in the .csproj; the rest may be trimmed,
             // which only changes the wording of an error for a namespace CodePolicy rejects.
             var list = new List<MetadataReference>();
@@ -89,7 +88,7 @@ namespace DsaAcademy.CSharpWasm
             return list;
         }
 
-        // Trims an error or compile message like runner/Program.cs does.
+        // Trims an error or compile message to RunnerLimits.MaxResultChars.
         private static string Cap(string text) => text.Length <= RunnerLimits.MaxResultChars
             ? text
             : text[..RunnerLimits.MaxResultChars] + $"... (output truncated: {text.Length:N0} characters)";
@@ -108,7 +107,7 @@ namespace DsaAcademy.CSharpWasm
                     optimizationLevel: OptimizationLevel.Debug,
                     allowUnsafe: false,
                     concurrentBuild: false) // single-threaded runtime
-                .WithScriptClassName("Submission#0"); // what Roslyn scripting (the server) uses
+                .WithScriptClassName("Submission#0"); // what Roslyn scripting uses
             return CSharpCompilation.CreateScriptCompilation(
                 "Submission", tree, References(), options, returnType: typeof(object));
         }
@@ -193,8 +192,8 @@ namespace DsaAcademy.CSharpWasm
         private const int MaxDiagnostics = 100;
 
         // CS8632, "the annotation for nullable reference types should only be used in code
-        // within a '#nullable' annotations context": scripts compile with nullable off, as on
-        // the server, but lessons write `Node?` anyway, so it would mark most starters.
+        // within a '#nullable' annotations context": scripts compile with nullable off, as
+        // Roslyn scripting does, but lessons write `Node?` anyway, so it would mark most starters.
         private static readonly HashSet<string> Quiet = ["CS8632"];
 
         [JSExport]

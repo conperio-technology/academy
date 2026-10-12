@@ -11,8 +11,8 @@ namespace DsaAcademy.Runner;
 // trying to catch them at runtime.
 //
 // This is the "don't let a learner (or a typo) touch the host" level of protection
-// for an internal app, not a hardened multi-tenant sandbox: the separate process,
-// timeout, and memory cap in the API (CSharpExecutor.cs) are the second layer.
+// for a learning app, not a hardened sandbox: the code runs in the learner's own browser
+// tab, in a Web Worker the page terminates after a per-test timeout (csharpWasmRunner.ts).
 public static class CodePolicy
 {
     private static readonly HashSet<string> AllowedNamespaces =
@@ -39,7 +39,7 @@ public static class CodePolicy
         "System.Type",
     ];
 
-    // The first violation, worded as the runner (and the in-browser grader) reports it, or
+    // The first violation, worded as the grader reports it, or
     // null when the code is fine.
     public static string? Check(Compilation compilation) => FindViolations(compilation).FirstOrDefault()?.Text;
 

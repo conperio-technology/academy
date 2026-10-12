@@ -4,7 +4,7 @@ namespace DsaAcademy.Content;
 
 // Builds test-case argument literals that are simultaneously valid C#, valid Python,
 // and valid JSON, so one literal can be substituted into a concept's CSharpCallTemplate
-// (compiled server-side) and PythonCallTemplate (run client-side via Pyodide) alike.
+// (compiled in the browser by wasm-csharp/) and PythonCallTemplate (run in Pyodide) alike.
 //
 // This works because:
 // - `[1, 2, 3]` is a C# 12+ target-typed collection expression (valid wherever an

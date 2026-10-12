@@ -27,12 +27,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
   </ItemGroup>
 
-  <!-- The exact policy the server's runner enforces, compiled in from the same file. -->
-  <ItemGroup>
-    <Compile Include="../runner/CodePolicy.cs" Link="CodePolicy.cs" />
-    <Compile Include="../runner/RunnerProtocol.cs" Link="RunnerProtocol.cs" />
-  </ItemGroup>
-
   <!-- Learner code may call anything public in these, and Roslyn compiles against their
        metadata as loaded at runtime, so they must not be trimmed. -->
   <ItemGroup>
@@ -44,7 +38,7 @@
     <TrimmerRootAssembly Include="System.Text.RegularExpressions" />
     <TrimmerRootAssembly Include="System.Text.Json" />
     <TrimmerRootAssembly Include="System.Memory" />
-    <!-- System.Collections namespace types (Queue, SortedList, ...) the server also compiles against. -->
+    <!-- System.Collections namespace types (Queue, SortedList, ...) learner code may use. -->
     <TrimmerRootAssembly Include="System.Collections.NonGeneric" />
     <!-- Our own (tiny) assembly: RunLine is serialized via reflection. -->
     <TrimmerRootAssembly Include="CSharpWasm" />

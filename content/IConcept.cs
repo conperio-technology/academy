@@ -1,8 +1,8 @@
 namespace DsaAcademy.Content;
 
 // One lesson. Each concept owns its own explanation, visualization, starter code, and
-// test cases; the API and the executor are generic over this interface so adding a new
-// concept never means touching Program.cs or CSharpExecutor.cs.
+// test cases; the export and the client's graders are generic over this interface, so adding
+// a new concept never means touching either.
 public interface IConcept
 {
     string Id { get; }
@@ -40,9 +40,9 @@ public interface IConcept
 
     // Extra code made available ahead of the user's own code -- e.g. a ListNode class +
     // a helper to build one from an int[], for linked-list concepts. Most concepts
-    // don't need one. C# preamble runs server-side (Execution/CSharpExecutor.cs);
-    // Python preamble is shipped to the client and run before the user's code via
-    // Pyodide, since Python execution happens entirely in-browser.
+    // don't need one. Both are shipped to the client: the C# preamble is compiled with the
+    // user's code by the in-browser grader (wasm-csharp/), the Python one runs before it
+    // in Pyodide.
     string? CSharpHarnessPreamble => null;
     string? PythonHarnessPreamble => null;
 

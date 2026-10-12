@@ -1,16 +1,12 @@
 # .NET
-server/bin/
-server/obj/
-runner/bin/
-runner/obj/
-server/*.db
-server/*.db-shm
-server/*.db-wal
+content/bin/
+content/obj/
 
 # Node / Vite
 client/node_modules/
 client/dist/
-client/dist-static/
+# Lesson content exported from content/ (client/scripts/export-content.mjs)
+client/public/content/
 
 # Secrets and local environment files (keep a committed example as .env.example)
 .env
@@ -35,14 +31,10 @@ Thumbs.db
 .gstack/
 
 
-# In-browser C# prototype: build output (wasm-csharp/build.sh)
+# In-browser C# grader: build output (wasm-csharp/build.sh)
 wasm-csharp/bin/
 wasm-csharp/obj/
 client/public/csharp-wasm/
-
-# Progress parity check (tools/progress-parity/check.mjs): build output
-tools/progress-parity/bin/
-tools/progress-parity/obj/
 
 # Claude Code: per-user settings and agent worktrees stay local
 .claude/settings.local.json

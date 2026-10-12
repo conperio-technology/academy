@@ -8,7 +8,7 @@ public class HashTableSimTool : ITool
 
     // Belongs right after Hash Maps: Two Sum, not trailing behind every DSA concept
     // (a Tool otherwise always sorts after same-or-lower-Order concepts within a
-    // section -- see Program.cs's /api/lessons sort). fundamentals track = Order 50,
+    // section -- see ContentExport.NavItems). fundamentals track = Order 50,
     // everything from Trees onward stays at the default 100, so 60 lands this here.
     public int Order => 60;
 

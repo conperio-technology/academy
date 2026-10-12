@@ -6,8 +6,8 @@
 #   ./wasm-csharp/build.sh          # or: npm run build:csharp-wasm (from client/)
 #   FORCE=1 ./wasm-csharp/build.sh  # rebuild even if the output looks up to date
 #
-# The output is gitignored (~18 MB plus ~5 MB of .br files). Without it the app still works:
-# C# exercises notice the runtime is missing and grade on the server instead.
+# The output is gitignored (~18 MB; static hosts such as GitHub Pages compress it in transit). Without it C# exercises can't be
+# graded (they say so); everything else works.
 # Needs only the .NET 10 SDK (no wasm-tools workload).
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -16,7 +16,7 @@ tmp="$here/obj/publish-out"
 stamp="$out/_framework/dotnet.js"
 
 # Skip the ~1 minute publish when nothing it compiles changed since the last one.
-inputs=("$here/Program.cs" "$here/CSharpWasm.csproj" "$here/../runner/CodePolicy.cs" "$here/../runner/RunnerProtocol.cs" "$0")
+inputs=("$here/Program.cs" "$here/CSharpWasm.csproj" "$here/CodePolicy.cs" "$here/RunnerProtocol.cs" "$0")
 if [[ -z "${FORCE:-}" && -f "$stamp" ]]; then
   stale=0
   for f in "${inputs[@]}"; do [[ "$f" -nt "$stamp" ]] && stale=1; done
@@ -31,10 +31,9 @@ dotnet publish "$here/CSharpWasm.csproj" -c Release -o "$tmp" --nologo
 
 rm -rf "$out"
 mkdir -p "$out/_framework"
-# The plain files (what Vite's dev server sends) plus the precompressed .br variants, which
-# the API sends instead when the browser accepts brotli (server/CSharpWasmFiles.cs). The
-# .gz copies are skipped: every browser that runs this accepts brotli.
-find "$tmp/wwwroot/_framework" -maxdepth 1 -type f ! -name '*.gz' -exec cp {} "$out/_framework/" \;
+# The plain files only: the publish also writes precompressed .br and .gz copies, which a
+# static host doesn't use.
+find "$tmp/wwwroot/_framework" -maxdepth 1 -type f ! -name '*.gz' ! -name '*.br' -exec cp {} "$out/_framework/" \;
 # The runtime's licence and third-party notices travel with it (see THIRD_PARTY_NOTICES.md).
 pack="$(dotnet nuget locals global-packages --list | sed 's/^global-packages: //')"
 pack="$pack/microsoft.netcore.app.runtime.mono.browser-wasm/$(dotnet msbuild "$here/CSharpWasm.csproj" -getProperty:BundledNETCoreAppPackageVersion)"
@@ -46,6 +45,5 @@ else
 fi
 # dotnet.js last: it's the up-to-date stamp above.
 touch "$stamp"
-plain=$(find "$out/_framework" -type f ! -name '*.br' -printf '%s\n' | awk '{s+=$1} END {printf "%.1f", s/1e6}')
-br=$(find "$out/_framework" -type f -name '*.br' -printf '%s\n' | awk '{s+=$1} END {printf "%.1f", s/1e6}')
-echo "Published to $out (${plain} MB, ${br} MB as brotli)"
+plain=$(find "$out/_framework" -type f -printf '%s\n' | awk '{s+=$1} END {printf "%.1f", s/1e6}')
+echo "Published to $out (${plain} MB)"

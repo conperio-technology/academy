@@ -3,8 +3,8 @@ using DsaAcademy.Content.Concepts;
 namespace DsaAcademy.Content;
 
 // The full catalog of concepts, in the order they should be taught. Add a new concept
-// class under Content/Concepts/ and list it here -- nothing else needs to change (the
-// API, the executor, and the progress store are all generic over IConcept).
+// class under Concepts/ and list it here -- nothing else needs to change (the export, the
+// graders and the progress store are all generic over IConcept).
 public static class ConceptRegistry
 {
     private static readonly List<IConcept> All =
@@ -203,7 +203,7 @@ public static class ConceptRegistry
 
     private static LessonLink? Link(IConcept? c) => c is null ? null : new LessonLink(c.Id, c.Title);
 
-    public static ConceptDetail ToDetail(this IConcept concept, bool completed, int attempts, DsaAcademy.Data.LessonEvidence evidence) => new(
+    public static ConceptDetail ToDetail(this IConcept concept, bool completed, int attempts, LessonEvidence evidence) => new(
         Id: concept.Id,
         Section: concept.Section,
         Track: concept.Track,

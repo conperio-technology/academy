@@ -57,8 +57,8 @@ public class LinkedListTraversal : IConcept
     ];
 
     // The user only ever sees/writes Solution -- ListNode and the array-to-list builder
-    // are infrastructure, injected ahead of their code (server-side for C#, client-side
-    // via Pyodide for Python) so test cases can hand them a real list.
+    // are infrastructure, injected ahead of their code (compiled with it for C#, run
+    // before it in Pyodide for Python) so test cases can hand them a real list.
     public string? CSharpHarnessPreamble =>
         "public class ListNode\n" +
         "{\n" +
