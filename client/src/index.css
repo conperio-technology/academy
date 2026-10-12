@@ -1116,20 +1116,12 @@ code, pre {
   gap: 8px 16px;
 }
 
-/* C# runs in the browser by default; "Run on server" toggle and status (csharpWasmRunner.ts). */
+/* C# runs in the browser: runtime status and timings (csharpWasmRunner.ts). */
 .run-in-browser-status {
   font-size: 13px;
   color: var(--text);
   opacity: 0.75;
   overflow-wrap: anywhere;
-}
-.run-in-browser-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
 }
 .run-in-browser-metrics {
   margin: -4px 0 12px;

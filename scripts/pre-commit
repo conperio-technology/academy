@@ -11,8 +11,8 @@
 # Git for Windows runs hooks with its own bash, so this works on Windows without WSL.
 #
 # Checks, each only when matching files are staged:
-#   - no progress databases, .env files or client/dist in the commit
-#   - no en or em dashes in added lines under server/Content and client/src
+#   - no .env files, client/dist or exported content (client/public/content) in the commit
+#   - no en or em dashes in added lines under content/ and client/src
 #   - C# whitespace matches .editorconfig (dotnet format whitespace, staged .cs files)
 #   - oxlint on staged .ts/.tsx files, then the TypeScript type check (tsc -b)
 #   - glossary, Complexity Gym and PLC checks and index.css brace depth (verify.sh "checks")
@@ -37,12 +37,12 @@ pick() {
 
 # 1. Files that must never be committed.
 forbidden=()
-while IFS= read -r f; do forbidden+=("$f"); done < <(pick '(^|/)\.env(\..*)?$|^server/.*\.db(-shm|-wal)?$|^client/dist/')
+while IFS= read -r f; do forbidden+=("$f"); done < <(pick '(^|/)\.env(\..*)?$|^client/dist/|^client/public/(content|csharp-wasm)/')
 if ((${#forbidden[@]})); then fail "these must not be committed: ${forbidden[*]}"; fi
 
 # 2. Dashes in lesson prose (added lines only, so older text does not block you).
 content=()
-while IFS= read -r f; do content+=("$f"); done < <(pick '^(server/Content|client/src)/')
+while IFS= read -r f; do content+=("$f"); done < <(pick '^(content|client/src)/')
 if ((${#content[@]})); then
   en="$(printf '\342\200\223')"; em="$(printf '\342\200\224')"   # U+2013 and U+2014 in UTF-8
   dashes="$(git diff --cached -U0 -- "${content[@]}" | grep -E '^\+' | grep -vE '^\+\+\+ ' | grep -F -e "$en" -e "$em")"
@@ -54,7 +54,7 @@ fi
 
 # 3. C# formatting.
 csfiles=()
-while IFS= read -r f; do csfiles+=("$f"); done < <(pick '^(server|runner)/.*\.cs$')
+while IFS= read -r f; do csfiles+=("$f"); done < <(pick '^(content|wasm-csharp)/.*\.cs$')
 if ((${#csfiles[@]})); then
   if ! dotnet format whitespace --folder --verify-no-changes --include "${csfiles[@]}"; then
     fail "C# whitespace. Fix with: dotnet format whitespace --folder --include ${csfiles[*]}  (then git add)"

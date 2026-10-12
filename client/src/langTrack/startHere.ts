@@ -84,7 +84,7 @@ print(count + 1)   # TypeError: can only concatenate str (not "int") to str
         { term: "Dynamic typing", meaning: "Types belong to values, not names, and are checked as each line runs (Python)." },
         { term: "Block", meaning: "A group of statements that belong together, like the body of a loop. Braces in C#, indentation in Python." },
         { term: "Function (or method)", meaning: "A named, reusable piece of code that takes inputs and can return a result. In C# functions live inside classes and are called methods." },
-        { term: "Sandbox", meaning: "A locked-down place to run code where it can't touch files, the network or other programs. The academy runs your C# in one." },
+        { term: "Sandbox", meaning: "A locked-down place to run code where it can't touch files, the network or other programs. The academy runs your C# in one, inside your browser." },
       ],
     },
     {
@@ -103,7 +103,7 @@ print(count + 1)   # TypeError: can only concatenate str (not "int") to str
         "The switch at the top of every lesson shows C# and Python side by side, or just one of them. Your choice is remembered in this browser.",
         "Each lesson ends with predict-the-output questions: read the program, decide what it prints, then pick an answer to see the explanation.",
         "The graded exercises in this track (the lessons with a code editor) give you a function to finish. Pick C# or Python with the language tab above the editor, write your code, then press Run Tests. Each test calls your function with an input and compares what it returns with the expected answer.",
-        "Exercises are graded on the value your function returns, not on what it prints. In fact, printing with `Console.WriteLine` is blocked in C# exercises, because C# runs on the academy's server inside a sandbox. Python runs entirely in your browser.",
+        "Exercises are graded on the value your function returns, not on what it prints. In fact, printing with `Console.WriteLine` is blocked in C# exercises, because your C# runs in a sandbox that only allows plain computation. Both languages run entirely in your browser.",
         "Stuck? The reference solution unlocks once you pass, or after a few attempts. Read it, then close it and write your own version from memory.",
         "The cheat sheets at the end of the section are one-page references for both languages, with a C# to Python translation table, a search box, copy buttons, and a layout that prints cleanly.",
       ],

@@ -1,9 +1,9 @@
 // The "Well-rounded IT & CS" study path: a second plan next to the FAANG interview plan in
 // prepPlanData.ts, for people who want broad, practical computing knowledge rather than
 // interview drilling. It is built from topic families. Each family is an ordered list of
-// lesson ids; the plan turns every lesson that exists on the server into one task, so adding a
-// lesson to a family is all it takes to add it to the plan and the readiness view. Ids the
-// server doesn't know are skipped, and a family with no existing lessons is hidden, so families
+// lesson ids; the plan turns every lesson that exists into one task, so adding a
+// lesson to a family is all it takes to add it to the plan and the readiness view. Unknown ids
+// are skipped, and a family with no existing lessons is hidden, so families
 // can be listed before their content lands (Windows & PowerShell, for example).
 
 export interface PathFamily {

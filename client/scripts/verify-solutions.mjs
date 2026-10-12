@@ -1,25 +1,21 @@
-// Runs every graded exercise's reference solution (server/Content/Solutions/<id>.csx and .py)
+// Runs every graded exercise's reference solution (content/Solutions/<id>.csx and .py)
 // through the same grader a learner's code goes through, and checks each exercise's
 // "Name the complexity" answers are selectable in the client.
 //
-//   node scripts/verify-solutions.mjs --base http://localhost:5495 [--only id1,id2]
-//       [--lang csharp,csharp-browser,python]
+//   node scripts/verify-solutions.mjs --base http://localhost:5802/academy/ [--only id1,id2]
+//       [--lang csharp,python]
 //
-// Needs a running API whose web root is a built client (scripts/verify.sh starts one that
-// way), because:
-//   - C# (csharp) goes through POST /api/execute/csharp, i.e. the real sandboxed runner
-//     that is now the fallback;
-//   - C# (csharp-browser) goes through the built client's csharpWasmWorker (Roslyn on .NET
-//     WebAssembly, the default path) in headless Chromium, with the same timeouts as
-//     csharpWasmRunner.ts. It also checks that code breaking CodePolicy is rejected in the
-//     browser with the same message the server gives, and that an infinite loop times out
-//     and the next run works in a fresh worker;
-//   - Python goes through the built client's own pythonWorker (Pyodide, loaded from
-//     jsdelivr) in headless Chromium via Playwright, exactly as PythonRunner.tsx does it.
-// Pyodide isn't a dependency of the repo (the client loads it from a CDN), so Python runs in
-// the browser rather than in Node; a local copy can stand in for the CDN, see below.
-// Playwright is found via NODE_PATH (see playwright.mjs). Progress gets recorded as "guest"
-// in whatever database that server uses, so point it at a throwaway DbPath.
+// Needs a served build of the site (npm run build, then scripts/serve.mjs; ../scripts/verify.sh
+// does both), because both languages are graded by the built client's own workers in headless
+// Chromium via Playwright:
+//   - C# goes through csharpWasmWorker (Roslyn on .NET WebAssembly, built by
+//     wasm-csharp/build.sh) with the same timeouts as csharpWasmRunner.ts. It also checks that
+//     code breaking CodePolicy is rejected with the policy's message, and that an infinite loop
+//     times out and the next run works in a fresh worker;
+//   - Python goes through pythonWorker (Pyodide, loaded from jsdelivr), exactly as
+//     PythonRunner.tsx does it.
+// Pyodide isn't a dependency of the repo (the client loads it from a CDN); a local copy can
+// stand in for the CDN, see below. Playwright is found via NODE_PATH (see playwright.mjs).
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -27,15 +23,12 @@ import { jsonEquals } from "../src/jsonEquals.ts";
 import { arg, findPackageDir, loadPlaywright } from "./playwright.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const base = arg("base", "http://localhost:5095").replace(/\/$/, "");
+const base = arg("base", "http://localhost:5802/academy/").replace(/\/?$/, "/");
+const at = (path) => new URL(path, base).href;
 const only = arg("only", "")?.split(",").filter(Boolean) ?? [];
-// csharp-browser (on by default when the client was built with the runtime, see
-// wasm-csharp/build.sh) grades every C# solution again in headless Chromium through the
-// built client's own csharpWasmWorker, the default path learners use.
-const wasmBuilt = existsSync(join(here, "..", "dist", "csharp-wasm", "_framework", "dotnet.js"));
-const langs = arg("lang", wasmBuilt ? "csharp,csharp-browser,python" : "csharp,python").split(",");
-if (!wasmBuilt && !process.argv.includes("--lang")) {
-  console.log("Skipping csharp-browser: client/dist has no csharp-wasm runtime (run wasm-csharp/build.sh, then npm run build)");
+const langs = arg("lang", "csharp,python").split(",");
+if (langs.includes("csharp") && !existsSync(join(here, "..", "dist", "csharp-wasm", "_framework", "dotnet.js"))) {
+  throw new Error("client/dist has no csharp-wasm runtime, so C# can't be graded: run ../wasm-csharp/build.sh, then npm run build");
 }
 const PY_TIMEOUT_MS = Number(arg("py-timeout", "5000")); // PythonRunner.tsx's TEST_TIMEOUT_MS
 
@@ -45,19 +38,19 @@ const optionsBlock = complexitySource.match(/const OPTIONS = \[([\s\S]*?)\];/)?.
 const OPTIONS = new Set([...optionsBlock.matchAll(/"([^"]+)"/g)].map((m) => m[1]));
 
 async function getJson(path) {
-  const res = await fetch(`${base}${path}`);
+  const res = await fetch(at(path));
   if (!res.ok) throw new Error(`GET ${path}: ${res.status}`);
   return res.json();
 }
 
 const failures = [];
 const warnings = [];
-const counts = { csharp: { pass: 0, fail: 0 }, "csharp-browser": { pass: 0, fail: 0 }, python: { pass: 0, fail: 0 } };
+const counts = { csharp: { pass: 0, fail: 0 }, python: { pass: 0, fail: 0 } };
 
-const nav = await getJson("/api/lessons");
+const nav = await getJson("content/lessons.json");
 const ids = nav.filter((n) => n.kind === "practice" && (only.length === 0 || only.includes(n.id))).map((n) => n.id);
 const lessons = [];
-for (const id of ids) lessons.push(await getJson(`/api/lessons/${id}`));
+for (const id of ids) lessons.push(await getJson(`content/lessons/${id}.json`));
 for (const id of only) if (!ids.includes(id)) failures.push(`${id}: no graded exercise with this id`);
 console.log(`${lessons.length} graded exercises, ${OPTIONS.size} complexity options in the client`);
 
@@ -73,37 +66,9 @@ for (const l of lessons) {
   }
 }
 
-// ---- C#: the server's execute endpoint ----
-// The server allows one run per user and MaxConcurrentRuns (4) in total, so this runs four
-// lanes, each as its own user via the identity header the server reads (UserHeader's default).
-if (langs.includes("csharp")) {
-  const queue = lessons.filter((l) => l.referenceSolutions.csharp);
-  const lane = async (n) => {
-    for (let l = queue.shift(); l; l = queue.shift()) {
-      const res = await fetch(`${base}/api/execute/csharp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-ms-client-principal-name": `verify-${n}` },
-        body: JSON.stringify({ lessonId: l.id, code: l.referenceSolutions.csharp }),
-      });
-      const body = await res.json().catch(() => null);
-      if (!res.ok || !body?.allPassed) {
-        counts.csharp.fail++;
-        const why = body?.compileError ?? body?.error ?? body?.results?.filter((r) => !r.passed).map((r) => `${r.inputDisplay} -> ${r.actualJson ?? r.error}, want ${r.expectedJson}`).slice(0, 2).join("; ") ?? `HTTP ${res.status}`;
-        failures.push(`${l.id} [C#]: ${why}`);
-        process.stdout.write("x");
-      } else {
-        counts.csharp.pass++;
-        process.stdout.write(".");
-      }
-    }
-  };
-  await Promise.all([1, 2, 3, 4].map(lane));
-  console.log(`\nC# (server): ${counts.csharp.pass} passed, ${counts.csharp.fail} failed`);
-}
-
 async function builtClientPage() {
-  const html = await fetch(`${base}/`).then((r) => r.text());
-  if (!html.includes('id="root"')) throw new Error(`${base}/ is not serving the built client (start the API with ASPNETCORE_WEBROOT=<repo>/client/dist)`);
+  const html = await fetch(base).then((r) => r.text());
+  if (!html.includes('id="root"')) throw new Error(`${base} is not serving the built client (npm run build, then node scripts/serve.mjs)`);
   const { chromium } = loadPlaywright();
   const browser = await chromium.launch();
   const context = await browser.newContext();
@@ -114,15 +79,16 @@ async function builtClientPage() {
 function workerChunk(prefix) {
   const file = readdirSync(join(here, "..", "dist", "assets")).find((f) => f.startsWith(`${prefix}-`) && f.endsWith(".js"));
   if (!file) throw new Error(`No ${prefix} chunk in client/dist/assets; run npm run build first`);
-  return `/assets/${file}`;
+  return at(`assets/${file}`);
 }
 
-// ---- C# in the browser: the built client's csharpWasmWorker in headless Chromium ----
+// ---- C#: the built client's csharpWasmWorker in headless Chromium ----
 const csLessons = lessons.filter((l) => l.referenceSolutions.csharp && l.cSharpCallTemplate);
-if (langs.includes("csharp-browser") && csLessons.length) {
+for (const l of lessons) if (l.referenceSolutions.csharp && !l.cSharpCallTemplate) failures.push(`${l.id} [C#]: a C# reference solution but no C# call template`);
+if (langs.includes("csharp") && csLessons.length) {
   const { browser, context } = await builtClientPage();
   const page = await context.newPage();
-  await page.goto(`${base}/`);
+  await page.goto(base);
   // Mirrors runInWorker() in csharpWasmRunner.ts: one shared worker that warms up first,
   // 60 s to compile, 5 s per test, and a fresh worker after a timeout or crash.
   await page.evaluate(({ workerUrl }) => {
@@ -201,35 +167,30 @@ if (langs.includes("csharp-browser") && csLessons.length) {
       .map((t, i) => ({ t, o: outputs[i] }))
       .filter(({ t, o }) => !(o?.actualJson != null && jsonEquals(o.actualJson, t.expectedJson)));
     if (fatal || compileError || bad.length) {
-      counts["csharp-browser"].fail++;
-      failures.push(`${l.id} [C# browser]: ${fatal ?? compileError ?? bad.slice(0, 2).map(({ t, o }) => `${t.inputDisplay} -> ${o?.actualJson ?? o?.error ?? "skipped"}, want ${t.expectedJson}`).join("; ")}`);
+      counts.csharp.fail++;
+      failures.push(`${l.id} [C#]: ${fatal ?? compileError ?? bad.slice(0, 2).map(({ t, o }) => `${t.inputDisplay} -> ${o?.actualJson ?? o?.error ?? "skipped"}, want ${t.expectedJson}`).join("; ")}`);
       process.stdout.write("x");
     } else {
-      counts["csharp-browser"].pass++;
+      counts.csharp.pass++;
       process.stdout.write(".");
     }
   }
   const sorted = [...compileTimes].sort((a, b) => a - b);
   const loadMs = await page.evaluate(() => window.__csharpLoadMs);
-  console.log(`\nC# (browser): ${counts["csharp-browser"].pass} passed, ${counts["csharp-browser"].fail} failed in ${((Date.now() - started) / 1000).toFixed(1)} s` +
+  console.log(`\nC#: ${counts.csharp.pass} passed, ${counts.csharp.fail} failed in ${((Date.now() - started) / 1000).toFixed(1)} s` +
     ` (runtime load ${Math.round(loadMs ?? 0)} ms, compile median ${Math.round(sorted[sorted.length >> 1] ?? 0)} ms, max ${Math.round(sorted.at(-1) ?? 0)} ms)`);
 
-  // Negative checks on the first lesson: CodePolicy rejects the same code with the same
-  // message on both paths, and a runaway loop is stopped without breaking the next run.
+  // Negative checks on the first lesson: CodePolicy rejects code that touches the file
+  // system with its own message, and a runaway loop is stopped without breaking the next run.
   const probe = csLessons[0];
   const banned = `${probe.referenceSolutions.csharp}\nstatic string Leak() { System.IO.File.WriteAllText("x.txt", "hi"); return ""; }\n`;
-  const browserBanned = await page.evaluate((req) => window.__runCSharp(req), csRequest(probe, banned));
-  const serverBanned = await fetch(`${base}/api/execute/csharp`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-ms-client-principal-name": "verify-policy" },
-    body: JSON.stringify({ lessonId: probe.id, code: banned }),
-  }).then((r) => r.json());
-  if (!browserBanned.compileError?.includes("isn't available in lessons")) {
-    failures.push(`[C# browser] CodePolicy: System.IO.File was not rejected (got ${JSON.stringify(browserBanned).slice(0, 200)})`);
-  } else if (browserBanned.compileError !== serverBanned.compileError) {
-    failures.push(`[C# browser] CodePolicy message differs: browser "${browserBanned.compileError}", server "${serverBanned.compileError}"`);
+  const rejected = await page.evaluate((req) => window.__runCSharp(req), csRequest(probe, banned));
+  // CodePolicy's message for a blocked type, plus where it was found.
+  const wantPolicy = "'System.IO.File' isn't available in lessons -- stick to collections, LINQ, strings, and math.";
+  if (!rejected.compileError?.startsWith(wantPolicy)) {
+    failures.push(`[C#] CodePolicy: System.IO.File was not rejected as expected (got ${JSON.stringify(rejected).slice(0, 200)})`);
   } else {
-    console.log(`CodePolicy in the browser: rejected, same message as the server: ${browserBanned.compileError}`);
+    console.log(`CodePolicy: rejected: ${rejected.compileError}`);
   }
   const loop = `${probe.referenceSolutions.csharp}\nstatic int Spin() { while (true) { } }\nint _spin = Spin();\n`;
   const loopStart = Date.now();
@@ -237,8 +198,8 @@ if (langs.includes("csharp-browser") && csLessons.length) {
   const loopMs = Date.now() - loopStart;
   const after = await page.evaluate((req) => window.__runCSharp(req), csRequest(probe, probe.referenceSolutions.csharp));
   const afterOk = !after.fatal && probe.testCases.every((t, i) => after.outputs[i]?.actualJson != null && jsonEquals(after.outputs[i].actualJson, t.expectedJson));
-  if (!looped.timedOut) failures.push(`[C# browser] infinite loop was not stopped: ${JSON.stringify(looped).slice(0, 200)}`);
-  else if (!afterOk) failures.push(`[C# browser] the run after a timeout failed: ${JSON.stringify(after).slice(0, 200)}`);
+  if (!looped.timedOut) failures.push(`[C#] infinite loop was not stopped: ${JSON.stringify(looped).slice(0, 200)}`);
+  else if (!afterOk) failures.push(`[C#] the run after a timeout failed: ${JSON.stringify(after).slice(0, 200)}`);
   else console.log(`Infinite loop in the browser: stopped after ${(loopMs / 1000).toFixed(1)} s; the next run passed in a fresh worker`);
   await browser.close();
 }
@@ -246,16 +207,7 @@ if (langs.includes("csharp-browser") && csLessons.length) {
 // ---- Python: the built client's worker in headless Chromium ----
 const pyLessons = lessons.filter((l) => l.referenceSolutions.python && l.functionNames.python);
 if (langs.includes("python") && pyLessons.length) {
-  const html = await fetch(`${base}/`).then((r) => r.text());
-  if (!html.includes('id="root"')) throw new Error(`${base}/ is not serving the built client (start the API with ASPNETCORE_WEBROOT=<repo>/client/dist)`);
-  // The worker chunk's hashed name, from the same build the server is serving.
-  const workerFile = readdirSync(join(here, "..", "dist", "assets")).find((f) => /^pythonWorker-.+\.js$/.test(f));
-  if (!workerFile) throw new Error("No pythonWorker chunk in client/dist/assets; run npm run build first");
-  const workerPath = `assets/${workerFile}`;
-
-  const { chromium } = loadPlaywright();
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
+  const { browser, context } = await builtClientPage();
   // Pyodide normally comes from jsdelivr (see src/pyodideLoader.ts). Where that's blocked,
   // install the same version outside the repo (npm install --prefix <dir> pyodide@<version>)
   // and put <dir>/node_modules on NODE_PATH: the CDN requests are then answered from it.
@@ -274,7 +226,7 @@ if (langs.includes("python") && pyLessons.length) {
     }
   }
   const page = await context.newPage();
-  await page.goto(`${base}/`);
+  await page.goto(base);
   // Mirrors runInWorker() in PythonRunner.tsx: one shared worker, a per-call timeout that
   // starts once the runtime is loaded, and a fresh worker after a timeout.
   await page.evaluate(({ workerUrl, timeoutMs }) => {
@@ -321,7 +273,7 @@ if (langs.includes("python") && pyLessons.length) {
         };
         w.postMessage(request);
       });
-  }, { workerUrl: `/${workerPath}`, timeoutMs: PY_TIMEOUT_MS });
+  }, { workerUrl: workerChunk("pythonWorker"), timeoutMs: PY_TIMEOUT_MS });
 
   for (const l of pyLessons) {
     const preamble = l.pythonHarnessPreamble ? l.pythonHarnessPreamble + "\n" : "";

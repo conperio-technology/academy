@@ -2,7 +2,8 @@
 
 Status: Accepted. For the static site only, the no-deploy rule is superseded by
 [0011](0011-static-site-on-github-pages.md): it is published on GitHub Pages by hand with the
-owner's go. Everything else below still holds.
+owner's go. The `Dockerfile` it mentions was removed with the server
+([0013](0013-static-only.md)). Everything else below still holds.
 Date: 2026-10-11
 
 ## Context

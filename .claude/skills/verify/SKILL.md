@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Run Conperio Academy's full local verification - dotnet build, client build, the client check scripts, every reference solution through the C# and Python graders, and a Playwright horizontal-overflow check of every lesson at 390px and 1300px - against a throwaway server on a spare port. Use before committing or merging content changes, after resolving merge conflicts, or when asked to verify, check or test the app.
+description: Run Conperio Academy's full local verification - the content exporter build, the in-browser C# grader and site build, the client check scripts, every reference solution through the in-browser C# and Python graders, a Playwright horizontal-overflow check of every lesson at 390px and 1300px, and an end-to-end site check - against the built site served on a spare port. Use before committing or merging content changes, after resolving merge conflicts, or when asked to verify, check or test the app.
 ---
 
 # Verify
@@ -13,25 +13,27 @@ scripts/verify.sh
 
 It:
 
-1. builds `server/` (+ `runner/`) with `dotnet build`, the in-browser C# runtime with
-   `wasm-csharp/build.sh` (skipped when up to date, or with `SKIP_WASM=1`), and `client/`
-   with `npm run build`;
+1. builds `content/` with `dotnet build`, the in-browser C# runtime with
+   `wasm-csharp/build.sh` (skipped when up to date, or with `SKIP_WASM=1`), and the site with
+   `npm run build` in `client/` (exports the content into `public/content/`, type checks,
+   builds `dist/`);
 2. runs `client/scripts/check-glossary.mjs`, `check-complexity-gym.mjs`, `check-plc-st.mjs`,
    and checks `client/src/index.css` braces balance (merge damage);
-3. starts the built API on `http://localhost:5495` (`VERIFY_PORT` to change) serving the
-   built client (`ASPNETCORE_WEBROOT=client/dist`) with a database in a fresh temp folder, so
-   the user's own `server/progress.db` and any server on 5095 are untouched;
-4. `client/scripts/verify-solutions.mjs`: every exercise's C# reference solution through
-   `POST /api/execute/csharp` (the real sandboxed runner, four at a time), again through the
-   built client's `csharpWasmWorker` in headless Chromium (the default path; plus a CodePolicy
-   rejection and an infinite-loop timeout check), and every Python solution through the built
-   client's `pythonWorker`; also fails if a
-   `ComplexityCatalog` answer isn't in the client's `OPTIONS`. Missing solutions or complexity
-   entries are listed as warnings;
+3. serves `client/dist` at `http://localhost:5495/academy/` (`VERIFY_PORT` to change) with
+   `client/scripts/serve.mjs`, so a dev server on 5173 is untouched;
+4. `client/scripts/verify-solutions.mjs`: every exercise's C# reference solution through the
+   built site's `csharpWasmWorker` in headless Chromium (plus a CodePolicy rejection and an
+   infinite-loop timeout check), and every Python solution through its `pythonWorker`; also
+   fails if a `ComplexityCatalog` answer isn't in the client's `OPTIONS`. Missing solutions or
+   complexity entries are listed as warnings;
 5. `client/scripts/check-overflow.mjs`: opens the dashboard and every lesson at 390px and
    1300px and fails on any horizontal page scroll, naming the elements that stick out;
-6. stops the server by PID and deletes its temp folder, then prints a pass/fail summary and
-   exits non-zero if any step failed.
+6. `client/scripts/check-site.mjs`: end to end in a fresh browser profile (C# graded and
+   recorded, progress after a reload, assisted vs independent passes, review queue,
+   export/reset/import, deep links, the message without the C# runtime, no request outside
+   `/academy/`);
+7. stops the static server by PID, then prints a pass/fail summary and exits non-zero if any
+   step failed.
 
 Takes about 3 to 5 minutes. Useful variations:
 
@@ -41,13 +43,12 @@ VERIFY_STEPS="checks" scripts/verify.sh                # just the fast data chec
 VERIFY_STEPS="solutions overflow" VERIFY_PORT=5600 scripts/verify.sh
 ```
 
-To check one lesson while iterating, start the server the same way and call a script directly:
+To check one lesson while iterating, serve the build the same way and call a script directly:
 
 ```bash
-cd server && ASPNETCORE_URLS=http://localhost:5495 ASPNETCORE_WEBROOT=$(cd ../client && pwd)/dist \
-  DbPath=<scratch dir>/verify.db dotnet bin/Debug/net10.0/server.dll &   # note the PID
-node client/scripts/verify-solutions.mjs --base http://localhost:5495 --only <id>[,<id>]
-node client/scripts/check-overflow.mjs --base http://localhost:5495 --only <id> --widths 390
+node client/scripts/serve.mjs --dir client/dist --port 5495 &   # note the PID
+node client/scripts/verify-solutions.mjs --base http://localhost:5495/academy/ --only <id>[,<id>]
+node client/scripts/check-overflow.mjs --base http://localhost:5495/academy/ --only <id> --widths 390
 kill <PID>
 ```
 
@@ -69,4 +70,4 @@ kill <PID>
 - An overflow failure names the outermost element(s) past the right edge; fix with an
   `overflow-x: auto` wrapper, `overflow-wrap: anywhere`, or `minmax(0, 1fr)` grid columns.
 
-Report the summary counts (C# server x/y, C# browser x/y, Python x/y, page views checked) when done.
+Report the summary counts (C# x/y, Python x/y, page views checked, site checks) when done.

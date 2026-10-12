@@ -1,6 +1,6 @@
 # 0003. Grade C# in a separate, sandboxed runner process
 
-Status: Accepted
+Status: Superseded by [0013](0013-static-only.md) (the runner was removed; C# is graded only in the browser, [0012](0012-in-browser-csharp-by-default.md))
 Date: 2026-10-11 (implemented 2026-10-09)
 
 ## Context

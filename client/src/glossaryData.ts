@@ -1,7 +1,7 @@
 // Content for the Glossary section: industry terms with short plain-English definitions,
 // used by the Glossary, Flash Cards and Term Quiz tools (components/tools/Glossary.tsx).
 // `seeAlso` entries must match another term's `term` exactly, and `lessonId` must be an
-// existing lesson or tool id on the server. scripts/check-glossary.mjs checks both.
+// existing lesson or tool id (content/). scripts/check-glossary.mjs checks both.
 
 export type GlossaryCategory =
   | "dsa"

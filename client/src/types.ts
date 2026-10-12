@@ -1,4 +1,4 @@
-// One sidebar row, covering both lesson kinds. `kind` decides which detail endpoint to
+// One sidebar row, covering both lesson kinds. `kind` decides which detail file to
 // fetch and which view component to render (see App.tsx).
 export interface NavItem {
   id: string;
@@ -39,7 +39,7 @@ export interface ConceptDetail {
   completed: boolean;
   pythonHarnessPreamble: string | null;
   pythonCallTemplate: string | null;
-  // For grading C# in the browser (csharpWasmRunner.ts). ("cSharp": the API camel-cases "CSharp" that way.)
+  // For grading C# in the browser (csharpWasmRunner.ts). ("cSharp": the C# export camel-cases "CSharp" that way.)
   cSharpHarnessPreamble?: string | null;
   cSharpCallTemplate?: string | null;
   recognitionSignals: string[];
@@ -59,8 +59,8 @@ export interface LessonLink {
   title: string;
 }
 
-// How the current user has practised one graded lesson, across languages (see
-// ProgressService.cs). assistedPass: passed from the guided starter or with the reference seen in
+// How the learner has practised one graded lesson, across languages (see
+// progressCore.ts). assistedPass: passed from the guided starter or with the reference seen in
 // the week before; independentPass: passed from the bare or timed starter without it; timedPass:
 // passed inside the mixed interview set; unrecordedPass: passed before these were recorded.
 export interface LessonEvidence {
@@ -81,8 +81,8 @@ export interface ComplexityInfo {
   alsoSpace: string[] | null;
 }
 
-// A completed lesson that's now due to be re-solved -- see ProgressService.cs on the
-// backend for the review ladder.
+// A completed lesson that's now due to be re-solved; see getDue in progressCore.ts for the
+// review ladder.
 export interface ReviewItem {
   conceptId: string;
   title: string;

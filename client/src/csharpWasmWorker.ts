@@ -36,7 +36,7 @@ export interface CSharpCompletion {
 // For a run: "ready" once the runtime is up, "compiled" after Roslyn (a compile error or
 // policy violation ends the run there), then one "result" per call in order, then "done".
 // "unavailable" means the runtime couldn't be loaded at all (not built, no WebAssembly...),
-// and the page grades on the server instead.
+// and the page says C# can't be graded here.
 export type CSharpWasmWorkerMessage =
   | { type: "loaded"; loadMs: number }
   | { type: "warmed"; compileMs: number }

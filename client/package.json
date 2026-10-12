@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "content": "node scripts/export-content.mjs",
+    "predev": "node scripts/export-content.mjs",
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:static": "node scripts/build-static.mjs",
+    "build": "node scripts/build.mjs",
     "build:csharp-wasm": "../wasm-csharp/build.sh",
     "lint": "oxlint",
-    "preview": "vite preview",
-    "preview:static": "vite preview --mode static"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",

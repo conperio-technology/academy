@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-// A simulated request through the same shape this app is deployed with: an ingress whose
+// A simulated request through a common internal-app setup: an ingress whose
 // login middleware AUTHENTICATES (who are you?), then the app AUTHORIZES (are you allowed
 // to do this?). Nothing here is sent anywhere; it's a model, like the Git lessons.
 

@@ -157,7 +157,7 @@ interface Props {
 
 // Sibling to LessonView, for the other lesson kind: a reference explanation + an
 // interactive calculator instead of a visualizer + code editor. No completion tracking
-// here -- see ITool.cs on the backend for why tools don't have a pass/fail concept.
+// here -- see content/ITool.cs for why tools don't have a pass/fail concept.
 export function ToolView({ toolId }: Props) {
   const [tool, setTool] = useState<ToolDetail | null>(null);
   const [loading, setLoading] = useState(true);

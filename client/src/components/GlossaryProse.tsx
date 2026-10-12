@@ -7,7 +7,7 @@ import { annotate, GLOSSARY_LESSON_ID, setPendingGlossaryFocus } from "../glossa
 // in a lesson's explanation it gets a dotted underline, and hovering, tapping or pressing Enter
 // on it shows the definition in a small popover. `backticked` spans render as inline code and
 // are never marked, the same convention as inlineCode.tsx. Paragraphs are separated by a blank
-// line ("\n\n") in the server's text.
+// line ("\n\n") in the lesson text.
 
 interface Props {
   text: string;

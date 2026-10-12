@@ -1,6 +1,6 @@
 # 0010. A static hosting mode next to the server
 
-Status: Accepted
+Status: Accepted; the server mode it sat next to was removed by [0013](0013-static-only.md), so the static site is now the only build (`npm run build`, output `client/dist/`) and the parity check is gone
 Date: 2026-10-11
 
 ## Context

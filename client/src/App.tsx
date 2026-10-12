@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { fetchCurrentUser, fetchLessons, fetchReview, OPEN_LESSON_EVENT, resetAllProgress } from "./api";
+import { fetchLessons, fetchReview, OPEN_LESSON_EVENT, resetAllProgress } from "./api";
 import { ConfirmButton } from "./components/ConfirmButton";
 import { Dashboard } from "./components/Dashboard";
 import { LessonList } from "./components/LessonList";
 import { LessonView } from "./components/LessonView";
 import { ToolView } from "./components/ToolView";
-import { siteUrl, STATIC_MODE } from "./staticMode";
+import { siteUrl } from "./siteUrl";
 import type { NavItem, ReviewItem } from "./types";
 
 // The open lesson is in the URL's hash (#/two-sum), so a link to a lesson works, a reload
 // stays on it, and Back goes to the previous one. A hash, not a path, because a static host
-// (static mode) only has index.html to serve and can't route /two-sum to it.
+// only has index.html to serve and can't route /two-sum to it.
 function lessonFromHash(): string | null {
   try {
     return decodeURIComponent(window.location.hash.replace(/^#\/?/, "")) || null;
@@ -30,10 +30,6 @@ function App() {
   // Only meaningful below the mobile breakpoint (see .sidebar/.sidebar-overlay in
   // index.css) -- the sidebar is always visible above it regardless of this flag.
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // "guest" unless this is reached through a reverse proxy that injects a
-  // real identity header -- see api.ts's fetchCurrentUser and Program.cs's
-  // CurrentUserId(). Null only until the very first fetch resolves.
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   function reload() {
     fetchLessons()
@@ -41,7 +37,7 @@ function App() {
         setItems(data);
         setError(null);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : "Failed to reach the server."));
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load the lesson list."));
     // The review queue is secondary: if it fails the rest of the app still works.
     fetchReview()
       .then(setReview)
@@ -49,11 +45,6 @@ function App() {
   }
 
   useEffect(reload, []);
-  useEffect(() => {
-    fetchCurrentUser()
-      .then(setCurrentUser)
-      .catch(() => setCurrentUser(null));
-  }, []);
   // Lets a tool deep inside the view (the mixed interview set's "open the lesson" link)
   // navigate without threading a callback through ToolView.
   useEffect(() => {
@@ -77,7 +68,7 @@ function App() {
     };
   }, []);
 
-  // After progress changed underneath every view (reset all, or an import in static mode).
+  // After progress changed underneath every view (reset all, or an import).
   function refreshAll() {
     setViewGeneration((g) => g + 1);
     reload();
@@ -114,13 +105,8 @@ function App() {
           </div>
           <span className="app-title">Academy</span>
         </button>
-        {error && STATIC_MODE ? (
+        {error ? (
           <p className="status-text error">Couldn't load the lesson list ({error}). Try reloading the page.</p>
-        ) : error ? (
-          <p className="status-text error">
-            Can't reach the API. Is <code>dotnet run</code> running in{" "}
-            <code>server/</code>?
-          </p>
         ) : (
           <>
             <LessonList
@@ -130,13 +116,7 @@ function App() {
               dueIds={new Set(review.map((r) => r.conceptId))}
             />
             <div className="sidebar-footer">
-              {STATIC_MODE ? (
-                <p className="current-user">Progress is saved in this browser only</p>
-              ) : currentUser && (
-                <p className="current-user">
-                  Progress for <strong>{currentUser}</strong>
-                </p>
-              )}
+              <p className="current-user">Progress is saved in this browser only</p>
               <ConfirmButton
                 label="Reset all progress"
                 confirmLabel="Reset every lesson back to not-started?"

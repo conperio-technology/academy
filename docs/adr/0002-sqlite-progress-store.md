@@ -1,6 +1,6 @@
 # 0002. Progress in one SQLite file via EF Core, no migrations
 
-Status: Accepted
+Status: Superseded by [0013](0013-static-only.md) (the server and its database were removed; progress lives in the browser)
 Date: 2026-10-11 (decided at project start)
 
 ## Context

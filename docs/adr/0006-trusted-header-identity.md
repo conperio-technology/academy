@@ -1,6 +1,6 @@
 # 0006. Identity from a trusted proxy header, no login in the app
 
-Status: Accepted
+Status: Superseded by [0013](0013-static-only.md) (no server, so no identity; progress is per browser)
 Date: 2026-10-11
 
 ## Context

@@ -16,7 +16,7 @@ const MAX_DEPTH = 4;
 
 // A binary tree encoded as a level-order array (index 0 = root, 2i+1/2i+2 = children,
 // null/undefined = no node) -- same encoding TreeSerializer.ToLevelOrderArray produces
-// server-side, and the same shape a binary heap will reuse later. Position is computed
+// in the C# content, and the same shape a binary heap will reuse later. Position is computed
 // purely from index, the same way a complete binary tree's array representation always
 // works, so there's no separate layout algorithm to keep in sync with the data.
 function depthOf(index: number): number {

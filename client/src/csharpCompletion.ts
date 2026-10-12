@@ -2,7 +2,7 @@
 // (csharpWasmRunner.ts completeCSharp, wasm-csharp/Program.cs Complete). Monaco has no C#
 // completion of its own, only word-based suggestions. This is the cheap version: the
 // symbols in scope at the caret, or the members after "expr.", filtered by CodePolicy.
-// When the runtime isn't available (server mode, not built) it returns nothing and Monaco
+// When the runtime isn't available (not built, no WebAssembly) it returns nothing and Monaco
 // keeps its word-based suggestions.
 import type { Monaco, OnMount } from "@monaco-editor/react";
 import type { editor as MonacoEditor, Position } from "monaco-editor";

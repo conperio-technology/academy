@@ -14,17 +14,22 @@
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
       "Bash(npm run lint:*)",
+      "Bash(npm run content:*)",
+      "Bash(npm run preview:*)",
       "Bash(npm --prefix client run build:*)",
       "Bash(node scripts/check-glossary.mjs:*)",
       "Bash(node scripts/check-complexity-gym.mjs:*)",
       "Bash(node scripts/check-plc-st.mjs:*)",
       "Bash(node scripts/verify-solutions.mjs:*)",
       "Bash(node scripts/check-overflow.mjs:*)",
+      "Bash(node scripts/check-site.mjs:*)",
+      "Bash(node scripts/export-content.mjs:*)",
       "Bash(node client/scripts/check-glossary.mjs:*)",
       "Bash(node client/scripts/check-complexity-gym.mjs:*)",
       "Bash(node client/scripts/check-plc-st.mjs:*)",
       "Bash(node client/scripts/verify-solutions.mjs:*)",
       "Bash(node client/scripts/check-overflow.mjs:*)",
+      "Bash(node client/scripts/check-site.mjs:*)",
       "Bash(scripts/verify.sh)",
       "Bash(./scripts/verify.sh)",
       "Bash(SKIP_BUILD=1 scripts/verify.sh)",
@@ -52,7 +57,8 @@
       "Bash(pkill:*)",
       "Bash(killall:*)",
       "Bash(docker push:*)",
-      "Bash(kubectl:*)"
+      "Bash(kubectl:*)",
+      "Bash(git push origin gh-pages:*)"
     ]
   }
 }

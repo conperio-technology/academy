@@ -1,6 +1,6 @@
 # 0012. In-browser C# is the default grader, the server runner the fallback
 
-Status: Accepted (supersedes [0005](0005-in-browser-csharp-prototype.md))
+Status: Accepted (supersedes [0005](0005-in-browser-csharp-prototype.md)); the server runner fallback was removed by [0013](0013-static-only.md), so the browser is the only grader
 Date: 2026-10-11 (merged in PR #47, branch `csharp-browser-all`)
 
 ## Context

@@ -18,7 +18,7 @@ Check, in order:
    `ConceptRegistry` entry, `ComplexityCatalog` entry whose strings are all in
    `ComplexityCheck.tsx` `OPTIONS`, `Solutions/<id>.csx` and `.py`. Ids unique; `Order` fits the
    track's numbering; plan ids in `studyPathData.ts` / `prepPlanData.ts` spelled exactly.
-3. **Grading.** C# starter and solution only use what `runner/CodePolicy.cs` allows. Test cases
+3. **Grading.** C# starter and solution only use what `wasm-csharp/CodePolicy.cs` allows. Test cases
    cover edge cases, and the starter code would fail them.
 4. **Style.** No en/em dashes or spaced hyphens in lesson text; plain, direct sentences;
    `\n\n` between explanation paragraphs; new CSS appended as one prefixed block.

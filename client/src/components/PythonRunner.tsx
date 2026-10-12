@@ -90,10 +90,8 @@ function runInWorker(request: PythonRunRequest, onReady: () => void): Promise<Ca
   });
 }
 
-// Runs Python entirely in the browser via Pyodide, in a Web Worker -- no server round
-// trip, so this is the one runner that talks to /api/progress/record instead of
-// /api/execute/*, since the server never sees the code run, only the already-computed
-// pass/fail.
+// Runs Python in the browser via Pyodide, in a Web Worker, then records the pass/fail in
+// this browser's progress (api.ts recordProgress), like the C# runner.
 export function PythonRunner({
   lessonId,
   starterCode,

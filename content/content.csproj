@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The lesson content: every lesson is a C# class (Concepts/, Tools/), and this console
+       app writes them out as the JSON files the site loads (ContentExport.cs, Program.cs).
+       The client's dev and build scripts run it (client/scripts/export-content.mjs). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DsaAcademy.Content</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Reference solutions (see SolutionCatalog.cs). LogicalName keeps the resource name
+       readable: "Solutions/{concept-id}.csx" / ".py". -->
+  <ItemGroup>
+    <EmbeddedResource Include="Solutions/*" LogicalName="Solutions/%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

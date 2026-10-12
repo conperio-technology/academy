@@ -268,7 +268,7 @@ export interface PlanTask {
   label?: string; // defaults to the lesson's title
   area: TaskArea;
   minutes: number;
-  // How the task is marked done: "lesson" = the lesson is completed on the server,
+  // How the task is marked done: "lesson" = the graded lesson is completed,
   // "walkthrough" = every stage of that design compared, "stories" = at least `target`
   // stories in the bank, "worked" = the tool lesson is marked worked through (shared with the
   // readiness view), "patternQuiz" = at least `runs` full runs of the design pattern quiz,

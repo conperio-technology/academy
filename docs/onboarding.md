@@ -24,10 +24,12 @@ and have a first small PR open.
    scripts/setup.sh                                              # Linux / macOS
    ```
 
-   It checks the tools, installs packages, builds both halves and runs the fast checks. It
+   It checks the tools, installs packages, builds the in-browser C# grader and the site, and
+   runs the fast checks. It
    ends with "setup: done". If it stops, it says which step failed.
-4. **Run the app** in two terminals: `cd server`, `dotnet run`; then `cd client`,
-   `npm run dev`. Open http://localhost:5173. Solve one exercise in C# and one in Python, and
+4. **Run the app**: `cd client`, `npm run dev`. Open http://localhost:5173. (There is no
+   server: the lessons are exported from C# to JSON files first, and your progress is kept in
+   the browser.) Solve one exercise in C# and one in Python, and
    open one tool lesson, so you've seen both kinds.
 5. **Read, in this order** (about an hour):
    - [README.md](../README.md): "Running it", "Working on this repo with Claude", skim "What's
@@ -62,7 +64,7 @@ Small, real, and it runs you through the whole loop: branch, edit, checks, PR, r
    ```
 
    `seeAlso` must name existing terms exactly and `lessonId` must be a real lesson id (search
-   for `Id => "` under `server/Content/`). No en or em dashes in the text.
+   for `Id => "` under `content/`). No en or em dashes in the text.
 4. Check it, from `client/`:
 
    ```bash
@@ -81,7 +83,7 @@ run the check that covers the file you changed, and look at the page afterwards.
 
 ## After day one
 
-- Pick a lesson or exercise to add from the open items at the end of README.md or the owner's list, and follow
+- Pick a lesson or exercise to add from the owner's list, and follow
   the matching skill (CONTRIBUTING.md section 4).
 - Review a teammate's PR using [code-review.md](code-review.md). Reviewing is the fastest way
   to learn the codebase.

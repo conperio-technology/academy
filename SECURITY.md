@@ -19,21 +19,10 @@ would rather stay anonymous.
   shared database behind it. Problems such as script injection through lesson content, an
   import file that can break out of its data, or a third-party script we load that could be
   swapped are in scope.
-- **This repository's code**, including the optional server mode in `server/` and `runner/`.
-
-## Known limits of the server mode
-
-The server mode is built for a single machine or a trusted network, and is not deployed
-anywhere. Two of its limits are by design, so reports of them alone are not vulnerabilities:
-
-- It has no login. It trusts an identity header set by a reverse proxy in front of it
-  ([ADR 0006](docs/adr/0006-trusted-header-identity.md)), so anyone who can reach it directly
-  can claim any user id.
-- The C# runner restricts submitted code with an allowlist and resource limits in a separate
-  process ([ADR 0003](docs/adr/0003-sandboxed-csharp-runner.md)), but it is not a hardened
-  sandbox such as a container or VM per run. Don't expose it to untrusted users.
-
-A way around the runner's allowlist (`runner/CodePolicy.cs`) is still worth reporting.
+- **This repository's code**: the lesson content and its exporter (`content/`), the
+  in-browser C# grader (`wasm-csharp/`), the site (`client/`) and the scripts. A way around
+  the C# grader's allowlist (`wasm-csharp/CodePolicy.cs`) is worth reporting, although that
+  code only ever runs in the learner's own browser tab.
 
 ## Supported versions
 

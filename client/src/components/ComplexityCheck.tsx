@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ComplexityInfo } from "../types";
 
-// Every canonical (and accepted-alternative) answer in server/Content/ComplexityCatalog.cs
+// Every canonical (and accepted-alternative) answer in content/ComplexityCatalog.cs
 // must appear here, or a correct answer would be impossible to select.
 const OPTIONS = [
   "O(1)",
