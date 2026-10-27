@@ -116,6 +116,11 @@ export function blockStats(reps: BlockRep[], now: Date = new Date()): Record<str
 
 // A block is offered in a session once every block it builds on is fluent. (Its lesson is
 // always open from the sidebar.)
+// Different days with at least one rep: the study plan's reps sessions tick from this.
+export function repDayCount(reps: BlockRep[]): number {
+  return new Set(reps.map((r) => localDay(r.at))).size;
+}
+
 export function isUnlocked(block: BuildingBlock, stats: Record<string, BlockStats>): boolean {
   return block.uses.every((id) => stats[id]?.fluent);
 }

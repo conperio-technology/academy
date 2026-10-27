@@ -116,6 +116,7 @@ const LOCAL_KEY_PREFIXES = [
   "sd-interview:",
   "plc:",
   "exercise-mode",
+  "plan-first",
 ];
 
 function localEntries(): Record<string, string> {

@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchEvidence, fetchLessons, fetchReview, openLesson } from "../../api";
 import { COMPETENCIES } from "../../behavioralData";
+import { blockStats, BUILDING_BLOCKS, repDayCount } from "../../buildingBlocksData";
+import { recentCounts, RECENT_DAYS } from "../../bugLogData";
 import { GLOSSARY } from "../../glossaryData";
 import {
+  loadBlockReps,
+  loadBugLog,
   loadDrillStats,
   loadGlossaryBoxes,
   loadMixedHistory,
@@ -260,6 +264,15 @@ function FaangPlan() {
   const foundationTerms = GLOSSARY.filter((t) => FOUNDATION_GLOSSARY_CATEGORIES.includes(t.category));
   const knownTerms = foundationTerms.filter((t) => (glossaryBoxes[t.term] ?? 0) >= KNOWN_BOX).length;
 
+  const blocksExist = exists("building-block-reps");
+  const blockReps = loadBlockReps();
+  const repDays = repDayCount(blockReps);
+  const blockStatsById = blockStats(blockReps);
+  const blocksDrilled = BUILDING_BLOCKS.filter((b) => blockStatsById[b.id].reps > 0).length;
+  const blocksFluent = BUILDING_BLOCKS.filter((b) => blockStatsById[b.id].fluent).length;
+  const blocksPassed = BUILDING_BLOCKS.filter((b) => completed(b.id)).length;
+  const topBug = recentCounts(loadBugLog())[0];
+
   const none = (source: string): Evidence => ({ value: null, source });
   const designArea = (label: string, rows: typeof sdRows): AreaEvidence => {
     const tried = rows.filter((r) => r.attempted);
@@ -292,6 +305,20 @@ function FaangPlan() {
           ? none("none yet: the mixed interview set is blind and against the clock")
           : { value: `${mixedSolved} of ${mixedHistory.length}`, source: `problems solved in your last ${mixedHistory.length} mixed interview set problems (blind, timed)` },
     },
+    ...(blocksExist
+      ? [
+          {
+            label: "Building blocks",
+            coverage: { value: `${blocksDrilled} of ${BUILDING_BLOCKS.length}`, source: "blocks you have done at least one rep of in Today's reps" },
+            assisted: { value: `${blocksPassed} of ${BUILDING_BLOCKS.length}`, source: "block lessons passed at least once, with or without help" },
+            independent: {
+              value: `${blocksFluent} of ${BUILDING_BLOCKS.length}`,
+              source: "fluent: clean reps (first run, no reference, inside the target time) on three different days",
+            },
+            timed: { value: `${repDays} ${repDays === 1 ? "day" : "days"}`, source: "days with at least one rep; every rep is timed against the block's target" },
+          },
+        ]
+      : []),
     designArea("System design", sdRows),
     ...(oodRows.length > 0 ? [designArea("Object-oriented design", oodRows)] : []),
     {
@@ -360,6 +387,12 @@ function FaangPlan() {
   else if (weakTopic)
     focus.push({ text: `${weakTopic.label} is your least covered CS foundation: next, ${byId.get(weakTopic.next!)!.title}`, lessonId: weakTopic.next! });
   else if (quizWeak) focus.push(quizFocus);
+  if (topBug && topBug.count >= 2)
+    focus.push({
+      text: `Your most common bug in the last ${RECENT_DAYS} days is "${topBug.category}" (${topBug.count} times): read the Bug Log before your next session`,
+      lessonId: "bug-log",
+    });
+  if (blocksExist && repDays === 0) focus.push({ text: "Start Today's reps: 15 minutes of small building blocks a day", lessonId: "building-block-reps" });
   if (weakTechniques.length > 0) focus.push({ text: `In the drill you often miss: ${weakTechniques.join(", ")}`, lessonId: "pattern-recognition-drill" });
   if (mixedHistory.length === 0 && codingIndependent >= 5)
     focus.push({ text: "You have independent passes but no timed evidence yet: try a mixed interview set", lessonId: "mixed-interview-set" });
@@ -373,7 +406,7 @@ function FaangPlan() {
 
   const profile = plan?.profile ?? DEFAULT_PROFILE;
   const plannedPhases = buildPlan(plan ? profile : draft, exists);
-  const weeks = scheduleByHours(plannedPhases, (plan ? profile : draft).hoursPerWeek);
+  const weeks = scheduleByHours(plannedPhases, (plan ? profile : draft).hoursPerWeek, blocksExist);
   const scheduled = weeks.flatMap((w) => w.tasks);
   const studyWeekCount = weeks.filter((w) => !w.slack).length;
   const optionalCount = weeks.reduce((n, w) => n + w.optional.length, 0);
@@ -386,6 +419,7 @@ function FaangPlan() {
     if (t.doneBy?.kind === "stories") return storyCount >= t.doneBy.target;
     if (t.doneBy?.kind === "worked") return workedSet.has(t.lessonId);
     if (t.doneBy?.kind === "patternQuiz") return quizRuns.length >= t.doneBy.runs;
+    if (t.doneBy?.kind === "reps") return repDays >= t.doneBy.sessions;
     return false;
   };
   // "Worked through" tasks stay tickable: ticking one marks the lesson for readiness too.
@@ -687,7 +721,8 @@ function FaangPlan() {
           })}
           <p className="gate-note">
             Lessons tick themselves when you pass them, walk-throughs when you've compared every stage, story-bank goals
-            when you have enough stories, and pattern quiz tasks when you've finished enough full runs. Ticking a CS
+            when you have enough stories, pattern quiz tasks when you've finished enough full runs, and each week's
+            reps session once you've done Today's reps on that many different days. Ticking a CS
             foundations lesson also marks it worked through in the readiness view. Tick the rest yourself. Your plan is
             saved in this browser.
           </p>
