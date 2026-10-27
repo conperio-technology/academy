@@ -159,7 +159,7 @@ interface Props {
 }
 
 // Tools that are study aids rather than lessons to finish: no "Mark as done".
-const NO_DONE_KINDS = new Set(["prepPlan", "itStudyPath", "bugLog"]);
+const NO_DONE_KINDS = new Set(["prepPlan", "itStudyPath", "faangStudyPath", "bugLog"]);
 
 // "Mark as done" at the end of a tool lesson. Tools have no pass/fail (content/ITool.cs), so
 // done is the learner's call; it is the same "worked through" mark the study plans tick, and
@@ -347,6 +347,7 @@ export function ToolView({ toolId }: Props) {
         {tool.toolKind === "mixedSet" && <MixedSet />}
         {tool.toolKind === "prepPlan" && <PrepPlan />}
         {tool.toolKind === "itStudyPath" && <PrepPlan key="it-cs" initialPath="it-cs" />}
+        {tool.toolKind === "faangStudyPath" && <PrepPlan key="faang" initialPath="faang" />}
         {tool.toolKind === "behavioralStar" && <BehavioralStar />}
         {tool.toolKind === "behavioralStoryBank" && <StoryBank />}
         {tool.toolKind === "behavioralMock" && <BehavioralMock />}

@@ -3486,3 +3486,57 @@ button.ns-line:disabled { opacity: 1; }
 .mark-done.is-done {
   border-color: var(--accent);
 }
+
+/* Dashboard: first-visit path picker and the Today strip (Dashboard.tsx) */
+.welcome-card,
+.today-strip {
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.welcome-card h2,
+.today-strip h2 {
+  margin: 0 0 8px;
+}
+.welcome-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+.welcome-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: left;
+  padding: 12px 14px;
+  white-space: normal;
+}
+.welcome-choice span {
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+.today-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.today-strip ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.today-strip li {
+  padding: 6px 0;
+  overflow-wrap: anywhere;
+}
+.today-label {
+  display: inline-block;
+  min-width: 80px;
+  font-weight: 600;
+  color: var(--text-h);
+}

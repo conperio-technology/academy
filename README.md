@@ -149,6 +149,8 @@ Sidebar sections, in display order (`content/SectionOrder.cs` controls this):
 
 - **Study Path: Well-rounded IT & CS**: a week-by-week route through the whole academy (see
   "Two study paths" under Interview Prep)
+- **Study Path: FAANG Interview Prep** (`faang-study-path`): the Interview Prep plan, listed here
+  too and opened on the interview path, so both paths sit where a newcomer looks first
 - **The Math You Need: Powers, Logarithms and Sums**, **Data Types: Numbers, Text and
   True/False** and **Functions, Memory and the Call Stack**: the foundations the other sections
   assume
