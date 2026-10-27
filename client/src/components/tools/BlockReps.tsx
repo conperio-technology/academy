@@ -29,6 +29,7 @@ interface Slot {
   seconds: number | null; // set when the rep ends
   rep: BlockRep | null;
   language: string; // the language of the latest run
+  plan: string[];
   sawReference: boolean;
   showReference: boolean;
 }
@@ -87,6 +88,7 @@ export function BlockReps() {
           seconds: null,
           rep: null,
           language: "csharp",
+          plan: [],
           sawReference: false,
           showReference: false,
         })),
@@ -115,6 +117,7 @@ export function BlockReps() {
       failedRuns: slot.failedRuns,
       passed,
       sawReference: slot.sawReference,
+      ...(slot.plan.length > 0 && { plan: slot.plan }),
     };
     recordBlockRep(rep);
     setReps(loadBlockReps());
@@ -278,6 +281,7 @@ export function BlockReps() {
         fixedMode="bare"
         onPassed={() => {}}
         onRan={handleRan}
+        onPlan={(plan) => updateSlot(index, { plan })}
       />
 
       {ended ? (
@@ -285,7 +289,7 @@ export function BlockReps() {
           <p>
             <RepResult slot={slot} />
           </p>
-          {plan.length > 0 && (
+          {plan.length > 0 && slot.plan.length === 0 && (
             <>
               <p>The block's plan, to compare with how you went about it:</p>
               <ol>

@@ -360,6 +360,15 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   the existing lessons that glue them to another idea. Tiers, targets, prerequisites and glue
   lessons are in `client/src/buildingBlocksData.ts`; reps are kept in `history:blocks`
   (browser only, included in the progress export)
+- **Plan first and the Bug Log** (on every DSA exercise in bare mode, and in Today's reps):
+  ticking **Plan first** asks for 4 or 5 plain-English steps before the editor opens, puts them
+  into the bare starter as numbered comments to fill in under, and after a pass shows them next
+  to the lesson's own steps (`client/src/planFirst.ts`). When a run fails and a later run
+  passes, the lesson asks **What was the bug?** (one-tap categories from `client/src/bugLogData.ts`,
+  your own categories, an optional note, or skip). The **Your Bug Log** page (`bug-log`) ranks
+  the categories over the last 14 days with the lessons they happened in, lists every entry,
+  and takes entries by hand; a lesson with logged bugs shows "Your past bugs here" above its
+  editor. Stored in `history:bug-log` (browser only, included in the progress export)
 - **Trees**: Binary Search Tree Insert/Search/Delete, Binary Tree Inorder Traversal
   (DFS), Binary Tree Level-Order Traversal (BFS) — a real node-and-edge tree diagram,
   positions computed purely from a level-order array index (same math a binary heap's

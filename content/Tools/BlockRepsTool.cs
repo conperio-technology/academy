@@ -29,5 +29,9 @@ public class BlockRepsTool : ITool
         "After each rep you see the block's plan, four or five plain-English steps, to compare with how you went about it, " +
         "and the bug it is most often written with. When a block is fluent, the table lists the existing lessons that glue " +
         "it to another idea.\n\n" +
+        "Two habits ride along. Tick \"Plan first\" above the editor to write four or five plain-English steps before " +
+        "it opens; they go into the starter as comments to fill in under, and after the pass they sit next to the block's " +
+        "own plan (planning time counts toward the rep, as it would in an interview). And when a rep fails before it " +
+        "passes, it asks what the bug was, for your Bug Log.\n\n" +
         "Reps are kept in this browser and included in the progress export on the dashboard.";
 }

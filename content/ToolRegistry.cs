@@ -175,6 +175,7 @@ public static class ToolRegistry
         new RangeQueriesTool(),
         new LazyPropagationTool(),
         new BlockRepsTool(),
+        new BugLogTool(),
         new PatternDrillTool(),
         new MixedSetTool(),
         new BehavioralStarTool(),

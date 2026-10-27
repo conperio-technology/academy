@@ -3453,3 +3453,20 @@ button.ns-line:disabled { opacity: 1; }
 .block-table .block-locked { display: block; font-size: 12px; }
 .block-table td:last-child { text-align: right; }
 .block-reference { white-space: pre; overflow-x: auto; max-width: 100%; }
+
+/* ---- Bug log and plan first (BugLogPrompt.tsx, tools/BugLog.tsx, LanguageRunner.tsx) ---- */
+.bug-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.bug-chips button { font-size: 13px; padding: 4px 10px; text-align: left; }
+.bug-chips button.active { border-color: var(--accent); color: var(--accent-strong); }
+.bug-field { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; font-size: 13px; }
+.bug-field input { font: inherit; background: var(--code-bg); color: var(--text-h); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; max-width: 100%; }
+.bug-top li { margin-bottom: 10px; overflow-wrap: anywhere; }
+.bug-bar { height: 6px; border-radius: 3px; background: var(--accent); opacity: 0.6; margin: 4px 0; }
+.bug-entries li { margin-bottom: 6px; overflow-wrap: anywhere; }
+.plan-first-toggle { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; margin: 8px 0; }
+.plan-box textarea { width: 100%; box-sizing: border-box; }
+.plan-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 12px 0; }
+.plan-compare h3 { font-size: 14px; margin: 0 0 4px; }
+.plan-compare li { overflow-wrap: anywhere; }
+.bug-field select { font: inherit; max-width: 100%; }
+.bug-top .link-button, .bug-entries .link-button { text-align: left; }
