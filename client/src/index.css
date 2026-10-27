@@ -3447,3 +3447,9 @@ button.ns-line:disabled { opacity: 1; }
 /* Sidebar footer: link to THIRD_PARTY_NOTICES.txt (written into every build by vite.config.ts) */
 .licence-link { font-size: 12px; opacity: 0.7; margin-top: 10px; }
 .licence-link a { color: inherit; }
+
+/* ---- Building Blocks drill (components/tools/BlockReps.tsx) ---- */
+.block-table td { vertical-align: middle; }
+.block-table .block-locked { display: block; font-size: 12px; }
+.block-table td:last-child { text-align: right; }
+.block-reference { white-space: pre; overflow-x: auto; max-width: 100%; }

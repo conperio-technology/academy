@@ -15,6 +15,8 @@ interface Props {
   // Set by the mixed interview set ("timed"), which supplies its own blind starter and hides the
   // guided / bare switch.
   fixedMode?: ExerciseMode;
+  // Every run, pass or fail, with the language it ran in (the Building Blocks drill counts them).
+  onRan?: (passed: boolean, language: string) => void;
 }
 
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -47,7 +49,7 @@ function saveMode(mode: ExerciseMode) {
 // Only offers a language tab if the lesson actually has starter code + a function name
 // for it -- so a concept that hasn't been ported to Python yet (or a future language)
 // just doesn't show that tab instead of rendering a broken runner.
-export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedMode }: Props) {
+export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedMode, onRan }: Props) {
   const availableLanguages = Object.keys(lesson.starterCode).filter((lang) => lesson.functionNames[lang]);
   const [language, setLanguage] = useState(availableLanguages[0] ?? "csharp");
   const bareAllowed = !fixedMode && lesson.section !== GUIDED_ONLY_SECTION;
@@ -67,9 +69,10 @@ export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedM
   const [loadedAt] = useState(() => Date.now());
   const sawReference = revealedHere || (lastReveal !== null && loadedAt - lastReveal < REVEAL_COOLDOWN_MS);
 
-  function handleRan(passed: boolean) {
+  function handleRan(passed: boolean, lang: string) {
     setLocalRuns((n) => n + 1);
     if (passed) setPassedHere(mode);
+    onRan?.(passed, lang);
   }
 
   function chooseMode(next: ExerciseMode) {
@@ -143,7 +146,7 @@ export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedM
             starterCode={starterFor("csharp")}
             functionName={lesson.functionNames["csharp"]}
             onPassed={onPassed}
-            onRan={handleRan}
+            onRan={(passed) => handleRan(passed, "csharp")}
             mode={mode}
             harnessPreamble={lesson.cSharpHarnessPreamble}
             callTemplate={lesson.cSharpCallTemplate}
@@ -163,7 +166,7 @@ export function LanguageRunner({ lesson, onPassed, hideReference = false, fixedM
             callTemplate={lesson.pythonCallTemplate ?? "{input}"}
             testCases={lesson.testCases}
             onPassed={onPassed}
-            onRan={handleRan}
+            onRan={(passed) => handleRan(passed, "python")}
             mode={mode}
           />
         </div>

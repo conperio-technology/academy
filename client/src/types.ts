@@ -323,7 +323,8 @@ export type ToolKind =
   | "langFunctional"
   | "langErrorPatterns"
   | "langProfiling"
-  | "langPackaging";
+  | "langPackaging"
+  | "blockReps";
 
 export interface ToolDetail {
   id: string;
