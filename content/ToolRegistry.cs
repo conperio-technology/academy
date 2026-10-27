@@ -10,6 +10,7 @@ public static class ToolRegistry
     private static readonly List<ITool> All =
     [
         new ItStudyPathTool(),
+        new FaangStudyPathTool(),
         new MathForCsTool(),
         new DataTypesTool(),
         new FunctionsCallStackTool(),

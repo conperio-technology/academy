@@ -304,6 +304,7 @@ export function loadBlockReps(): BlockRep[] {
 
 export function recordBlockRep(rep: BlockRep) {
   write(BLOCKS_KEY, [...loadBlockReps(), rep].slice(-BLOCKS_LIMIT));
+  window.dispatchEvent(new Event(PROGRESS_CHANGED_EVENT)); // for badges
 }
 
 // ---- Personal bug log: the bugs you actually make (bugLogData.ts, components/BugLogPrompt.tsx,
@@ -330,6 +331,7 @@ export function loadBugLog(): BugEntry[] {
 export function recordBug(entry: Omit<BugEntry, "id" | "at">): BugEntry {
   const bug: BugEntry = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString() };
   write(BUGS_KEY, [...loadBugLog(), bug].slice(-BUGS_LIMIT));
+  window.dispatchEvent(new Event(PROGRESS_CHANGED_EVENT)); // for badges
   return bug;
 }
 

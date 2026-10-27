@@ -214,6 +214,7 @@ public enum ToolKind
     IncidentResponseLogging,
     OtIcsSecurity,
     ItStudyPath,
+    FaangStudyPath,
     LangMemory,
     LangConcurrency,
     LangAsyncAdvanced,

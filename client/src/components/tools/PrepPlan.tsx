@@ -39,6 +39,7 @@ import {
 import { DESIGN_INTERVIEWS } from "../../systemDesignInterviews";
 import type { LessonEvidence, NavItem, ReviewItem } from "../../types";
 import { STUDY_PATHS, type StudyPathId } from "../../studyPathData";
+import { taskDone } from "../../pathProgress";
 import { ItCsPlan } from "./ItCsPlan";
 
 // The interview prep plan and readiness view. Everything here is derived: lesson completion and
@@ -93,12 +94,6 @@ function walkthroughCoverage(design: string): { attempted: boolean; coverage: nu
   return { attempted: progress.revealedStages.length > 0, coverage: total === 0 ? 0 : ticked / total };
 }
 
-function walkthroughDone(design: string) {
-  const interview = (DESIGN_INTERVIEWS as Record<string, { stages: { id: string }[] }>)[design];
-  if (!interview) return false;
-  const revealed = new Set(loadWalkthrough(design).revealedStages);
-  return interview.stages.every((s) => revealed.has(s.id));
-}
 
 // One cell of the evidence grid: a figure (or null when nothing measures it) and what produced it.
 interface Evidence {
@@ -412,16 +407,8 @@ function FaangPlan() {
   const optionalCount = weeks.reduce((n, w) => n + w.optional.length, 0);
   const coreMinutes = weeks.filter((w) => !w.slack).reduce((n, w) => n + w.tasks.reduce((m, t) => m + t.minutes, 0), 0);
   const storyCount = storyComps.length;
-  const isDone = (t: PlannedTask) => {
-    if (plan?.ticked.includes(t.key)) return true;
-    if (t.doneBy?.kind === "lesson") return completed(t.lessonId);
-    if (t.doneBy?.kind === "walkthrough") return walkthroughDone(t.doneBy.design);
-    if (t.doneBy?.kind === "stories") return storyCount >= t.doneBy.target;
-    if (t.doneBy?.kind === "worked") return workedSet.has(t.lessonId);
-    if (t.doneBy?.kind === "patternQuiz") return quizRuns.length >= t.doneBy.runs;
-    if (t.doneBy?.kind === "reps") return repDays >= t.doneBy.sessions;
-    return false;
-  };
+  const doneContext = { ticked: plan?.ticked ?? [], completed, worked: workedSet, storyCount, fullQuizRuns: quizRuns.length, repDays };
+  const isDone = (t: PlannedTask) => taskDone(t, doneContext);
   // "Worked through" tasks stay tickable: ticking one marks the lesson for readiness too.
   const autoDone = (t: PlannedTask) =>
     t.doneBy !== undefined && t.doneBy.kind !== "worked" && !plan?.ticked.includes(t.key) && isDone(t);

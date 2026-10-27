@@ -313,6 +313,7 @@ export type ToolKind =
   | "incidentResponseLogging"
   | "otIcsSecurity"
   | "itStudyPath"
+  | "faangStudyPath"
   | "langMemory"
   | "langConcurrency"
   | "langAsyncAdvanced"
