@@ -131,7 +131,8 @@ const rowsFor = async (id) => (await idb("read")).filter((r) => r.conceptId === 
 await page.goto(base);
 await page.waitForFunction(() => document.querySelectorAll(".lesson-list .section-toggle").length > 3, null, { timeout: 30000 });
 const dashboardText = await page.locator(".main-content").textContent();
-check(dashboardText.includes(`of ${nav.filter((n) => n.kind === "practice").length} practice lessons`), "dashboard counts every graded lesson");
+check(dashboardText.includes(`of ${nav.length} lessons done`), "dashboard counts every lesson");
+check(dashboardText.includes(`of ${nav.filter((n) => n.kind === "practice").length} graded exercises passed`), "dashboard counts every graded lesson");
 check(await page.locator(".progress-backup").isVisible(), "dashboard shows the progress export/import panel");
 check(!(await page.locator(".sidebar").textContent()).includes("Couldn't load"), "no 'couldn't load the lesson list' error");
 
@@ -139,6 +140,15 @@ check(!(await page.locator(".sidebar").textContent()).includes("Couldn't load"),
 await open(tool.id, tool.title);
 ok(`tool lesson opens (${tool.id})`);
 check(page.url().endsWith(`#/${tool.id}`), "the open lesson is in the URL hash", page.url());
+// A tool lesson (not a plan or log) can be marked done, and the sidebar ticks it.
+const markable = nav.find((n) => n.kind === "tool" && !["interview-prep-plan", "it-cs-study-path", "faang-study-path", "bug-log"].includes(n.id));
+await open(markable.id, markable.title);
+await page.locator(".mark-done button", { hasText: "Mark as done" }).click();
+await page.locator(".mark-done.is-done").waitFor({ timeout: 10000 });
+await page.waitForFunction((t) => [...document.querySelectorAll(".lesson-list-item")].some((b) => b.textContent.includes(t) && b.textContent.includes("✅")), markable.title, { timeout: 10000 });
+ok(`Mark as done ticks a tool lesson in the sidebar (${markable.id})`);
+await page.locator(".mark-done button", { hasText: "Undo" }).click();
+await page.locator(".mark-done button", { hasText: "Mark as done" }).waitFor({ timeout: 10000 });
 await open(first.id, first.title);
 ok(`graded lesson opens (${first.id})`);
 
