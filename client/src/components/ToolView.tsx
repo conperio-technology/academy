@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { fetchTool } from "../api";
+import { loadWorkedThrough, PROGRESS_CHANGED_EVENT, setWorkedThrough } from "../practiceHistory";
 import { GlossaryProse } from "./GlossaryProse";
 import type { ToolDetail } from "../types";
 import { AlgorithmIntro } from "./tools/AlgorithmIntro";
@@ -157,9 +158,40 @@ interface Props {
   toolId: string;
 }
 
+// Tools that are study aids rather than lessons to finish: no "Mark as done".
+const NO_DONE_KINDS = new Set(["prepPlan", "itStudyPath", "bugLog"]);
+
+// "Mark as done" at the end of a tool lesson. Tools have no pass/fail (content/ITool.cs), so
+// done is the learner's call; it is the same "worked through" mark the study plans tick, and
+// the PLC exercises and Micro850 labs set it themselves when passed or completed.
+function MarkDone({ toolId }: { toolId: string }) {
+  const [done, setDone] = useState(() => loadWorkedThrough().includes(toolId));
+  useEffect(() => {
+    const sync = () => setDone(loadWorkedThrough().includes(toolId));
+    window.addEventListener(PROGRESS_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(PROGRESS_CHANGED_EVENT, sync);
+  }, [toolId]);
+  return (
+    <div className={`mark-done ${done ? "is-done" : ""}`}>
+      {done ? (
+        <>
+          <span>✅ You marked this lesson done.</span>
+          <button className="link-button" onClick={() => setDone(setWorkedThrough(toolId, false).includes(toolId))}>
+            Undo
+          </button>
+        </>
+      ) : (
+        <>
+          <span>Read it and tried the examples?</span>
+          <button onClick={() => setDone(setWorkedThrough(toolId, true).includes(toolId))}>Mark as done</button>
+        </>
+      )}
+    </div>
+  );
+}
+
 // Sibling to LessonView, for the other lesson kind: a reference explanation + an
-// interactive calculator instead of a visualizer + code editor. No completion tracking
-// here -- see content/ITool.cs for why tools don't have a pass/fail concept.
+// interactive calculator instead of a visualizer + code editor, finished with "Mark as done".
 export function ToolView({ toolId }: Props) {
   const [tool, setTool] = useState<ToolDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -357,6 +389,8 @@ export function ToolView({ toolId }: Props) {
         {tool.toolKind === "plcStExercise" && PLC_EXERCISE_BY_ID[tool.id] && <PlcExercise key={tool.id} ex={PLC_EXERCISE_BY_ID[tool.id]} />}
         {tool.toolKind === "plcMicro850Lab" && MICRO850_LAB_BY_ID[tool.id] && <Micro850Lab key={tool.id} lab={MICRO850_LAB_BY_ID[tool.id]} />}
       </section>
+
+      {!NO_DONE_KINDS.has(tool.toolKind) && <MarkDone toolId={tool.id} />}
     </div>
   );
 }

@@ -3,6 +3,7 @@
 // the per-learner fields empty); those fields are filled in here from the progress kept in
 // this browser (progressStore.ts, rules in progressCore.ts).
 import type { ExerciseMode } from "./bareStarter";
+import { loadWorkedThrough } from "./practiceHistory";
 import * as core from "./progressCore";
 import type { ProgressRow } from "./progressCore";
 import { readRows, replaceRows, updateRows } from "./progressStore";
@@ -30,11 +31,13 @@ async function requirePractice(lessonId: string) {
   if (!items.some((i) => i.kind === "practice" && i.id === lessonId)) throw new Error(`No graded lesson ${lessonId}`);
 }
 
-// The sidebar listing, with completed lessons marked.
+// The sidebar listing, with completed lessons marked: graded exercises once passed, tool lessons
+// once marked done (practiceHistory.ts, "worked through", the same mark the study plans use).
 export async function fetchLessons(): Promise<NavItem[]> {
   const [items, rows] = await Promise.all([nav(), readRows()]);
   const completed = new Set(rows.filter((r) => r.completedAt !== null).map((r) => r.conceptId));
-  return items.map((i) => ({ ...i, completed: i.kind === "practice" && completed.has(i.id) }));
+  const worked = new Set(loadWorkedThrough());
+  return items.map((i) => ({ ...i, completed: i.kind === "practice" ? completed.has(i.id) : worked.has(i.id) }));
 }
 
 // One graded exercise, with this learner's attempts and evidence.
@@ -113,6 +116,7 @@ const LOCAL_KEY_PREFIXES = [
   "sd-interview:",
   "plc:",
   "exercise-mode",
+  "plan-first",
 ];
 
 function localEntries(): Record<string, string> {

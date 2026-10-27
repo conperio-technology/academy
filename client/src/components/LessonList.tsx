@@ -53,8 +53,7 @@ export function LessonList({ items, selectedId, onSelect, dueIds }: Props) {
     <nav className="lesson-list">
       {Object.entries(bySection).map(([section, sectionItems]) => {
         const open = expanded.has(section);
-        const practice = sectionItems.filter((i) => i.kind === "practice");
-        const completed = practice.filter((i) => i.completed).length;
+        const completed = sectionItems.filter((i) => i.completed).length;
         const dueCount = sectionItems.filter((i) => dueIds.has(i.id)).length;
         return (
           <div key={section} className="lesson-section">
@@ -63,7 +62,7 @@ export function LessonList({ items, selectedId, onSelect, dueIds }: Props) {
               <span className="section-toggle-title">{section}</span>
               <span className="section-count">
                 {dueCount > 0 && <span className="due-badge" title="Lessons due for review">{dueCount}</span>}
-                {practice.length > 0 ? `${completed}/${practice.length}` : `${sectionItems.length}`}
+                {`${completed}/${sectionItems.length}`}
               </span>
             </button>
             {open &&
@@ -78,7 +77,7 @@ export function LessonList({ items, selectedId, onSelect, dueIds }: Props) {
                           onClick={() => onSelect(item.id)}
                         >
                           <span className="lesson-check">
-                            {item.kind === "tool" ? "🛠" : item.completed ? "✅" : "○"}
+                            {item.completed ? "✅" : item.kind === "tool" ? "🛠" : "○"}
                           </span>
                           <span>{item.title}</span>
                           {dueIds.has(item.id) && (

@@ -108,6 +108,11 @@ Review is spaced repetition: a lesson you solved comes due after 1 day, and each
 re-solve it while due the gap grows (3, 7, 14, then 30 days). Sidebar sections are collapsed
 by default and remember which you've opened.
 
+Graded exercises count as done when they pass. Tool lessons (explainers and interactive widgets)
+end with **Mark as done**, the same "worked through" mark the study plans tick; PLC exercises and
+Micro850 labs set it themselves when passed or completed. The sidebar ticks both kinds, and the
+section counts and dashboard cards count every lesson.
+
 ## Working on this repo with Claude
 
 The repo is set up for [Claude Code](https://claude.com/claude-code):
@@ -254,8 +259,12 @@ compiled C# console program) to get the outputs shown.
   optional list, extra tasks and earlier design work) and hours per week, which sets the length.
   Each phase states its prerequisites, optional tasks are listed but not scheduled, and a slack
   week after every four (and one at the end) is reserved for failed attempts, revision and repeat
-  mocks. It ticks itself off as you solve lessons, finish
-  walk-throughs, write stories and run the pattern quiz. Plan content lives in `prepPlanData.ts`;
+  mocks. Every study week starts with a **Today's reps** session, and each algorithm building
+  block is scheduled just before the first lesson it is the base of (new to programming also
+  gets the 16 simple blocks as prerequisites). Slack weeks include a Bug Log review. The
+  readiness view has a Building blocks row (drilled, passed, fluent, rep days), and the focus
+  list names your most common recent bug. It ticks itself off as you solve lessons, finish
+  walk-throughs, write stories, run the pattern quiz and do your reps. Plan content lives in `prepPlanData.ts`;
   drill, mixed-set, mock-round, pattern-quiz and worked-through history in `practiceHistory.ts`
   (browser only).
 - **Two study paths**: the same tool now offers a picker between the FAANG interview plan above

@@ -3,6 +3,8 @@
 // lesson or tool ids; a task whose id the server doesn't know (content not merged yet, or
 // removed) is simply left out of the plan.
 
+import { BUILDING_BLOCKS } from "./buildingBlocksData.ts";
+
 export interface Family {
   id: string;
   label: string;
@@ -272,13 +274,14 @@ export interface PlanTask {
   // "walkthrough" = every stage of that design compared, "stories" = at least `target`
   // stories in the bank, "worked" = the tool lesson is marked worked through (shared with the
   // readiness view), "patternQuiz" = at least `runs` full runs of the design pattern quiz,
-  // anything else = ticked by hand.
+  // "reps" = Today's reps done on at least `sessions` different days, anything else = ticked by hand.
   doneBy?:
     | { kind: "lesson" }
     | { kind: "walkthrough"; design: string }
     | { kind: "stories"; target: number }
     | { kind: "worked" }
-    | { kind: "patternQuiz"; runs: number };
+    | { kind: "patternQuiz"; runs: number }
+    | { kind: "reps"; sessions: number };
 }
 
 const lesson = (id: string, minutes = 45): PlanTask => ({
@@ -313,9 +316,13 @@ const stories = (target: number): PlanTask => ({
 });
 const mixed = (n: number, format: string, minutes: number) =>
   activity(`mixed-${n}`, "mixed-interview-set", `Mixed interview set: ${format}`, "coding", minutes);
-// Building Blocks sessions (components/tools/BlockReps.tsx), ticked by hand.
-const reps = (n: number) =>
-  activity(`block-reps-${n}`, "building-block-reps", "Today's reps: one building-block session (3 to 5 reps)", "coding", 15);
+// Building Blocks sessions (components/tools/BlockReps.tsx), one in every study week (see
+// scheduleByHours); the nth ticks itself once reps were done on n different days.
+const REPS_MINUTES = 15;
+const reps = (n: number): PlanTask => ({
+  ...activity(`block-reps-${n}`, "building-block-reps", "Today's reps: one building-block session (3 to 5 reps)", "coding", REPS_MINUTES),
+  doneBy: { kind: "reps", sessions: n },
+});
 const drill = (n: number) => activity(`drill-${n}`, "pattern-recognition-drill", "Pattern recognition drill, one full run", "coding", 20);
 const tool = (id: string, minutes = 25): PlanTask => ({
   key: id,
@@ -354,7 +361,6 @@ export const PHASES: Phase[] = [
       tool("complexity-amortized", 25),
       tool("complexity-explaining", 20),
       gym(1, "Practice, mixed categories"),
-      reps(1),
       lesson("hashmap-two-sum", 30),
       lesson("string-group-anagrams"),
       lesson("prefix-sums-range-query", 30),
@@ -365,13 +371,11 @@ export const PHASES: Phase[] = [
       lesson("sliding-window-longest-unique"),
       lesson("sliding-window-char-replacement"),
       lesson("stack-valid-parentheses", 30),
-      reps(2),
       read("behavioral-star", "behavioral", 30),
       stories(3),
       tool("glossary-terms", 15),
       flashCards(1),
       gym(2, "Explain it, three snippets out loud"),
-      reps(3),
       tool("text-encoding", 30),
       drill(1),
     ],
@@ -388,7 +392,6 @@ export const PHASES: Phase[] = [
       lesson("binary-search-rotated"),
       lesson("binary-search-rotated-min"),
       lesson("binary-search-on-answer"),
-      reps(4),
       lesson("linked-list-reverse", 30),
       lesson("linked-list-reverse-between"),
       lesson("linked-list-cycle-start"),
@@ -397,7 +400,6 @@ export const PHASES: Phase[] = [
       lesson("monotonic-stack-next-greater"),
       lesson("monotonic-stack-daily-temperatures"),
       lesson("design-min-stack"),
-      reps(5),
       lesson("binary-tree-level-order", 30),
       lesson("tree-validate-bst"),
       lesson("tree-kth-smallest-bst"),
@@ -653,7 +655,8 @@ const prereq = (id: string, minutes: number, graded = false): PlanTask =>
 export const LEVELS: Record<StartLevel, Adjustment> = {
   new: {
     label: "New to programming",
-    blurb: "Adds a programming prerequisites block first, and makes the hardest topics optional for a first pass.",
+    blurb:
+      "Adds a programming prerequisites block first, including the 16 simple building blocks, and makes the hardest topics optional for a first pass. Turn on Plan first in bare mode: writing the steps in plain English before coding is the habit that helps most early on.",
     prerequisites: [
       prereq("lang-start-here", 20),
       prereq("lang-variables-types", 30),
@@ -671,6 +674,8 @@ export const LEVELS: Record<StartLevel, Adjustment> = {
       prereq("basics-remove-duplicates", 30, true),
       prereq("lang-classes", 40),
       prereq("basics-rectangle-class", 30, true),
+      // The simple constructs from Building Blocks: each one small, graded, and the base of a drill.
+      ...BUILDING_BLOCKS.filter((b) => b.tier === 1).map((b) => prereq(b.id, 15, true)),
       prereq("algorithm-intro", 30),
       prereq("array-traversal-sum", 20, true),
       prereq("array-reverse-in-place", 30, true),
@@ -817,6 +822,18 @@ export function buildPlan(profile: PlanProfile, exists: (id: string) => boolean)
     }
     for (const key of adj.optional ?? []) if (!why.has(key)) why.set(key, adj.optionalWhy ?? "optional");
   }
+  // Each algorithm building block goes just before the first lesson it is the base of, so its
+  // pattern is drilled small before the full problem.
+  for (const block of BUILDING_BLOCKS.filter((b) => b.tier === 2)) {
+    if (phases.some((p) => p.tasks.some((t) => t.key === block.id))) continue;
+    const phase = phases.find((p) => p.tasks.some((t) => block.glue.includes(t.key)));
+    if (!phase) continue;
+    phase.tasks.splice(
+      phase.tasks.findIndex((t) => block.glue.includes(t.key)),
+      0,
+      lesson(block.id, 20),
+    );
+  }
   const planned: PlannedPhase[] = phases.map((p) => ({
     name: p.name,
     requires: PHASE_REQUIRES[p.name] ?? "",
@@ -854,8 +871,9 @@ function slackWeek(n: number, minutes: number, final: boolean): PlanWeek {
     slack: true,
     optional: [],
     tasks: [
-      slack("retry", "interview-prep-plan", "Redo the lessons you failed or only passed assisted, from the bare starter (the readiness view lists them)", 0.45),
-      slack("catch-up", "pattern-recognition-drill", "Catch up on unfinished tasks from earlier weeks, then clear the spaced-review queue on the dashboard", 0.3),
+      slack("retry", "interview-prep-plan", "Redo the lessons you failed or only passed assisted, from the bare starter (the readiness view lists them)", 0.35),
+      slack("bugs", "bug-log", "Read your Bug Log: find your most common kind of bug and redo one lesson where you made it", 0.15),
+      slack("catch-up", "pattern-recognition-drill", "Catch up on unfinished tasks from earlier weeks, then clear the spaced-review queue on the dashboard", 0.25),
       slack(
         "mock",
         final ? "behavioral-mock-round" : "mixed-interview-set",
@@ -868,14 +886,16 @@ function slackWeek(n: number, minutes: number, final: boolean): PlanWeek {
 
 // Fills weeks in order at the learner's weekly hours (a task never splits; one bigger than a
 // whole week gets a week to itself), inserting a slack week after every SLACK_EVERY study weeks
-// and a final one before the interviews. Optional tasks are listed, not scheduled.
-export function scheduleByHours(phases: PlannedPhase[], hoursPerWeek: number): PlanWeek[] {
+// and a final one before the interviews. Optional tasks are listed, not scheduled. With
+// weeklyReps, every study week starts with one Today's reps session.
+export function scheduleByHours(phases: PlannedPhase[], hoursPerWeek: number, weeklyReps = false): PlanWeek[] {
   const capacity = Math.max(60, hoursPerWeek * 60);
   const weeks: PlanWeek[] = [];
   let current: PlanWeek | null = null;
   let used = 0;
   let studyWeeks = 0;
   let slackCount = 0;
+  let repsCount = 0;
   const close = () => {
     if (!current || current.tasks.length === 0) return;
     weeks.push(current);
@@ -887,8 +907,14 @@ export function scheduleByHours(phases: PlannedPhase[], hoursPerWeek: number): P
   for (const phase of phases) {
     let started = false;
     for (const t of phase.tasks.filter((x) => x.tier !== "optional")) {
-      if (current && used + t.minutes > capacity && current.tasks.length > 0) close();
-      current ??= { phase: phase.name, firstOfPhase: null, tasks: [], slack: false, optional: [] };
+      if (current && used + t.minutes > capacity && current.tasks.some((x) => x.doneBy?.kind !== "reps")) close();
+      if (!current) {
+        current = { phase: phase.name, firstOfPhase: null, tasks: [], slack: false, optional: [] };
+        if (weeklyReps) {
+          current.tasks.push({ ...reps(++repsCount), tier: "core" });
+          used += REPS_MINUTES;
+        }
+      }
       if (!started) {
         current.firstOfPhase ??= phase.name;
         started = true;

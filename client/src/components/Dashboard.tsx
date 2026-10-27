@@ -16,13 +16,14 @@ export function Dashboard({ items, review, onSelect, onProgressImported }: Props
   const sections = [...new Set(items.map((i) => i.section))];
   const practice = items.filter((i) => i.kind === "practice");
   const completedCount = practice.filter((i) => i.completed).length;
+  const lessonsDone = items.filter((i) => i.completed).length;
   const nextUp = practice.find((i) => !i.completed);
 
   return (
     <div className="dashboard">
       <h1>Conperio Academy</h1>
       <p className="one-liner">
-        {completedCount} of {practice.length} practice lessons completed.
+        {lessonsDone} of {items.length} lessons done, {completedCount} of {practice.length} graded exercises passed.
         {nextUp && (
           <>
             {" "}
@@ -62,24 +63,26 @@ export function Dashboard({ items, review, onSelect, onProgressImported }: Props
         {sections.map((section) => {
           const sectionItems = items.filter((i) => i.section === section);
           const sectionPractice = sectionItems.filter((i) => i.kind === "practice");
-          const done = sectionPractice.filter((i) => i.completed).length;
-          const tools = sectionItems.length - sectionPractice.length;
+          const passed = sectionPractice.filter((i) => i.completed).length;
+          const done = sectionItems.filter((i) => i.completed).length;
           const info = SECTION_INFO[section];
-          const target = sectionPractice.find((i) => !i.completed) ?? sectionItems[0];
+          const target = sectionItems.find((i) => !i.completed) ?? sectionItems[0];
           return (
             <div key={section} className="section-card">
               <h3>{section}</h3>
               {info && <p>{info.blurb}</p>}
               {info && <p className="gate-note">{info.why}</p>}
               <p className="section-card-stats">
+                <span>
+                  {done}/{sectionItems.length} done
+                </span>
                 {sectionPractice.length > 0 && (
                   <span>
-                    {done}/{sectionPractice.length} practice
+                    {passed}/{sectionPractice.length} graded passed
                   </span>
                 )}
-                {tools > 0 && <span>{tools} reference &amp; interactive</span>}
               </p>
-              <button onClick={() => onSelect(target.id)}>{done > 0 && done < sectionPractice.length ? "Continue" : "Open"}</button>
+              <button onClick={() => onSelect(target.id)}>{done > 0 && done < sectionItems.length ? "Continue" : "Open"}</button>
             </div>
           );
         })}
