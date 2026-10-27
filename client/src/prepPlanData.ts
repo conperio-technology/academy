@@ -313,6 +313,9 @@ const stories = (target: number): PlanTask => ({
 });
 const mixed = (n: number, format: string, minutes: number) =>
   activity(`mixed-${n}`, "mixed-interview-set", `Mixed interview set: ${format}`, "coding", minutes);
+// Building Blocks sessions (components/tools/BlockReps.tsx), ticked by hand.
+const reps = (n: number) =>
+  activity(`block-reps-${n}`, "building-block-reps", "Today's reps: one building-block session (3 to 5 reps)", "coding", 15);
 const drill = (n: number) => activity(`drill-${n}`, "pattern-recognition-drill", "Pattern recognition drill, one full run", "coding", 20);
 const tool = (id: string, minutes = 25): PlanTask => ({
   key: id,
@@ -351,6 +354,7 @@ export const PHASES: Phase[] = [
       tool("complexity-amortized", 25),
       tool("complexity-explaining", 20),
       gym(1, "Practice, mixed categories"),
+      reps(1),
       lesson("hashmap-two-sum", 30),
       lesson("string-group-anagrams"),
       lesson("prefix-sums-range-query", 30),
@@ -361,11 +365,13 @@ export const PHASES: Phase[] = [
       lesson("sliding-window-longest-unique"),
       lesson("sliding-window-char-replacement"),
       lesson("stack-valid-parentheses", 30),
+      reps(2),
       read("behavioral-star", "behavioral", 30),
       stories(3),
       tool("glossary-terms", 15),
       flashCards(1),
       gym(2, "Explain it, three snippets out loud"),
+      reps(3),
       tool("text-encoding", 30),
       drill(1),
     ],
@@ -382,6 +388,7 @@ export const PHASES: Phase[] = [
       lesson("binary-search-rotated"),
       lesson("binary-search-rotated-min"),
       lesson("binary-search-on-answer"),
+      reps(4),
       lesson("linked-list-reverse", 30),
       lesson("linked-list-reverse-between"),
       lesson("linked-list-cycle-start"),
@@ -390,6 +397,7 @@ export const PHASES: Phase[] = [
       lesson("monotonic-stack-next-greater"),
       lesson("monotonic-stack-daily-temperatures"),
       lesson("design-min-stack"),
+      reps(5),
       lesson("binary-tree-level-order", 30),
       lesson("tree-validate-bst"),
       lesson("tree-kth-smallest-bst"),

@@ -225,6 +225,7 @@ public enum ToolKind
     LangErrorPatterns,
     LangProfiling,
     LangPackaging,
+    BlockReps,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,

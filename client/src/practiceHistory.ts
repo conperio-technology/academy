@@ -267,3 +267,27 @@ export function recordLessonOpened(lessonId: string) {
   const ids = loadOpenedLessons();
   if (!ids.includes(lessonId)) write(OPENED_KEY, [...ids, lessonId]);
 }
+
+// ---- Building Blocks drill: one entry per rep (buildingBlocksData.ts, components/tools/BlockReps.tsx) ----
+
+const BLOCKS_KEY = "history:blocks";
+const BLOCKS_LIMIT = 2000;
+
+export interface BlockRep {
+  at: string; // ISO date the rep ended
+  blockId: string;
+  language: string;
+  seconds: number;
+  failedRuns: number; // runs before the pass (or before giving up) that failed or didn't compile
+  passed: boolean;
+  sawReference: boolean; // the reference solution was opened before the pass
+}
+
+export function loadBlockReps(): BlockRep[] {
+  const reps = read<BlockRep[]>(BLOCKS_KEY, []);
+  return Array.isArray(reps) ? reps.filter((r) => r && typeof r.blockId === "string") : [];
+}
+
+export function recordBlockRep(rep: BlockRep) {
+  write(BLOCKS_KEY, [...loadBlockReps(), rep].slice(-BLOCKS_LIMIT));
+}

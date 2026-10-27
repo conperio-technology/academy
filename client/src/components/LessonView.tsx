@@ -48,6 +48,11 @@ export function LessonView({ lessonId, onCompleted }: Props) {
   if (loading) return <p className="status-text">Loading lesson…</p>;
   if (!lesson) return <p className="status-text">Couldn't load this lesson.</p>;
 
+  // Building blocks have no step-through visualizer (content/Concepts/BuildingBlock.cs), so the
+  // sections renumber without it.
+  const hasSteps = lesson.visualizationSteps.length > 0;
+  const step = (n: number) => `${hasSteps ? n : n - 1}. `;
+
   return (
     <div className="lesson-view">
       <header>
@@ -71,6 +76,16 @@ export function LessonView({ lessonId, onCompleted }: Props) {
         <p>{lesson.keyTakeaway}</p>
       </div>
 
+      {lesson.track === "building blocks" && (
+        <p className="gate-note transfer-note">
+          A building block: a small template to write until it's automatic.{" "}
+          <button className="link-button" onClick={() => openLesson("building-block-reps")}>
+            Today's reps
+          </button>{" "}
+          drills it from a blank editor, times each rep and tracks when it's fluent.
+        </p>
+      )}
+
       {lesson.transferOf && (
         <p className="gate-note transfer-note">
           Transfer problem: this follows{" "}
@@ -89,27 +104,29 @@ export function LessonView({ lessonId, onCompleted }: Props) {
         confusableWith={lesson.confusableWith}
       />
 
-      <section>
-        <h2>1. Watch it happen</h2>
-        {lesson.visualizerKind === "linkedList" && <LinkedListVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "stack" && <StackVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "hashMap" && <HashMapVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "callStack" && <CallStackVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "tree" && <TreeVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "graph" && <GraphVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "grid" && <GridVisualizer steps={lesson.visualizationSteps} />}
-        {lesson.visualizerKind === "array" && <ArrayVisualizer steps={lesson.visualizationSteps} />}
-      </section>
+      {hasSteps && (
+        <section>
+          <h2>1. Watch it happen</h2>
+          {lesson.visualizerKind === "linkedList" && <LinkedListVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "stack" && <StackVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "hashMap" && <HashMapVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "callStack" && <CallStackVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "tree" && <TreeVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "graph" && <GraphVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "grid" && <GridVisualizer steps={lesson.visualizationSteps} />}
+          {lesson.visualizerKind === "array" && <ArrayVisualizer steps={lesson.visualizationSteps} />}
+        </section>
+      )}
 
       <section>
-        <h2>2. Now write it yourself</h2>
+        <h2>{step(2)}Now write it yourself</h2>
         <InterviewMode lessonId={lesson.id} />
         <LanguageRunner key={runnerKey} lesson={lesson} onPassed={onCompleted} />
       </section>
 
       {lesson.complexity && (
         <section>
-          <h2>3. Name the complexity</h2>
+          <h2>{step(3)}Name the complexity</h2>
           <ComplexityCheck complexity={lesson.complexity} />
         </section>
       )}

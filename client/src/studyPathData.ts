@@ -73,6 +73,7 @@ export const IT_CS_FAMILIES: PathFamily[] = [
       "algorithm-intro",
       "big-o-notation",
       "array-traversal-sum",
+      "building-block-reps",
       "hashmap-two-sum",
       "hash-table-internals",
       "binary-search-array",

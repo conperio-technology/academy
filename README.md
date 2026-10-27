@@ -321,9 +321,9 @@ space, with Practice, Explain it (write your reasoning, then grade it against a 
 modes. The bank lives in `client/src/complexityGymData.ts`; `node scripts/check-complexity-gym.mjs`
 (from `client/`) validates it.
 
-Then Fundamentals (11 concepts) + Trees (6) + Graphs (4) + Sorting (5) + Dynamic
+Then Fundamentals (11 concepts) + Building Blocks (35) + Trees (6) + Graphs (4) + Sorting (5) + Dynamic
 Programming (4) + a Patterns track (70) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
-125 gradable concepts in total, each with a
+160 gradable concepts in total, each (except the building blocks) with a
 canned step-through visualizer, a "key takeaway" callout, a Monaco editor, and
 test-driven completion tracking (plus one reference Tool, Hashing, slotted
 in right after Two Sum, and a Pattern Recognition Drill at the end of the section):
@@ -339,6 +339,27 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   factor crosses 0.75, the exact same amortized-cost shape as the Dynamic Arrays tool
   in Computer Fundamentals. Sits right after Two Sum, not at the end of the section,
   while hash maps are still fresh
+- **Building blocks** (35 small graded templates after Fundamentals, plus **Today's reps**):
+  the pieces most interview solutions are glued together from, each with a wrapper thin
+  enough that one rep takes a few minutes. Tier 1 is 16 simple constructs (count with a
+  hashmap, a seen set, group by key, best so far, two pointers from both ends, fast and slow
+  pointers, swap and reverse, stack, queue, building a string, sorting with a key, grid
+  neighbours, prefix sums, character arithmetic, a dummy list node, tree recursion). Tier 2
+  is 19 algorithm blocks (BFS with a visited set, multi-source grid BFS, iterative DFS with a
+  stack, recursive DFS over every node, lower-bound binary search, binary search on the
+  answer, variable and fixed sliding windows, a heap of tuples, Dijkstra, union-find, Kahn's
+  topological sort, the backtracking template, prefix sum plus hashmap, a monotonic stack,
+  memoized recursion, a 1-D DP table, a 2-D DP table over two strings, 0/1 knapsack in one
+  row). The guided starter is the block's plain-English plan as numbered comments, so bare
+  mode strips it to the signature (`content/Concepts/BuildingBlock.cs`); blocks have no
+  visualizer. **Today's reps** picks 3 or 5 blocks (least fluent first, constructs before
+  algorithms; a tier 2 block is offered once the blocks it builds on are fluent), opens each
+  bare with a stopwatch, and records the rep. A rep is clean when it passes on the first run
+  within the block's target time without the reference; clean reps on 3 different days make
+  a block fluent. After each rep it shows the plan and the usual bug, and fluent blocks list
+  the existing lessons that glue them to another idea. Tiers, targets, prerequisites and glue
+  lessons are in `client/src/buildingBlocksData.ts`; reps are kept in `history:blocks`
+  (browser only, included in the progress export)
 - **Trees**: Binary Search Tree Insert/Search/Delete, Binary Tree Inorder Traversal
   (DFS), Binary Tree Level-Order Traversal (BFS) — a real node-and-edge tree diagram,
   positions computed purely from a level-order array index (same math a binary heap's

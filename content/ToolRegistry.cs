@@ -174,6 +174,7 @@ public static class ToolRegistry
         new BitTricksTool(),
         new RangeQueriesTool(),
         new LazyPropagationTool(),
+        new BlockRepsTool(),
         new PatternDrillTool(),
         new MixedSetTool(),
         new BehavioralStarTool(),
