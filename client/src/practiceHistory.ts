@@ -281,6 +281,7 @@ export interface BlockRep {
   failedRuns: number; // runs before the pass (or before giving up) that failed or didn't compile
   passed: boolean;
   sawReference: boolean; // the reference solution was opened before the pass
+  plan?: string[]; // the steps written first, with "Plan first" on
 }
 
 export function loadBlockReps(): BlockRep[] {
@@ -290,4 +291,46 @@ export function loadBlockReps(): BlockRep[] {
 
 export function recordBlockRep(rep: BlockRep) {
   write(BLOCKS_KEY, [...loadBlockReps(), rep].slice(-BLOCKS_LIMIT));
+}
+
+// ---- Personal bug log: the bugs you actually make (bugLogData.ts, components/BugLogPrompt.tsx,
+// components/tools/BugLog.tsx) ----
+
+const BUGS_KEY = "history:bug-log";
+const BUG_CATEGORIES_KEY = "history:bug-log-categories";
+const BUGS_LIMIT = 2000;
+
+export interface BugEntry {
+  id: string;
+  at: string; // ISO date
+  lessonId: string | null; // null for one added by hand (from a real interview, say)
+  language: string | null;
+  category: string;
+  note: string;
+}
+
+export function loadBugLog(): BugEntry[] {
+  const bugs = read<BugEntry[]>(BUGS_KEY, []);
+  return Array.isArray(bugs) ? bugs.filter((b) => b && typeof b.category === "string" && typeof b.at === "string") : [];
+}
+
+export function recordBug(entry: Omit<BugEntry, "id" | "at">): BugEntry {
+  const bug: BugEntry = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString() };
+  write(BUGS_KEY, [...loadBugLog(), bug].slice(-BUGS_LIMIT));
+  return bug;
+}
+
+export function deleteBug(id: string) {
+  write(BUGS_KEY, loadBugLog().filter((b) => b.id !== id));
+}
+
+// Categories the learner added on top of BUG_CATEGORIES.
+export function loadCustomBugCategories(): string[] {
+  const c = read<string[]>(BUG_CATEGORIES_KEY, []);
+  return Array.isArray(c) ? c.filter((x) => typeof x === "string") : [];
+}
+
+export function addCustomBugCategory(name: string) {
+  const c = loadCustomBugCategories();
+  if (!c.includes(name)) write(BUG_CATEGORIES_KEY, [...c, name]);
 }

@@ -324,7 +324,8 @@ export type ToolKind =
   | "langErrorPatterns"
   | "langProfiling"
   | "langPackaging"
-  | "blockReps";
+  | "blockReps"
+  | "bugLog";
 
 export interface ToolDetail {
   id: string;

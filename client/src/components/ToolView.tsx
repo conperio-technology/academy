@@ -62,6 +62,7 @@ import { MixedSet } from "./tools/MixedSet";
 import { PrepPlan } from "./tools/PrepPlan";
 import { PatternDrill } from "./tools/PatternDrill";
 import { BlockReps } from "./tools/BlockReps";
+import { BugLog } from "./tools/BugLog";
 import { PlcMemoryAddressing } from "./tools/PlcMemoryAddressing";
 import { PlcSafetyRedundancy } from "./tools/PlcSafetyRedundancy";
 import { PlcScanCycle } from "./tools/PlcScanCycle";
@@ -310,6 +311,7 @@ export function ToolView({ toolId }: Props) {
         {tool.toolKind === "lazyPropagation" && <LazyPropagation />}
         {tool.toolKind === "patternDrill" && <PatternDrill />}
         {tool.toolKind === "blockReps" && <BlockReps />}
+        {tool.toolKind === "bugLog" && <BugLog />}
         {tool.toolKind === "mixedSet" && <MixedSet />}
         {tool.toolKind === "prepPlan" && <PrepPlan />}
         {tool.toolKind === "itStudyPath" && <PrepPlan key="it-cs" initialPath="it-cs" />}
