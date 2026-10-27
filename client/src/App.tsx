@@ -5,6 +5,7 @@ import { Dashboard } from "./components/Dashboard";
 import { LessonList } from "./components/LessonList";
 import { LessonView } from "./components/LessonView";
 import { ToolView } from "./components/ToolView";
+import { clearWorkedThrough, PROGRESS_CHANGED_EVENT } from "./practiceHistory";
 import { siteUrl } from "./siteUrl";
 import type { NavItem, ReviewItem } from "./types";
 
@@ -45,6 +46,11 @@ function App() {
   }
 
   useEffect(reload, []);
+  // A tool lesson marked done (or undone), here or inside a study plan.
+  useEffect(() => {
+    window.addEventListener(PROGRESS_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(PROGRESS_CHANGED_EVENT, reload);
+  }, []);
   // Lets a tool deep inside the view (the mixed interview set's "open the lesson" link)
   // navigate without threading a callback through ToolView.
   useEffect(() => {
@@ -76,6 +82,7 @@ function App() {
 
   async function handleResetAll() {
     await resetAllProgress();
+    clearWorkedThrough();
     refreshAll();
   }
 

@@ -129,11 +129,22 @@ export function loadWorkedThrough(): string[] {
   return Array.isArray(ids) ? ids.filter((x) => typeof x === "string") : [];
 }
 
+// Fired on window when a lesson is marked done or not done outside the graded progress store,
+// so the sidebar and dashboard (App.tsx) reload their completed state.
+export const PROGRESS_CHANGED_EVENT = "academy:progress-changed";
+
 export function setWorkedThrough(lessonId: string, on: boolean): string[] {
-  const rest = loadWorkedThrough().filter((id) => id !== lessonId);
+  const before = loadWorkedThrough();
+  if (before.includes(lessonId) === on) return before;
+  const rest = before.filter((id) => id !== lessonId);
   const next = on ? [...rest, lessonId] : rest;
   write(WORKED_KEY, next);
+  window.dispatchEvent(new Event(PROGRESS_CHANGED_EVENT));
   return next;
+}
+
+export function clearWorkedThrough() {
+  write(WORKED_KEY, []);
 }
 
 // ---- Glossary flash cards (written by Glossary.tsx under "glossary:cards") ----
@@ -219,6 +230,7 @@ export function recordPlcAttempt(exerciseId: string, passed: boolean): PlcExerci
   const next: PlcExerciseProgress = { attempts: prev.attempts + 1, passedAt: prev.passedAt ?? (passed ? new Date().toISOString() : undefined) };
   all[exerciseId] = next;
   write(PLC_KEY, all);
+  if (passed) setWorkedThrough(exerciseId, true); // the exercise id is its lesson id
   return next;
 }
 
@@ -244,6 +256,7 @@ export function saveMicro850Checks(labId: string, checked: string[], complete: b
   const next: Micro850LabProgress = { checked, completedAt: prev?.completedAt ?? (complete ? new Date().toISOString() : undefined) };
   all[labId] = next;
   write(M850_KEY, all);
+  if (complete) setWorkedThrough(labId, true); // the lab id is its lesson id
   return next;
 }
 

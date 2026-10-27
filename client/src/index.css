@@ -3470,3 +3470,19 @@ button.ns-line:disabled { opacity: 1; }
 .plan-compare li { overflow-wrap: anywhere; }
 .bug-field select { font: inherit; max-width: 100%; }
 .bug-top .link-button, .bug-entries .link-button { text-align: left; }
+
+/* "Mark as done" at the end of a tool lesson (ToolView.tsx) */
+.mark-done {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-panel);
+}
+.mark-done.is-done {
+  border-color: var(--accent);
+}
