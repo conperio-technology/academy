@@ -117,6 +117,7 @@ const LOCAL_KEY_PREFIXES = [
   "plc:",
   "exercise-mode",
   "plan-first",
+  "badges:",
 ];
 
 function localEntries(): Record<string, string> {

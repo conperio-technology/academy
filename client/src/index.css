@@ -3540,3 +3540,148 @@ button.ns-line:disabled { opacity: 1; }
   font-weight: 600;
   color: var(--text-h);
 }
+
+/* Dashboard badges, certificates and the "badge earned" toast (Badges.tsx) */
+.badges-panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  padding: 12px 20px;
+  margin: 20px 0;
+}
+.badges-panel > summary {
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.badges-panel > summary h2 {
+  display: inline;
+  margin: 0;
+  font-size: 1.2em;
+}
+.badges-panel h3 {
+  margin: 16px 0 8px;
+}
+.badge-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+.badge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  opacity: 0.6;
+  overflow-wrap: anywhere;
+}
+.badge.earned {
+  opacity: 1;
+  border-color: var(--accent);
+}
+.badge-icon {
+  font-size: 1.4em;
+}
+.badge-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  max-width: 420px;
+  margin-left: auto;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  color: var(--text-h);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+.certificate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: auto;
+  padding: 16px;
+  background: rgba(10, 10, 14, 0.92);
+}
+.certificate-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  max-width: 760px;
+  margin: 0 auto 16px;
+}
+.certificate-controls input {
+  max-width: 100%;
+}
+.certificate {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  text-align: center;
+  background: #fffdf6;
+  color: #1b1c23;
+  border: 10px double #b08d2e;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+.certificate p {
+  margin: 8px 0;
+}
+.certificate-org {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.certificate-kicker {
+  font-size: 1.4em;
+  font-style: italic;
+}
+.certificate-name {
+  font-size: 2.2em;
+  font-weight: 700;
+  border-bottom: 1px solid #b08d2e;
+  display: inline-block;
+  padding: 0 24px 4px;
+}
+.certificate-path {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+.certificate-date,
+.certificate-note {
+  font-size: 0.9em;
+  color: #555;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .certificate,
+  .certificate * {
+    visibility: visible;
+  }
+  .certificate-overlay {
+    position: absolute;
+    background: none;
+    padding: 0;
+  }
+  .certificate {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+}

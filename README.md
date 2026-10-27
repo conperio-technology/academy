@@ -102,8 +102,20 @@ Below a 768px viewport (a phone, say) the sidebar becomes a slide-out drawer ins
 permanent column: tap the ☰ button to open it, tap the dimmed backdrop or pick a lesson to
 close it again.
 
-The landing page is a dashboard: overall progress, a "next up" shortcut, the progress export
-and import, one card per section explaining what it's for, and a **Due for review** queue.
+The landing page is a dashboard. On a first visit it asks what you're here for (prepare for
+coding interviews, broad IT and CS knowledge, learn to program from zero, or just browsing)
+and opens that path; after that a **Today** strip shows the next step on your path (the FAANG
+plan's next undone task, the IT & CS path's next lesson, or the next programming
+prerequisite), Today's reps and the first lesson due for review, with a Change path link
+(`client/src/pathProgress.ts`). Below it: overall progress, the progress export and import,
+**Badges**, one card per section explaining what it's for, and a **Due for review** queue.
+
+Badges (`client/src/badges.ts`) are worked out from progress already in the browser: bronze,
+silver and gold per section (half done, all done, every graded exercise passed from the bare
+starter), habits (reps streaks and days, fluent blocks, bugs logged) and milestones (first pass,
+first independent pass, 100 lessons, a timed solve, a design walk-through, 8 stories). A short
+note appears when one is earned. Finishing a study path unlocks a printable certificate with the
+name you type; it says it is self-issued, since nothing leaves the browser.
 Review is spaced repetition: a lesson you solved comes due after 1 day, and each time you
 re-solve it while due the gap grows (3, 7, 14, then 30 days). Sidebar sections are collapsed
 by default and remember which you've opened.

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loadBlockReps } from "../practiceHistory";
 import { faangNext, itCsNext, learnNext, loadGoal, saveGoal, type Goal, type NextStep } from "../pathProgress";
 import { SECTION_INFO } from "../sectionInfo";
+import { Badges } from "./Badges";
 import { ProgressBackup } from "./ProgressBackup";
 import type { NavItem, ReviewItem } from "../types";
 
@@ -176,6 +177,8 @@ export function Dashboard({ items, review, onSelect, onProgressImported }: Props
       )}
 
       <ProgressBackup onImported={() => onProgressImported?.()} />
+
+      {items.length > 0 && <Badges items={items} />}
 
       {review.length > 0 && (
         <div className="review-panel">

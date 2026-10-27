@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchLessons, fetchReview, OPEN_LESSON_EVENT, resetAllProgress } from "./api";
+import { BadgeToast } from "./components/Badges";
 import { ConfirmButton } from "./components/ConfirmButton";
 import { Dashboard } from "./components/Dashboard";
 import { LessonList } from "./components/LessonList";
@@ -139,6 +140,7 @@ function App() {
         )}
       </aside>
       <main className="main-content">
+        <BadgeToast items={items} />
         {selectedItem?.kind === "tool" && <ToolView key={`${selectedId}-${viewGeneration}`} toolId={selectedItem.id} />}
         {selectedItem?.kind === "practice" && (
           <LessonView key={`${selectedId}-${viewGeneration}`} lessonId={selectedItem.id} onCompleted={reload} />
