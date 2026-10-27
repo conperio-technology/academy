@@ -45,12 +45,14 @@ export function Badges({ items }: { items: NavItem[] }) {
         <div key={g}>
           <h3>{g}</h3>
           <ul className="badge-grid">
-            {badges
-              .filter((b) => b.group === g)
-              .sort((a, b) => Number(b.earned) - Number(a.earned))
-              .map((b) => (
-                <BadgeTile key={b.id} badge={b} />
-              ))}
+            {g === "Sections"
+              ? [...new Set(badges.filter((b) => b.section).map((b) => b.section!))].map((s) => (
+                  <SectionTile key={s} tiers={badges.filter((b) => b.section === s)} />
+                ))
+              : badges
+                  .filter((b) => b.group === g)
+                  .sort((a, b) => Number(b.earned) - Number(a.earned))
+                  .map((b) => <BadgeTile key={b.id} badge={b} />)}
           </ul>
         </div>
       ))}
@@ -69,6 +71,23 @@ export function Badges({ items }: { items: NavItem[] }) {
       </ul>
       {showing && <Certificate cert={showing} onClose={() => setShowing(null)} />}
     </details>
+  );
+}
+
+// One tile per section: the best tier earned so far, and what the next one needs.
+function SectionTile({ tiers }: { tiers: Badge[] }) {
+  const best = tiers.filter((t) => t.earned).at(-1);
+  const next = tiers.find((t) => !t.earned);
+  const name = tiers[0].name.replace(/ \(\w+\)$/, "");
+  const medal = best ? { bronze: "🥉", silver: "🥈", gold: "🥇" }[best.id.split("-").at(-1)!] : "🔒";
+  return (
+    <li className={`badge ${best ? "earned" : ""}`} title={tiers.map((t) => `${t.name}: ${t.how}`).join("\n")}>
+      <span className="badge-icon" aria-hidden="true">
+        {medal}
+      </span>
+      <strong>{best ? best.name : name}</strong>
+      <span className="gate-note">{next ? `Next, ${next.name.slice(name.length + 2, -1)}: ${next.how.charAt(0).toLowerCase()}${next.how.slice(1)}, ${next.progress}` : "Every tier earned"}</span>
+    </li>
   );
 }
 

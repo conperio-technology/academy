@@ -15,6 +15,7 @@ export interface Badge {
   how: string; // what earns it
   progress: string; // where the learner is, e.g. "12 of 15"
   earned: boolean;
+  section?: string; // section badges: bronze, silver and gold share one tile per section
 }
 
 // Plan and log tools have nothing to finish, so sections count only lessons.
@@ -78,8 +79,8 @@ export function computeBadges(items: NavItem[], evidence: LessonEvidence[]): Bad
     const done = inSection.filter((i) => i.completed).length;
     const half = Math.ceil(inSection.length / 2);
     const key = section.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    badges.push({ id: `section-${key}-bronze`, group: "Sections", name: `${name} (bronze)`, how: `Finish half of ${section}`, progress: count(done, half), earned: done >= half });
-    badges.push({ id: `section-${key}-silver`, group: "Sections", name: `${name} (silver)`, how: `Finish every lesson in ${section}`, progress: count(done, inSection.length), earned: done === inSection.length });
+    badges.push({ id: `section-${key}-bronze`, group: "Sections", name: `${name} (bronze)`, how: `Finish half of ${section}`, progress: count(done, half), earned: done >= half, section });
+    badges.push({ id: `section-${key}-silver`, group: "Sections", name: `${name} (silver)`, how: `Finish every lesson in ${section}`, progress: count(done, inSection.length), earned: done === inSection.length, section });
     const graded = inSection.filter((i) => i.kind === "practice");
     if (graded.length > 0) {
       const own = graded.filter((i) => independent.has(i.id)).length;
@@ -90,6 +91,7 @@ export function computeBadges(items: NavItem[], evidence: LessonEvidence[]): Bad
         how: `Pass every graded exercise in ${section} from the bare starter, without the reference`,
         progress: count(own, graded.length),
         earned: own === graded.length,
+        section,
       });
     }
   }
