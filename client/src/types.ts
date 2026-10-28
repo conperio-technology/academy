@@ -348,7 +348,15 @@ export type ToolKind =
   | "bootProcess"
   | "itsmIncidentsChanges"
   | "netEmailAuth"
-  | "netIpv6";
+  | "netIpv6"
+  | "langRegex"
+  | "langDatesTimes"
+  | "complexityClasses"
+  | "debuggingSystematically"
+  | "architectureStyles"
+  | "dataAnalyticsWarehouses"
+  | "probabilityCounting"
+  | "agileScrumKanban";
 
 export interface ToolDetail {
   id: string;

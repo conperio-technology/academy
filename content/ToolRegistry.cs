@@ -280,6 +280,14 @@ public static class ToolRegistry
         new ItsmIncidentsChangesTool(),
         new NetEmailAuthTool(),
         new NetIpv6Tool(),
+        new LangRegexTool(),
+        new LangDatesTimesTool(),
+        new ComplexityClassesTool(),
+        new DebuggingSystematicallyTool(),
+        new ArchitectureStylesTool(),
+        new DataAnalyticsWarehousesTool(),
+        new ProbabilityCountingTool(),
+        new AgileScrumKanbanTool(),
     ];
 
     private static readonly Dictionary<string, ITool> ById = All.ToDictionary(t => t.Id);

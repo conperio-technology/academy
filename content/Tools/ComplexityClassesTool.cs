@@ -1,0 +1,19 @@
+namespace DsaAcademy.Content.Tools;
+
+public class ComplexityClassesTool : ITool
+{
+    public string Id => "complexity-classes";
+    public string Section => "Data Structures & Algorithms";
+    public string Track => "complexity";
+    public int Order => 9;
+    public string Title => "P, NP, NP-Hard and Undecidable, in Plain English";
+    public string OneLiner => "What the complexity classes mean, reductions and why some problems are NP-hard, the pseudo-polynomial knapsack trick, what to do with an NP-hard problem, and the halting problem.";
+    public string KeyTakeaway => "P is problems solvable quickly; NP is problems whose answers are quick to check. NP-complete problems are the hardest in NP, all equally hard, and nobody knows a fast algorithm for any of them. Reductions prove hardness by turning one problem into another. Knapsack's O(n*W) DP is pseudo-polynomial, exponential in the input's length. Some problems, like the halting problem, no algorithm can solve.";
+
+    public ToolKind ToolKind => ToolKind.ComplexityClasses;
+
+    public string Explanation =>
+        "Big O says how fast an algorithm is; complexity classes ask how fast any algorithm for a problem could be. This lesson keeps it informal: P, NP, NP-complete and NP-hard, what a reduction is, and why a small change in the rules moves a problem from easy to impossibly hard." +
+        "\n\n" +
+        "It covers the knapsack 'isn't that polynomial?' trick, the practical options when a problem is NP-hard, and the halting problem, the classic example of something no program can decide.";
+}

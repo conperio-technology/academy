@@ -124,7 +124,8 @@ export type OpsWidgetName =
   | "backupChain"
   | "ipv6Drill"
   | "emailAuth"
-  | "iamPolicy";
+  | "iamPolicy"
+  | "birthdayParadox";
 
 export interface WidgetPart {
   kind: "widget";
