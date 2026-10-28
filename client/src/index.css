@@ -3742,3 +3742,14 @@ button.ns-line:disabled { opacity: 1; }
 .clock-lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 0.5rem; margin: 0.75rem 0; }
 .clock-ev { width: 100%; text-align: left; font-size: 0.8rem; margin: 0.15rem 0; white-space: normal; overflow-wrap: anywhere; }
 .clock-ev.active { border-color: var(--accent); color: var(--accent); }
+
+/* IT infrastructure widgets (components/tools/ops/InfraWidgets.tsx) */
+.raid-disks { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.4rem; margin: 0.5rem 0; }
+.raid-disk { display: grid; gap: 0.1rem; font-size: 0.8rem; }
+.raid-disk span { font-size: 0.7rem; opacity: 0.8; }
+.raid-disk.raid-failed, .raid-disk.raid-failed:hover, .raid-disk.raid-failed:focus { border-color: var(--danger); color: var(--danger); }
+.backup-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.4rem; margin: 0.75rem 0; }
+.backup-day { display: grid; gap: 0.1rem; font-size: 0.8rem; }
+.backup-day.backup-need { border-color: var(--accent); }
+.backup-day.backup-future { opacity: 0.45; border-style: dashed; }
+.iam-stmt { font-family: var(--mono); font-size: 0.75rem; overflow-wrap: anywhere; min-width: 0; }

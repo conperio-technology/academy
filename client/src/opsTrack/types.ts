@@ -119,7 +119,12 @@ export type OpsWidgetName =
   | "jwtLab"
   | "corsChecker"
   | "raftSim"
-  | "logicalClocks";
+  | "logicalClocks"
+  | "raidCalc"
+  | "backupChain"
+  | "ipv6Drill"
+  | "emailAuth"
+  | "iamPolicy";
 
 export interface WidgetPart {
   kind: "widget";
