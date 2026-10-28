@@ -572,12 +572,16 @@ Then the "object-oriented design" track: the "design the classes for X" intervie
   Same write-first, compare, tick-the-checklist format as the system design walk-throughs.
   Content lives in `oodInterviews.ts`
 
-### Professional Dev Skills
+### Databases
 
-Job-readiness skills a working dev needs regardless of language — a different axis
-again from DSA or OOP: SQL, Git, testing and working with AI assistants. All are reference
-Tools, each with a real interactive playground rather than a static explanation:
+Relational databases and SQL first, then how databases work inside, then NoSQL. Every SQL
+example is a live editor over an in-browser SQLite database (**sql.js**, WASM SQLite, loaded
+lazily from a CDN the same way Pyodide is); nothing typed here touches your saved progress,
+and "reset data" rebuilds the database from its seed.
 
+- **Databases: What They Do and Which Kind to Use**: durability, concurrency, queries and
+  constraints; the families (relational, key-value, document, wide-column, graph, time-series,
+  search, vector) and what each is for; OLTP vs OLAP
 - **SQL Basics: SELECT, WHERE, ORDER BY, LIMIT** — the logical execution order
   (FROM → WHERE → ORDER BY → LIMIT → SELECT) vs. the order you type clauses in, with a
   real query editor running against a real in-browser SQLite database
@@ -595,13 +599,40 @@ Tools, each with a real interactive playground rather than a static explanation:
 - **SQL Transactions & ACID** — a two-UPDATE bank transfer with optional BEGIN/COMMIT and an
   optional crash between the statements, with the bank's total balance watched live; a
   `CHECK (balance >= 0)` rejects overdrafts
+- **SQL Subqueries and CTEs, Including Recursive CTEs**: scalar, IN and EXISTS subqueries,
+  correlated subqueries, CTE steps, and WITH RECURSIVE over an org chart and a generated calendar
+- **NULL, CASE and Set Operations**: three-valued logic and the NULL rules, CASE and conditional
+  aggregation, UNION / UNION ALL / INTERSECT / EXCEPT
+- **Window Functions: Rankings, Running Totals and LAG**: ROW_NUMBER vs RANK vs DENSE_RANK on
+  tied data, running totals, LAG, moving averages and frames, filtering on a window in a CTE
+- **Isolation Levels and Anomalies**: dirty reads, non-repeatable reads, phantoms, lost updates
+  and write skew, with a two-session simulator per isolation level (PostgreSQL and MySQL
+  differences called out), MVCC vs locking, and fixes that work at any level
+- **SQL Practice: Filtering and Joins / Grouping and Aggregates / Window Functions and CTEs**:
+  16 graded problems on a shop database (customers with no orders, second highest salary, top
+  N per group, month-over-month change, longest login streak). The learner's query and the
+  reference query run on fresh copies of the database and the rows are compared
+  (`sqlPracticeData.ts`, `components/tools/SqlPractice.tsx`); passing a whole set marks the lesson
+  done, kept in the browser under `history:sql-practice`
+- **How a Database Stores Data: Pages, B-Trees, LSM Trees and the WAL**: pages and the buffer
+  pool, write-ahead logging and recovery, B+ trees vs LSM trees with an LSM simulator (memtable,
+  flushes, compaction, read path), row vs column stores
+- **ORMs, N+1 Queries, Connection Pools and Migrations**: EF Core and SQLAlchemy loading
+  strategies, an N+1 cost calculator, pool sizing, and expand-and-contract migrations
+- **NoSQL Families: Key-Value, Document, Wide-Column and Graph**: Redis, MongoDB, Cassandra and
+  Neo4j examples, what each gives up, a choosing table, BASE and quorums
+- **NoSQL Data Modeling: Access Patterns, Embedding and Partition Keys**: designing from the
+  queries, embed vs reference, DynamoDB single-table design, and a partition key simulator
 
-The first three share one canned `employees`/`departments` dataset (10 employees, 3
-departments) and run entirely client-side via **sql.js** (WASM SQLite, loaded lazily
-from a CDN the same way Pyodide is): nothing typed here touches your saved progress,
-and the "reset data" button rebuilds a fresh in-memory database
-from the same seed at any time.
+The SQL Basics, Joins and Aggregation lessons share one `employees`/`departments` dataset
+(`sqlSampleData.ts`); the practice problems and several examples use the shop database in
+`sqlPracticeData.ts`. `client/scripts/check-sql-practice.mjs` runs every reference solution,
+every accepted alternative and every live example with Node's built-in SQLite.
 
+### Professional Dev Skills
+
+Job-readiness skills a working dev needs regardless of language, a different axis
+again from DSA or OOP: Git, testing and working with AI assistants (SQL moved to Databases).
 Plus a **git** track, same treatment, no embedded real-git engine (nothing as
 lightweight as sql.js/Pyodide exists for that) — both widgets simulate the underlying
 model directly:

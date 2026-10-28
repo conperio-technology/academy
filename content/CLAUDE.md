@@ -26,7 +26,7 @@ fills them in from the progress kept in the browser (`client/src/localBackend.ts
 - `IConcept.cs`, `ConceptModels.cs`: `IConcept`, `TestCase`, `VisualizerKind`, the DTOs.
 - `ToolRegistry.cs` / `ConceptRegistry.cs`: the lists of instances; a lesson not listed here
   doesn't exist. Ids must be unique (the registries build a dictionary and throw on duplicates).
-- `SectionOrder.cs`: section display order, 0 "Start Here" to 17 "Industrial & Embedded Systems".
+- `SectionOrder.cs`: section display order, 0 "Start Here" to 18 "Industrial & Embedded Systems".
   `IConcept.Section` defaults to "Data Structures & Algorithms"; `Order` defaults to 100.
 - `ComplexityCatalog.cs`: time/space answers per concept id, plus `AlsoTime`/`AlsoSpace`
   alternatives. Every string must exist in the client's `ComplexityCheck.tsx` `OPTIONS`.

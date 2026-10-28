@@ -52,6 +52,7 @@ A lesson whose content is a data file (lang, ops, PLC tracks) doesn't need its o
 node scripts/check-glossary.mjs        # duplicate terms, see-also targets, lesson ids exist, dashes
 node scripts/check-complexity-gym.mjs  # Complexity Gym bank
 node scripts/check-plc-st.mjs          # PLC interpreter + exercises
+node scripts/check-sql-practice.mjs    # SQL practice solutions and live SQL examples (Node built-in SQLite)
 # against a served build (npm run build, then node scripts/serve.mjs --port 5802):
 node scripts/verify-solutions.mjs --base http://localhost:5802/academy/   # every reference solution, C# and Python, in the browser
 node scripts/check-overflow.mjs --base http://localhost:5802/academy/     # 390px and 1300px, every lesson

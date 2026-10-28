@@ -10,6 +10,7 @@ const WORKED_KEY = "history:worked-through";
 const GYM_KEY = "history:complexity-gym";
 const GYM_EXPLAIN_KEY = "history:complexity-gym-explain";
 const PLC_KEY = "history:plc-exercises";
+const SQL_PRACTICE_KEY = "history:sql-practice";
 const LIMIT = 200;
 
 function read<T>(key: string, fallback: T): T {
@@ -232,6 +233,27 @@ export function recordPlcAttempt(exerciseId: string, passed: boolean): PlcExerci
   write(PLC_KEY, all);
   if (passed) setWorkedThrough(exerciseId, true); // the exercise id is its lesson id
   return next;
+}
+
+// ---- SQL practice problems: attempts and first pass per problem id. A set's lesson counts
+// as worked through once every problem in it has passed. ----
+
+export interface SqlPracticeProgress {
+  attempts: number;
+  passedAt?: string; // ISO date of the first pass
+}
+
+export function loadSqlPractice(): Record<string, SqlPracticeProgress> {
+  const p = read<Record<string, SqlPracticeProgress>>(SQL_PRACTICE_KEY, {});
+  return p && typeof p === "object" && !Array.isArray(p) ? p : {};
+}
+
+export function recordSqlPracticeAttempt(problemId: string, passed: boolean): Record<string, SqlPracticeProgress> {
+  const all = loadSqlPractice();
+  const prev = all[problemId] ?? { attempts: 0 };
+  all[problemId] = { attempts: prev.attempts + 1, passedAt: prev.passedAt ?? (passed ? new Date().toISOString() : undefined) };
+  write(SQL_PRACTICE_KEY, all);
+  return all;
 }
 
 // ---- Micro850 hands-on labs: the "check yourself" ticks per lab, by item text (so

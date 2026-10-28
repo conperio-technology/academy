@@ -24,6 +24,16 @@ import { cicd } from "./cloud/cicd.ts";
 import { iac } from "./cloud/iac.ts";
 import { observability } from "./cloud/observability.ts";
 import { gitTeam } from "./cloud/gitTeam.ts";
+import { dbIntro } from "./databases/intro.ts";
+import { dbSubqueriesCtes } from "./databases/subqueriesCtes.ts";
+import { dbNullsCaseSets } from "./databases/nullsCaseSets.ts";
+import { dbWindowFunctions } from "./databases/windowFunctions.ts";
+import { dbIsolation } from "./databases/isolation.ts";
+import { sqlPracticeAggregation, sqlPracticeJoins, sqlPracticeWindows } from "./databases/practice.ts";
+import { dbStorage } from "./databases/storage.ts";
+import { dbOrms } from "./databases/orms.ts";
+import { dbNosqlFamilies } from "./databases/nosqlFamilies.ts";
+import { dbNosqlModeling } from "./databases/nosqlModeling.ts";
 
 // Which data file each IT operations lesson renders (components/tools/OpsLesson.tsx).
 export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
@@ -51,4 +61,16 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   cloudIac: iac,
   cloudObservability: observability,
   gitTeamWorkflows: gitTeam,
+  dbIntro: dbIntro,
+  dbSubqueriesCtes: dbSubqueriesCtes,
+  dbNullsCaseSets: dbNullsCaseSets,
+  dbWindowFunctions: dbWindowFunctions,
+  dbIsolationAnomalies: dbIsolation,
+  sqlPracticeJoins: sqlPracticeJoins,
+  sqlPracticeAggregation: sqlPracticeAggregation,
+  sqlPracticeWindows: sqlPracticeWindows,
+  dbStorageEngines: dbStorage,
+  dbOrmsConnectionPools: dbOrms,
+  dbNosqlFamilies: dbNosqlFamilies,
+  dbNosqlModeling: dbNosqlModeling,
 };

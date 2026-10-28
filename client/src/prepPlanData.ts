@@ -487,6 +487,7 @@ export const PHASES: Phase[] = [
       read("sd-async-systems", "system design", 30),
       read("sd-rate-limiting", "system design"),
       read("sd-cap", "system design"),
+      read("db-nosql-families", "system design", 30),
       read("sd-resilience", "system design", 30),
       read("sd-observability", "system design"),
       read("sd-api-rest-http", "system design"),
@@ -738,10 +739,19 @@ export const TARGETS: Record<PlanTarget, Adjustment> = {
     extra: [
       {
         phase: 1,
-        tasks: [read("sql-schema-design", "system design", 30), read("sql-indexes", "system design", 30), read("sql-transactions", "system design", 30)],
+        tasks: [
+          read("sql-schema-design", "system design", 30),
+          read("sql-indexes", "system design", 30),
+          read("sql-transactions", "system design", 30),
+          read("db-isolation-anomalies", "system design", 30),
+          tool("db-window-functions", 30),
+          tool("sql-practice-joins", 40),
+          tool("sql-practice-aggregation", 40),
+          tool("sql-practice-windows", 50),
+        ],
       },
       { phase: 2, tasks: [read("security-authn-authz", "system design", 30), walkthrough("notificationSystem", "sd-interview-notification-system")] },
-      { phase: 3, tasks: [walkthrough("webCrawler", "sd-interview-web-crawler")] },
+      { phase: 3, tasks: [walkthrough("webCrawler", "sd-interview-web-crawler"), read("db-nosql-modeling", "system design", 30), read("db-storage-engines", "system design", 30)] },
     ],
   },
   senior: {

@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlSchemaDesignTool : ITool
 {
     public string Id => "sql-schema-design";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 160;
     public string Title => "Schema Design: Keys, Constraints & Normalization";
     public string OneLiner => "Store each fact once, and make the database itself refuse data that breaks your rules.";
     public string KeyTakeaway =>

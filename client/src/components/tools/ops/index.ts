@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { OpsWidgetName } from "../../../opsTrack/types";
 import { AvailabilityZones, CicdPipeline, GitTeamFlow, IacPlan, ImageTags, K8sSelectors, Observability, SharedResponsibility } from "./CloudWidgets";
 import { AdExplorer, BashVsPs, EventLog, ExecutionPolicy, GpoPrecedence, NtfsAccess, PsPipeline, PsVerbNoun, WinServices } from "./WindowsWidgets";
+import { IsolationLab, LsmTree, NPlusOne, PartitionKeyChooser } from "./DatabaseWidgets";
 import { AptSimulator, CronExplainer, DiskFull, SshLogin, StrictMode, SystemdService, TextToolbox, WordSplitting } from "./LinuxWidgets";
 
 // The simulators an IT operations lesson can embed by name (see opsTrack/types.ts).
@@ -31,4 +32,8 @@ export const OPS_WIDGETS: Record<OpsWidgetName, ComponentType> = {
   iacPlan: IacPlan,
   observability: Observability,
   gitTeamFlow: GitTeamFlow,
+  isolationLab: IsolationLab,
+  lsmTree: LsmTree,
+  nPlusOne: NPlusOne,
+  partitionKey: PartitionKeyChooser,
 };

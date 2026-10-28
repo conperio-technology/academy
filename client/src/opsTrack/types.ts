@@ -19,7 +19,11 @@ export type CodeLang =
   | "dockerfile"
   | "ini"
   | "text"
-  | "json";
+  | "json"
+  | "sql"
+  | "csharp"
+  | "python"
+  | "http";
 
 // Tagged template that keeps backslashes as typed and trims the leading and trailing newline.
 export function src(strings: TemplateStringsArray, ...values: unknown[]): string {
@@ -105,7 +109,11 @@ export type OpsWidgetName =
   | "cicdPipeline"
   | "iacPlan"
   | "observability"
-  | "gitTeamFlow";
+  | "gitTeamFlow"
+  | "isolationLab"
+  | "lsmTree"
+  | "nPlusOne"
+  | "partitionKey";
 
 export interface WidgetPart {
   kind: "widget";
@@ -121,7 +129,26 @@ export interface LabPart {
   lesson: string; // a key of LINUX_LESSONS
 }
 
-export type OpsPart = CodePart | TextPart | TermsPart | TablePart | StepsPart | WalkthroughPart | WidgetPart | LabPart;
+// A live SQL editor over one of the shared sample databases (components/tools/SqlPlayground.tsx).
+// "sample" is the employees and departments database of the first SQL lessons; "shop" is the
+// customers, orders and products database in sqlPracticeData.ts.
+export interface SqlPart {
+  kind: "sql";
+  title: string;
+  intro?: string;
+  query: string;
+  schema?: "sample" | "shop";
+}
+
+// A set of SQL problems checked by running the learner's query and the reference query on the
+// same data and comparing the rows (components/tools/SqlPractice.tsx, data in sqlPracticeData.ts).
+export interface SqlPracticePart {
+  kind: "sqlPractice";
+  title: string;
+  set: string;
+}
+
+export type OpsPart = SqlPart | SqlPracticePart | CodePart | TextPart | TermsPart | TablePart | StepsPart | WalkthroughPart | WidgetPart | LabPart;
 
 // A multiple-choice check. `answer` plus the distractors are shown shuffled.
 export interface QuizItem {

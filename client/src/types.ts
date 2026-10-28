@@ -326,7 +326,19 @@ export type ToolKind =
   | "langProfiling"
   | "langPackaging"
   | "blockReps"
-  | "bugLog";
+  | "bugLog"
+  | "dbIntro"
+  | "dbSubqueriesCtes"
+  | "dbNullsCaseSets"
+  | "dbWindowFunctions"
+  | "dbIsolationAnomalies"
+  | "sqlPracticeJoins"
+  | "sqlPracticeAggregation"
+  | "sqlPracticeWindows"
+  | "dbStorageEngines"
+  | "dbOrmsConnectionPools"
+  | "dbNosqlFamilies"
+  | "dbNosqlModeling";
 
 export interface ToolDetail {
   id: string;

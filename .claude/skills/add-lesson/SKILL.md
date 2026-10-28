@@ -10,7 +10,7 @@ pass/fail. (For a lesson with a code editor and tests, use the `add-graded-exerc
 
 ## 1. Decide placement first
 
-1. Pick the section from `content/SectionOrder.cs` (18 sections, 0 "Start Here" to 17
+1. Pick the section from `content/SectionOrder.cs` (19 sections, 0 "Start Here" to 18
    "Industrial & Embedded Systems"). A brand-new section also needs a `SectionOrder` entry and a
    blurb in `client/src/sectionInfo.ts`.
 2. Pick a `Track` and an `Order`. List the neighbours:

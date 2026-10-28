@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlIndexesTool : ITool
 {
     public string Id => "sql-indexes";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 170;
     public string Title => "SQL Indexes & Query Plans";
     public string OneLiner => "Why the same query takes 0.1 ms or 10 ms, and how to ask the database which one you're going to get.";
     public string KeyTakeaway =>

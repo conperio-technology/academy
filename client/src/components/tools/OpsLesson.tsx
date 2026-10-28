@@ -6,12 +6,16 @@ import type { LINUX_LESSONS } from "../../linuxLessons";
 import type { CodeBlock, CodeLang, OpsLessonData, OpsPart, QuizItem, WalkthroughPart } from "../../opsTrack/types";
 import { CopyButton } from "./LangShared";
 import { OPS_WIDGETS } from "./ops";
+import { SQL_SAMPLE_SCHEMA } from "../../sqlSampleData";
+import { SHOP_SCHEMA } from "../../sqlPracticeData";
 
 // Renders one IT operations lesson (Linux administration, Windows & PowerShell, Cloud &
 // DevOps) from its data file in src/opsTrack/: prose, code with real output, tables,
 // step-throughs, a bespoke simulator or the in-browser Linux machine, then a quiz.
 
 const LinuxLab = lazy(() => import("./LinuxLab"));
+const SqlPlayground = lazy(() => import("./SqlPlayground").then((m) => ({ default: m.SqlPlayground })));
+const SqlPractice = lazy(() => import("./SqlPractice").then((m) => ({ default: m.SqlPractice })));
 
 const LANG_LABEL: Record<CodeLang, string> = {
   bash: "bash",
@@ -25,6 +29,10 @@ const LANG_LABEL: Record<CodeLang, string> = {
   ini: "config",
   text: "text",
   json: "JSON",
+  sql: "SQL",
+  csharp: "C#",
+  python: "Python",
+  http: "HTTP",
 };
 
 export function OpsCode({ block }: { block: CodeBlock }) {
@@ -180,6 +188,25 @@ function Part({ part }: { part: OpsPart }) {
         </div>
       );
     }
+    case "sql":
+      return (
+        <div className="crypto-section">
+          <h3>{part.title}</h3>
+          {part.intro && <p className="lt-p">{withInlineCode(part.intro)}</p>}
+          <Suspense fallback={<p className="status-text">Loading the SQL editor…</p>}>
+            <SqlPlayground schemaSql={part.schema === "shop" ? SHOP_SCHEMA : SQL_SAMPLE_SCHEMA} starterQuery={part.query} />
+          </Suspense>
+        </div>
+      );
+    case "sqlPractice":
+      return (
+        <div className="crypto-section">
+          <h3>{part.title}</h3>
+          <Suspense fallback={<p className="status-text">Loading the SQL editor…</p>}>
+            <SqlPractice set={part.set} />
+          </Suspense>
+        </div>
+      );
     case "lab":
       return (
         <div className="crypto-section">

@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlBasicsTool : ITool
 {
     public string Id => "sql-basics";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 100;
     public string Title => "SQL Basics: SELECT, WHERE, ORDER BY, LIMIT";
     public string OneLiner => "The four clauses that answer 90% of \"get me some rows\" questions: which columns, which rows, in what order, how many.";
     public string KeyTakeaway =>
