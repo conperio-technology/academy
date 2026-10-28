@@ -34,6 +34,9 @@ import { dbStorage } from "./databases/storage.ts";
 import { dbOrms } from "./databases/orms.ts";
 import { dbNosqlFamilies } from "./databases/nosqlFamilies.ts";
 import { dbNosqlModeling } from "./databases/nosqlModeling.ts";
+import { secCrypto } from "./security/crypto.ts";
+import { secWebIdentity } from "./security/webIdentity.ts";
+import { sdConsensus } from "./systemDesign/consensus.ts";
 
 // Which data file each IT operations lesson renders (components/tools/OpsLesson.tsx).
 export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
@@ -73,4 +76,7 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   dbOrmsConnectionPools: dbOrms,
   dbNosqlFamilies: dbNosqlFamilies,
   dbNosqlModeling: dbNosqlModeling,
+  secCryptoFundamentals: secCrypto,
+  secWebSessionsIdentity: secWebIdentity,
+  sdConsensusClocks: sdConsensus,
 };

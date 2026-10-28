@@ -3,6 +3,8 @@ import type { OpsWidgetName } from "../../../opsTrack/types";
 import { AvailabilityZones, CicdPipeline, GitTeamFlow, IacPlan, ImageTags, K8sSelectors, Observability, SharedResponsibility } from "./CloudWidgets";
 import { AdExplorer, BashVsPs, EventLog, ExecutionPolicy, GpoPrecedence, NtfsAccess, PsPipeline, PsVerbNoun, WinServices } from "./WindowsWidgets";
 import { IsolationLab, LsmTree, NPlusOne, PartitionKeyChooser } from "./DatabaseWidgets";
+import { LogicalClocks, RaftSim } from "./DistributedWidgets";
+import { CorsChecker, DiffieHellman, JwtLab, ToyRsa } from "./SecurityWidgets";
 import { AptSimulator, CronExplainer, DiskFull, SshLogin, StrictMode, SystemdService, TextToolbox, WordSplitting } from "./LinuxWidgets";
 
 // The simulators an IT operations lesson can embed by name (see opsTrack/types.ts).
@@ -36,4 +38,10 @@ export const OPS_WIDGETS: Record<OpsWidgetName, ComponentType> = {
   lsmTree: LsmTree,
   nPlusOne: NPlusOne,
   partitionKey: PartitionKeyChooser,
+  toyRsa: ToyRsa,
+  diffieHellman: DiffieHellman,
+  jwtLab: JwtLab,
+  corsChecker: CorsChecker,
+  raftSim: RaftSim,
+  logicalClocks: LogicalClocks,
 };

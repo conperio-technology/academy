@@ -778,6 +778,9 @@ Interactive models of the building blocks, then full interview walk-throughs.
   compensations, orchestrated or choreographed
 - **Rate Limiting** — fixed window, sliding log, sliding counter and token bucket on the
   same traffic, including the fixed-window boundary burst
+- **Consensus and Logical Clocks**: a five-node Raft cluster you drive by hand (election
+  timeouts, client writes, crashes and a partition that shows why only the majority side
+  commits), quorum sizes, Paxos and ZAB, and Lamport and vector clocks on three processes
 - **CAP and Consistency** — a partition between two datacenters in CP and AP modes, and a
   quorum (N, W, R) calculator
 - **Scaling and reliability** track: **Tail Latency and Request Hedging** (percentiles, fan-out
@@ -877,6 +880,12 @@ Every demo is deterministic client-side React; nothing calls a real model.
   plain, as SHA-256, and as salted PBKDF2
 - **HTTPS, TLS & Certificates** — the browser's three certificate checks against a sample chain,
   with expired, wrong-host, self-signed and missing-intermediate cases
+- **Cryptography Fundamentals**: which tool gives which guarantee (hash, MAC, AEAD, public-key
+  encryption, signatures), Diffie-Hellman with small numbers, a toy RSA key pair that encrypts
+  and signs, forward secrecy and post-quantum algorithms
+- **Web Sessions and Identity**: session cookies vs. JWTs and the cookie flags, a real HS256 JWT
+  to sign and tamper with, the OAuth 2.0 code flow with PKCE step by step, OpenID Connect, SAML
+  SSO, and a CORS checker for preflights and credentials
 - **SQL Injection** — log in to a real sql.js database with string-built SQL, then with a
   parameterized query
 - **Cross-Site Scripting (XSS)** — post comments into a sandboxed "victim's page", with and

@@ -113,7 +113,13 @@ export type OpsWidgetName =
   | "isolationLab"
   | "lsmTree"
   | "nPlusOne"
-  | "partitionKey";
+  | "partitionKey"
+  | "toyRsa"
+  | "diffieHellman"
+  | "jwtLab"
+  | "corsChecker"
+  | "raftSim"
+  | "logicalClocks";
 
 export interface WidgetPart {
   kind: "widget";
