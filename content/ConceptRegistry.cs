@@ -165,6 +165,7 @@ public static class ConceptRegistry
         new DpWordBreak(),
         new DpDecodeWays(),
         new DpEditDistance(),
+        new DpRegexMatching(),
         new DpLongestCommonSubsequence(),
         new TriePrefixCount(),
         new TrieReplaceWords(), // transfer exercise
@@ -236,6 +237,7 @@ public static class ConceptRegistry
         new InterGridWithCell(),
         new InterFormatRow(),
         new InterParseSettings(),
+        new InterExtractErrorCodes(),
         // Programming in C# & Python, advanced track.
         new AdvSumFieldsSpan(),
         new AdvCleanupOrder(),

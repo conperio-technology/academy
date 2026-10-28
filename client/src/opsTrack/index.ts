@@ -44,6 +44,12 @@ import { bootProcess } from "./fundamentals/boot.ts";
 import { itsm } from "./professional/itsm.ts";
 import { emailAuth } from "./networking/email.ts";
 import { ipv6 } from "./networking/ipv6.ts";
+import { complexityClasses } from "./foundations/complexityClasses.ts";
+import { debugging } from "./foundations/debugging.ts";
+import { architectureStyles } from "./foundations/architecture.ts";
+import { analytics } from "./foundations/analytics.ts";
+import { probability } from "./foundations/probability.ts";
+import { agile } from "./foundations/agile.ts";
 
 // Which data file each IT operations lesson renders (components/tools/OpsLesson.tsx).
 export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
@@ -93,4 +99,10 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   itsmIncidentsChanges: itsm,
   netEmailAuth: emailAuth,
   netIpv6: ipv6,
+  complexityClasses: complexityClasses,
+  debuggingSystematically: debugging,
+  architectureStyles: architectureStyles,
+  dataAnalyticsWarehouses: analytics,
+  probabilityCounting: probability,
+  agileScrumKanban: agile,
 };

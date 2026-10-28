@@ -31,6 +31,8 @@ import { functional } from "./functional.ts";
 import { errorPatterns } from "./errorPatterns.ts";
 import { profiling } from "./profiling.ts";
 import { packaging } from "./packaging.ts";
+import { regex } from "./regex.ts";
+import { datesTimes } from "./datesTimes.ts";
 
 // Which data file each lesson kind of the "Programming in C# & Python" section renders.
 // A new lesson (stage 2 and 3 included) adds its data file and one line here.
@@ -66,4 +68,6 @@ export const LANG_LESSONS: Partial<Record<ToolKind, LangLessonData>> = {
   langErrorPatterns: errorPatterns,
   langProfiling: profiling,
   langPackaging: packaging,
+  langRegex: regex,
+  langDatesTimes: datesTimes,
 };

@@ -230,15 +230,17 @@ side, C# only or Python only (remembered per browser).
 - **Eleven intermediate lessons**: Lambdas and Higher-Order Functions; LINQ and Comprehensions;
   Interfaces, Protocols and Abstract Classes; Generics and Type Hints; Iterators and Generators;
   Records, Dataclasses and Equality; Immutability, Values and References; Files, Formatting and
-  Parsing; Async and Await Basics; Unit Testing with xUnit and pytest (samples run with real
+  Parsing; Regular Expressions (syntax, the C# and Python APIs, greedy vs lazy, catastrophic
+  backtracking); Dates, Times and Time Zones (UTC vs local, ISO 8601, DST gaps and repeats, monotonic
+  clocks); Async and Await Basics; Unit Testing with xUnit and pytest (samples run with real
   `dotnet test` and pytest); Modules, Namespaces and Packages. Each has 8 to 10 predict-the-output
   questions
-- **Thirteen graded intermediate exercises** (`inter-*`), each right after its lesson: compose
+- **Fourteen graded intermediate exercises** (`inter-*`), each right after its lesson: compose
   functions, sort by length then alphabetically, group words by length, filter-sort-pick
   passing names, shapes with an abstract base class, generic min and max, a generic stack class,
   chunks with `yield` (including an endless input), an endless Fibonacci generator, distinct
   points with a record or frozen dataclass, change a copy of a grid without touching the
-  original, format a report line, and parse key=value settings. Async and test frameworks are
+  original, format a report line, parse key=value settings, and extract error codes from a log with a regex. Async and test frameworks are
   taught but not graded: the C# grader's allowlist has no `System.Threading.Tasks`, and test
   frameworks can't run in the exercise editor
 - **Eleven advanced lessons**: Memory, Allocations and Span<T>; Threads, Locks, the GIL and
@@ -345,12 +347,14 @@ every append under four growth policies, plus monotonic stack and sliding window
 Complexity Out Loud** (a seven-step template and weak versus strong answers). It ends with the
 **Complexity Gym**: 144 C# and Python snippets in 15 categories, each asking for both time and
 space, with Practice, Explain it (write your reasoning, then grade it against a rubric) and Stats
-modes. The bank lives in `client/src/complexityGymData.ts`; `node scripts/check-complexity-gym.mjs`
+modes. A final lesson, **P, NP, NP-Hard and Undecidable, in Plain English**, covers the
+complexity classes, reductions, the pseudo-polynomial knapsack trick and the halting problem.
+The Gym bank lives in `client/src/complexityGymData.ts`; `node scripts/check-complexity-gym.mjs`
 (from `client/`) validates it.
 
 Then Fundamentals (11 concepts) + Building Blocks (35) + Trees (6) + Graphs (4) + Sorting (9) + Dynamic
-Programming (4) + a Patterns track (96) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
-190 gradable concepts in total, each (except the building blocks) with a
+Programming (4) + a Patterns track (97) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
+191 gradable concepts in total, each (except the building blocks) with a
 canned step-through visualizer, a "key takeaway" callout, a Monaco editor, and
 test-driven completion tracking (plus one reference Tool, Hashing, slotted
 in right after Two Sum, and a Pattern Recognition Drill at the end of the section):
@@ -469,7 +473,8 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   Sum and Generate Parentheses (backtracking), Longest Consecutive Sequence, Product of Array
   Except Self, Encode and Decode Strings (length-prefixed framing), Insert Delete GetRandom
   O(1) and a Time-Based Key-Value Store (design problems), and Fisher-Yates Shuffle and
-  Reservoir Sampling (randomized, with the random draws given so they can be graded)
+  Reservoir Sampling (randomized, with the random draws given so they can be graded), and Regular
+  Expression Matching with . and * (a tiny regex engine built with dynamic programming)
 
 - **Greedy, Math and Bits** (three tracks after Patterns, each opened by an explainer tool):
   **Greedy Algorithms** (break greedy coin change, interval rules that fail, fractional vs 0/1
@@ -478,7 +483,8 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   Product Subarray; **Math for Coding
   Interviews** (C# vs Python modulo and division, Euclid, a steppable sieve, square-and-multiply,
   overflow, nCr and Pascal's triangle) then Count Primes, Pow(x, n), GCD and LCM of an Array, Happy
-  Number, Excel Column Title and Reverse Integer; **Bit Manipulation Toolkit** (two's complement,
+  Number, Excel Column Title and Reverse Integer, plus **Probability and Counting for Programmers**
+  (permutations and combinations, expected value, and a birthday-paradox widget); **Bit Manipulation Toolkit** (two's complement,
   an operator playground with arithmetic vs logical shifts, the trick table, XOR, subset masks, a
   C# vs Python table) then Single Number, Missing Number, Power of Two, Counting Bits, Reverse Bits,
   Sum of Two Integers and All Subsets by Counting Bitmasks. Each graded lesson calls out where C#
@@ -580,6 +586,9 @@ The **design patterns** track follows the OOP basics, aimed at big-tech intervie
   Drill's format: pick the pattern, see the signals and the commonly confused sibling,
   and finish on a list of misses that links to the right lesson. Content lives in
   `designPatternsData.ts` and `designPatternQuizData.ts`
+- **Architecture Styles: Monoliths, Microservices, Layers and Events**: how a system is deployed
+  (monolith, modular monolith, microservices, serverless) and how its code is organized (layered,
+  hexagonal, clean, vertical slices), event-driven communication, and when each is worth it
 
 Then the "object-oriented design" track: the "design the classes for X" interview round.
 
@@ -641,6 +650,9 @@ and "reset data" rebuilds the database from its seed.
   Neo4j examples, what each gives up, a choosing table, BASE and quorums
 - **NoSQL Data Modeling: Access Patterns, Embedding and Partition Keys**: designing from the
   queries, embed vs reference, DynamoDB single-table design, and a partition key simulator
+- **Data and Analytics: OLTP vs OLAP, Warehouses, Star Schemas and ETL**: why analytics runs on
+  separate columnar systems, warehouses, lakes and lakehouses, star schemas with facts and
+  dimensions, ETL vs ELT, and batch vs stream processing
 
 The SQL Basics, Joins and Aggregation lessons share one `employees`/`departments` dataset
 (`sqlSampleData.ts`); the practice problems and several examples use the shop database in
@@ -650,7 +662,8 @@ every accepted alternative and every live example with Node's built-in SQLite.
 ### Professional Dev Skills
 
 Job-readiness skills a working dev needs regardless of language, a different axis
-again from DSA or OOP: Git, testing and working with AI assistants (SQL moved to Databases).
+again from DSA or OOP: Git, testing, debugging, IT service management, ways of working and working
+with AI assistants (SQL moved to Databases).
 Plus a **git** track, same treatment, no embedded real-git engine (nothing as
 lightweight as sql.js/Pyodide exists for that) — both widgets simulate the underlying
 model directly:
@@ -675,6 +688,15 @@ And a **testing** track, an interview topic and a day-to-day skill, with C# xUni
 - **TDD, What to Test, Flaky Tests and Coverage**: a red-green-refactor stepper whose tests
   really run, a coverage vs mutation-testing demo where 100% coverage still ships a boundary
   bug, and flaky-test causes with fixes
+
+Plus a **debugging** track and a **ways of working** lesson:
+
+- **Debugging Systematically: Reproduce, Narrow Down, Fix the Cause**: a repeatable loop, reading
+  stack traces (run to get the output), debugger tools, logging, a `git bisect` run that finds the
+  breaking commit, and bugs with a recognisable shape
+- **Agile, Scrum and Kanban, Without the Hype**: what the manifesto says, Scrum vs Kanban, the
+  roles, artifacts and ceremonies, estimation in story points and velocity, and where a design
+  doc fits
 
 And **Engineering with AI Assistants** (working with AI): what assistants are good and bad at,
 reviewing generated diffs, testing, debugging when the AI is wrong, secrets, and when to write it

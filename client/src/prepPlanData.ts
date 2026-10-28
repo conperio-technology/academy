@@ -176,6 +176,7 @@ export const CODING_FAMILIES: Family[] = [
       "dp-edit-distance",
       "dp-longest-palindromic-substring",
       "dp-stock-cooldown",
+      "dp-regex-matching",
     ],
   },
   {
@@ -201,6 +202,7 @@ export const CODING_FAMILIES: Family[] = [
       "math-happy-number",
       "math-excel-column-title",
       "math-reverse-integer",
+      "probability-counting",
     ],
   },
   {
@@ -246,6 +248,7 @@ export const FOUNDATION_TOPICS: Family[] = [
       "complexity-hidden-costs",
       "complexity-space",
       "complexity-explaining",
+      "complexity-classes",
     ],
   },
   {

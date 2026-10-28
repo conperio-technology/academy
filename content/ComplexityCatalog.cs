@@ -252,6 +252,8 @@ public static class ComplexityCatalog
         ["design-time-map"] = new("O(log n)", "O(n)", "Set appends in O(1) amortized. Get binary-searches one key's versions, O(log m) for m versions of that key, which is at most O(log n). Every stored version is kept: O(n) for n set calls."),
         ["random-shuffle"] = new("O(n)", "O(1)", "One swap per position from the back. The shuffle itself is in place; this version copies the input first (O(n) if you count it).", AlsoSpace: ["O(n)"]),
         ["random-reservoir-sampling"] = new("O(n)", "O(k)", "One pass over the n items with O(1) work each. Only the k-slot reservoir is stored, however long the stream."),
+        ["inter-extract-error-codes"] = new("O(n)", "O(n)", "The regex engine scans the n characters of the log once for this pattern (no nested quantifiers, so no backtracking blow-up); the list of matches holds at most O(n) characters."),
+        ["dp-regex-matching"] = new("O(n · m)", "O(n · m)", "One table cell per pair of prefix lengths, (n + 1)(m + 1) cells, each filled in constant time from cells above and to the left. Only the previous row is ever read, so two rows would cut the space to O(m)."),
     };
 
     public static ComplexityInfo? Find(string conceptId) => Table.GetValueOrDefault(conceptId);

@@ -7,6 +7,7 @@ import { LogicalClocks, RaftSim } from "./DistributedWidgets";
 import { CorsChecker, DiffieHellman, JwtLab, ToyRsa } from "./SecurityWidgets";
 import { AptSimulator, CronExplainer, DiskFull, SshLogin, StrictMode, SystemdService, TextToolbox, WordSplitting } from "./LinuxWidgets";
 import { BackupChain, EmailAuth, IamPolicy, Ipv6Drill, RaidCalc } from "./InfraWidgets";
+import { BirthdayParadox } from "./FoundationsWidgets";
 
 // The simulators an IT operations lesson can embed by name (see opsTrack/types.ts).
 export const OPS_WIDGETS: Record<OpsWidgetName, ComponentType> = {
@@ -50,4 +51,5 @@ export const OPS_WIDGETS: Record<OpsWidgetName, ComponentType> = {
   ipv6Drill: Ipv6Drill,
   emailAuth: EmailAuth,
   iamPolicy: IamPolicy,
+  birthdayParadox: BirthdayParadox,
 };

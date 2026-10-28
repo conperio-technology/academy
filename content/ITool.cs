@@ -250,6 +250,14 @@ public enum ToolKind
     ItsmIncidentsChanges,
     NetEmailAuth,
     NetIpv6,
+    LangRegex,
+    LangDatesTimes,
+    ComplexityClasses,
+    DebuggingSystematically,
+    ArchitectureStyles,
+    DataAnalyticsWarehouses,
+    ProbabilityCounting,
+    AgileScrumKanban,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,
