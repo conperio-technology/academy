@@ -7225,6 +7225,366 @@ const ITOPS = group("itops", [
   },
 ]);
 
+const NEW_DSA = group("dsa", [
+  {
+    term: "P versus NP",
+    definition: "The open question of whether every problem whose solution can be checked quickly can also be solved quickly. Most believe P is not NP; a proof wins a million-dollar prize.",
+    seeAlso: ["NP-complete", "NP-hard", "Reduction"],
+    lessonId: "complexity-classes",
+  },
+  {
+    term: "NP-hard",
+    definition: "At least as hard as every NP-complete problem, but not necessarily in NP itself. Optimization versions such as the travelling salesman are NP-hard.",
+    seeAlso: ["NP-complete", "P versus NP", "Reduction"],
+    lessonId: "complexity-classes",
+  },
+  {
+    term: "Reduction",
+    definition: "Turning any instance of one problem into an instance of another so their answers agree. It proves relative hardness: if A reduces to B, then B is at least as hard as A.",
+    seeAlso: ["NP-complete", "NP-hard"],
+    lessonId: "complexity-classes",
+  },
+  {
+    term: "Halting problem",
+    definition: "The proven-undecidable question of whether a given program eventually stops on a given input. No algorithm can answer it for every case, which is why linters cannot catch every infinite loop.",
+    seeAlso: ["P versus NP"],
+    lessonId: "complexity-classes",
+  },
+  {
+    term: "Pseudo-polynomial time",
+    definition: "Running time that is polynomial in the numeric value of an input but exponential in its length in bits, such as the knapsack DP's O(n*W). Fast while the numbers are small.",
+    seeAlso: ["Dynamic programming", "NP-complete"],
+    lessonId: "complexity-classes",
+  },
+  {
+    term: "Permutation",
+    definition: "An arrangement of items where order matters. There are n! orderings of n items, and n!/(n-k)! ordered selections of k from n.",
+    seeAlso: ["Combination", "Combinatorics"],
+    lessonId: "probability-counting",
+  },
+  {
+    term: "Combination",
+    definition: "A selection of items where order does not matter, counted as C(n, k) = n!/(k!(n-k)!), such as choosing a team from a group.",
+    seeAlso: ["Permutation", "Combinatorics"],
+    lessonId: "probability-counting",
+  },
+  {
+    term: "Combinatorics",
+    definition: "The mathematics of counting arrangements and selections: products of choices, permutations, combinations and subsets. It also sizes brute-force searches.",
+    seeAlso: ["Permutation", "Combination", "Expected value"],
+    lessonId: "probability-counting",
+  },
+  {
+    term: "Expected value",
+    definition: "The long-run average of a random quantity: each outcome times its probability, summed. A fair die has expected value 3.5. Expected values add even for dependent events.",
+    seeAlso: ["Probability", "Combinatorics"],
+    lessonId: "probability-counting",
+  },
+  {
+    term: "Probability",
+    definition: "A number from 0 to 1 giving how likely an event is. Independent events multiply, the complement of an event is 1 minus its probability, and 'at least one' is often easiest via the complement.",
+    seeAlso: ["Expected value", "Birthday paradox"],
+    lessonId: "probability-counting",
+  },
+  {
+    term: "Birthday paradox",
+    definition: "The surprising result that just 23 people give a better-than-even chance of a shared birthday, because there are many pairs. It sets how soon hashes and random ids collide: about the square root of their range.",
+    seeAlso: ["Probability", "Hash collision"],
+    lessonId: "probability-counting",
+  },
+]);
+
+const NEW_SYSTEM_DESIGN = group("systemDesign", [
+  {
+    term: "Replicated state machine",
+    definition: "Several nodes that apply the same commands in the same order and so stay in identical state. Consensus is how they agree on that order, as a replicated log.",
+    seeAlso: ["Consensus", "Raft", "Quorum"],
+    lessonId: "sd-consensus-clocks",
+  },
+  {
+    term: "Paxos",
+    definition: "A family of consensus protocols for agreeing on one value per slot despite crashes, used in systems like Google Chubby and Spanner. Raft was designed to do the same job more understandably.",
+    seeAlso: ["Consensus", "Raft", "Quorum"],
+    lessonId: "sd-consensus-clocks",
+  },
+  {
+    term: "Lamport clock",
+    definition: "A per-process counter that respects causality: if one event could have caused another, its Lamport time is smaller. It gives a consistent total order but cannot by itself tell concurrent events apart.",
+    seeAlso: ["Vector clock", "Consensus"],
+    lessonId: "sd-consensus-clocks",
+  },
+  {
+    term: "Linearizability",
+    definition: "The strongest consistency: once a write is acknowledged, every later read sees it, as if operations happened one at a time in real-time order. Consensus-backed stores provide it at the cost of a majority round trip per write.",
+    seeAlso: ["Strong consistency", "Consensus", "CAP theorem"],
+    lessonId: "sd-consensus-clocks",
+  },
+  {
+    term: "Hexagonal architecture",
+    definition: "Organizing code so the domain logic sits in the middle and defines ports (interfaces) that adapters implement for the web, database or queue. Dependencies point inwards, so business rules do not depend on frameworks.",
+    seeAlso: ["Dependency injection", "Dependency inversion principle"],
+    lessonId: "architecture-styles",
+  },
+]);
+
+const NEW_DATA = group("data", [
+  {
+    term: "Lakehouse",
+    definition: "A data lake with table formats such as Delta Lake or Iceberg that add transactions, schemas and fast queries, so one copy serves both raw storage and analytics.",
+    seeAlso: ["Data lake", "Data warehouse"],
+    lessonId: "data-analytics-warehouses",
+  },
+]);
+
+const NEW_NETWORKING = group("networking", [
+  {
+    term: "SLAAC",
+    definition: "Stateless address autoconfiguration: an IPv6 host builds its own address from the prefix a router advertises, with no server tracking leases. The usual way devices get IPv6 addresses.",
+    seeAlso: ["IPv6", "DHCP"],
+    lessonId: "net-ipv6",
+  },
+  {
+    term: "SPF",
+    definition: "Sender Policy Framework: a DNS record listing which servers may send mail for a domain, checked against the envelope sender. On its own it does not stop spoofing of the visible From address.",
+    seeAlso: ["DKIM", "DMARC", "SMTP"],
+    lessonId: "net-email-spf-dkim-dmarc",
+  },
+  {
+    term: "DKIM",
+    definition: "DomainKeys Identified Mail: a signature in an email, checked against a public key in DNS, proving a domain signed the message and it was not changed in transit.",
+    seeAlso: ["SPF", "DMARC", "Digital signature"],
+    lessonId: "net-email-spf-dkim-dmarc",
+  },
+  {
+    term: "DMARC",
+    definition: "A DNS policy that requires SPF or DKIM to pass for a domain aligned with the visible From address, and says what to do otherwise (none, quarantine or reject). Together with SPF and DKIM it stops From spoofing.",
+    seeAlso: ["SPF", "DKIM"],
+    lessonId: "net-email-spf-dkim-dmarc",
+  },
+  {
+    term: "SMTP",
+    definition: "Simple Mail Transfer Protocol, which moves email between servers. It lets the sender claim any From address, which is why SPF, DKIM and DMARC were added.",
+    seeAlso: ["SPF", "DKIM", "DMARC"],
+    lessonId: "net-email-spf-dkim-dmarc",
+  },
+]);
+
+const NEW_SECURITY = group("security", [
+  {
+    term: "Key exchange",
+    definition: "A protocol that lets two parties agree on a shared secret over a channel an eavesdropper can read, such as Diffie-Hellman. TLS uses it to set up each session's keys.",
+    seeAlso: ["Diffie-Hellman", "Forward secrecy", "TLS"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Diffie-Hellman",
+    definition: "A key-exchange method where each side combines its own secret with the other's public value to reach the same shared secret, which an eavesdropper cannot compute. TLS uses an ephemeral form (ECDHE) for forward secrecy.",
+    seeAlso: ["Key exchange", "Forward secrecy"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Asymmetric encryption",
+    definition: "Encryption using a key pair: a public key anyone can hold and a private key kept secret. What one key does, only the other undoes. RSA and elliptic-curve cryptography are the families in use.",
+    seeAlso: ["Encryption", "RSA", "Elliptic-curve cryptography", "Public-key cryptography"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Message authentication code (MAC)",
+    definition: "A fingerprint of a message computed with a secret key, such as HMAC. Only someone with the key can produce or check it, so a valid MAC proves integrity and that the sender holds the key.",
+    seeAlso: ["HMAC", "Digital signature", "Hash function"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Authenticated encryption",
+    definition: "Encryption that also produces a tag, so any change to the ciphertext is detected on decryption. AES-GCM and ChaCha20-Poly1305 are the standard choices (AEAD).",
+    seeAlso: ["AES", "Nonce", "Encryption"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Nonce",
+    definition: "A number used once, fed into encryption so that encrypting the same message twice gives different ciphertext. It need not be secret, but reusing one with the same key can break the encryption.",
+    seeAlso: ["Authenticated encryption"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Elliptic-curve cryptography",
+    definition: "Public-key cryptography that gives the same strength as RSA with much smaller, faster keys. ECDHE for key exchange and ECDSA or Ed25519 for signatures are now the default in TLS and SSH.",
+    seeAlso: ["Asymmetric encryption", "RSA", "Digital signature"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "Post-quantum cryptography",
+    definition: "Encryption and signature algorithms believed to resist attack by a large quantum computer, which would break RSA and elliptic curves. NIST standardized ML-KEM and ML-DSA in 2024.",
+    seeAlso: ["Asymmetric encryption", "Elliptic-curve cryptography"],
+    lessonId: "sec-crypto-fundamentals",
+  },
+  {
+    term: "JSON Web Token (JWT)",
+    definition: "A compact token of three base64url parts, header.payload.signature, carrying signed claims such as who the user is and when it expires. The parts are readable by anyone, so secrets never go in a JWT; the signature only stops changes.",
+    seeAlso: ["OAuth 2.0", "Access token", "Digital signature"],
+    lessonId: "sec-web-sessions-identity",
+  },
+  {
+    term: "OpenID Connect",
+    definition: "An identity layer on top of OAuth 2.0: asking for the openid scope returns an ID token (a signed JWT) that tells the app who logged in. The basis of modern single sign-on.",
+    seeAlso: ["OAuth 2.0", "JSON Web Token (JWT)", "Single sign-on"],
+    lessonId: "sec-web-sessions-identity",
+  },
+  {
+    term: "SAML",
+    definition: "An older XML-based single sign-on standard, still common in enterprise software: the identity provider posts a signed assertion about the user to the application.",
+    seeAlso: ["Single sign-on", "OpenID Connect"],
+    lessonId: "sec-web-sessions-identity",
+  },
+  {
+    term: "Single sign-on",
+    definition: "One login at an identity provider that grants access to many applications, each trusting the provider's signed statement about who the user is. Disabling one account removes access everywhere.",
+    seeAlso: ["OpenID Connect", "SAML", "Authentication"],
+    lessonId: "sec-web-sessions-identity",
+  },
+  {
+    term: "Session cookie",
+    definition: "A cookie holding a random session id that the server looks up on each request to know who is signed in. Set it HttpOnly, Secure and SameSite to resist theft and cross-site use.",
+    seeAlso: ["Cookie", "Authentication", "XSS"],
+    lessonId: "sec-web-sessions-identity",
+  },
+  {
+    term: "PBKDF2",
+    definition: "A slow, salted password-hashing function that repeats a hash many times to make guessing expensive. Argon2 and bcrypt serve the same purpose and are generally preferred now.",
+    seeAlso: ["Hashing", "Salt"],
+    lessonId: "security-hashing-encryption",
+  },
+]);
+
+const NEW_CLOUD = group("cloud", [
+  {
+    term: "Disaster recovery",
+    definition: "The plan and systems for carrying on after a whole site or region is lost, from restoring backups elsewhere to running a warm or active standby, chosen by the RPO and RTO.",
+    seeAlso: ["Recovery point objective (RPO)", "Recovery time objective (RTO)", "Backup"],
+    lessonId: "cloud-backups-dr",
+  },
+  {
+    term: "Backup",
+    definition: "A separate copy of data kept so it can be restored after deletion, corruption or loss. Follow 3-2-1 (three copies, two media, one off site) with one immutable or offline copy, and test restores.",
+    seeAlso: ["Disaster recovery", "RAID", "Snapshot"],
+    lessonId: "cloud-backups-dr",
+  },
+  {
+    term: "Live migration",
+    definition: "Moving a running virtual machine to another host with no downtime, by copying its memory while it runs and pausing only briefly at the end. Used to patch hosts and move VMs off failing hardware.",
+    seeAlso: ["Virtual machine", "Hypervisor"],
+    lessonId: "virtualization-vms",
+  },
+  {
+    term: "Thin provisioning",
+    definition: "Giving a VM or volume a large nominal disk but using storage only as data is written. It saves space until the guests together exceed the real capacity, so it needs monitoring.",
+    seeAlso: ["Virtual machine", "Snapshot"],
+    lessonId: "virtualization-vms",
+  },
+  {
+    term: "NAT gateway",
+    definition: "A managed device in a public subnet that lets private resources make outbound connections while blocking inbound ones. Billed per hour and per gigabyte.",
+    seeAlso: ["Subnet mask", "NAT", "Security group"],
+    lessonId: "cloud-networking-iam",
+  },
+  {
+    term: "Network ACL",
+    definition: "A stateless allow-and-deny list applied to a whole cloud subnet, evaluated in order, so return traffic needs its own rule. Used as a coarse layer beneath security groups.",
+    seeAlso: ["Security group", "Firewall"],
+    lessonId: "cloud-networking-iam",
+  },
+  {
+    term: "IAM role",
+    definition: "An identity with permissions but no stored password or keys, which a user, server or function assumes to get temporary credentials that expire. The safe way to give code cloud access.",
+    seeAlso: ["Principle of least privilege", "Identity and access management (IAM)", "Serverless"],
+    lessonId: "cloud-networking-iam",
+  },
+  {
+    term: "Identity and access management (IAM)",
+    definition: "The cloud service that decides which principal may perform which action on which resource, through policies. Every request is denied by default, and an explicit deny always wins.",
+    seeAlso: ["IAM role", "Principle of least privilege"],
+    lessonId: "cloud-networking-iam",
+  },
+]);
+
+const NEW_ITOPS = group("itops", [
+  {
+    term: "UEFI",
+    definition: "The modern firmware that starts a computer, replacing legacy BIOS: it finds a bootloader on the EFI System Partition and can enforce Secure Boot.",
+    seeAlso: ["Secure Boot"],
+    lessonId: "boot-process",
+  },
+  {
+    term: "Secure Boot",
+    definition: "A UEFI feature that runs a bootloader only if it is signed by a trusted key, so malware cannot run before the operating system and its defences.",
+    seeAlso: ["UEFI", "Digital signature"],
+    lessonId: "boot-process",
+  },
+  {
+    term: "Incident",
+    definition: "Something that worked is now broken or degraded, handled by restoring service as fast as possible, even with a workaround, before finding the root cause.",
+    seeAlso: ["SLA", "Root cause analysis (RCA)", "Problem management"],
+    lessonId: "itsm-incidents-changes",
+  },
+]);
+
+const NEW_ENGINEERING = group("engineering", [
+  {
+    term: "Regular expression",
+    definition: "A pattern language for describing the shape of text, used to search, validate, extract, replace and split. Both C# and Python build it in; nested quantifiers can cause catastrophic backtracking.",
+    seeAlso: ["ReDoS"],
+    lessonId: "lang-regex",
+  },
+  {
+    term: "ReDoS",
+    definition: "Regular expression denial of service: a pattern with nested quantifiers that takes exponential time on a crafted input, pinning a CPU. Avoided with timeouts, simpler patterns, or non-backtracking engines.",
+    seeAlso: ["Regular expression"],
+    lessonId: "lang-regex",
+  },
+  {
+    term: "Git bisect",
+    definition: "A Git command that binary-searches the history to find the commit that introduced a bug, marking each tested commit good or bad. It can automate the testing with a script.",
+    seeAlso: ["Debugging"],
+    lessonId: "debugging-systematically",
+  },
+  {
+    term: "Debugging",
+    definition: "Finding why a program behaves as it does rather than as intended: reproduce the failure, narrow it down, form and test a hypothesis, then fix the cause and add a test.",
+    seeAlso: ["Stack trace", "Breakpoint", "Git bisect"],
+    lessonId: "debugging-systematically",
+  },
+  {
+    term: "Stack trace",
+    definition: "The chain of function calls that led to an error, printed when an exception is thrown. Reading it points to the line that failed and how execution got there.",
+    seeAlso: ["Debugging", "Breakpoint"],
+    lessonId: "debugging-systematically",
+  },
+  {
+    term: "Breakpoint",
+    definition: "A marker that pauses a program at a line so a debugger can inspect its variables. A conditional breakpoint pauses only when a condition holds.",
+    seeAlso: ["Debugging", "Stack trace"],
+    lessonId: "debugging-systematically",
+  },
+  {
+    term: "Modular monolith",
+    definition: "A single deployable split into modules with explicit boundaries and their own data, keeping a monolith's simplicity while allowing later extraction into services.",
+    seeAlso: ["Monolith", "Microservices"],
+    lessonId: "architecture-styles",
+  },
+  {
+    term: "Story point",
+    definition: "A unit of relative effort and complexity used to size work instead of hours, so estimates are not read as deadlines. A team's velocity turns points into a forecast.",
+    seeAlso: ["Velocity", "Agile"],
+    lessonId: "agile-scrum-kanban",
+  },
+  {
+    term: "Velocity",
+    definition: "The number of story points a team typically completes in a sprint, used to forecast for that team only. Not a productivity score and never used to compare teams.",
+    seeAlso: ["Story point", "Agile"],
+    lessonId: "agile-scrum-kanban",
+  },
+]);
+
 export const GLOSSARY: GlossaryTerm[] = [
   ...DSA,
   ...SYSTEM_DESIGN,
@@ -7240,6 +7600,14 @@ export const GLOSSARY: GlossaryTerm[] = [
   ...OT,
   ...AI,
   ...CAREER,
+...NEW_DSA,
+  ...NEW_SYSTEM_DESIGN,
+  ...NEW_DATA,
+  ...NEW_NETWORKING,
+  ...NEW_SECURITY,
+  ...NEW_CLOUD,
+  ...NEW_ITOPS,
+  ...NEW_ENGINEERING,
 ];
 
 export const categoryLabel = (id: GlossaryCategory) => GLOSSARY_CATEGORIES.find((c) => c.id === id)?.label ?? id;
