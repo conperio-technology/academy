@@ -3717,3 +3717,28 @@ button.ns-line:disabled { opacity: 1; }
 .dbw-who { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-h); }
 .dbw-steps .dbw-sql { display: block; font-family: var(--mono); white-space: pre-wrap; }
 .dbw-result { display: block; margin-top: 0.2rem; font-style: italic; }
+
+/* Security and distributed systems widgets (components/tools/ops/SecurityWidgets.tsx, DistributedWidgets.tsx) */
+.sec-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.4rem 0; }
+.sec-row input:not([type="checkbox"]) { min-width: 0; max-width: 100%; }
+.sec-check { flex-wrap: nowrap; align-items: baseline; }
+.sec-col { display: grid; gap: 0.2rem; margin: 0.4rem 0; font-size: 0.85rem; min-width: 0; }
+.sec-col textarea, .sec-col input, .sec-col select { width: 100%; box-sizing: border-box; font-family: var(--mono); }
+.sec-form { display: grid; align-content: start; }
+.sec-token { font-family: var(--mono); font-size: 0.8rem; overflow-wrap: anywhere; word-break: break-all; background: var(--code-bg); padding: 0.5rem; border-radius: 6px; }
+.sec-tok-head { color: #f87171; }
+.sec-tok-body { color: #c084fc; }
+.sec-tok-sig { color: #60a5fa; }
+.raft-nodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 0.5rem; margin: 0.75rem 0; }
+.raft-node { display: grid; gap: 0.25rem; align-content: start; }
+.raft-leader { border-color: var(--accent); }
+.raft-candidate { border-color: #fbbf24; }
+.raft-down { opacity: 0.45; }
+.raft-cut { border-style: dashed; }
+.raft-log { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.raft-log li { font-family: var(--mono); font-size: 0.75rem; border: 1px dashed var(--border); border-radius: 4px; padding: 0.1rem 0.3rem; }
+.raft-log li.raft-committed { border-style: solid; border-color: var(--accent); }
+.raft-events li { overflow-wrap: anywhere; }
+.clock-lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 0.5rem; margin: 0.75rem 0; }
+.clock-ev { width: 100%; text-align: left; font-size: 0.8rem; margin: 0.15rem 0; white-space: normal; overflow-wrap: anywhere; }
+.clock-ev.active { border-color: var(--accent); color: var(--accent); }

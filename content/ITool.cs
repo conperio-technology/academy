@@ -240,6 +240,9 @@ public enum ToolKind
     DbOrmsConnectionPools,
     DbNosqlFamilies,
     DbNosqlModeling,
+    SecCryptoFundamentals,
+    SecWebSessionsIdentity,
+    SdConsensusClocks,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,

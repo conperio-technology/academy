@@ -270,6 +270,9 @@ public static class ToolRegistry
         new DbOrmsConnectionPoolsTool(),
         new DbNosqlFamiliesTool(),
         new DbNosqlModelingTool(),
+        new SecCryptoFundamentalsTool(),
+        new SecWebSessionsIdentityTool(),
+        new SdConsensusClocksTool(),
     ];
 
     private static readonly Dictionary<string, ITool> ById = All.ToDictionary(t => t.Id);

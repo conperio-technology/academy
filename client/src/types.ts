@@ -338,7 +338,10 @@ export type ToolKind =
   | "dbStorageEngines"
   | "dbOrmsConnectionPools"
   | "dbNosqlFamilies"
-  | "dbNosqlModeling";
+  | "dbNosqlModeling"
+  | "secCryptoFundamentals"
+  | "secWebSessionsIdentity"
+  | "sdConsensusClocks";
 
 export interface ToolDetail {
   id: string;
