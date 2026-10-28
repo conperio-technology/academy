@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlAggregationTool : ITool
 {
     public string Id => "sql-aggregation";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 120;
     public string Title => "SQL Aggregation: GROUP BY, COUNT, SUM, AVG";
     public string OneLiner => "Answering \"how many\" and \"what's the average, per group\" without writing a loop -- GROUP BY collapses many rows into one summary row per group.";
     public string KeyTakeaway =>

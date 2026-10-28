@@ -3685,3 +3685,35 @@ button.ns-line:disabled { opacity: 1; }
     top: 0;
   }
 }
+
+/* ---- Databases: SQL practice problems and database simulators ---- */
+.sqlp { display: grid; gap: 1rem; }
+.sqlp-card h4 { margin: 0.25rem 0 0.5rem; color: var(--text-h); }
+.sqlp-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.sqlp-solved { color: var(--accent-strong); font-weight: 600; font-size: 0.85rem; }
+.sqlp-pass { color: var(--accent-strong); font-weight: 600; }
+.sqlp-fail { color: var(--danger); font-weight: 600; }
+.sqlp-hint { border-left: 3px solid var(--accent); padding-left: 0.75rem; }
+.sqlp-solution { border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; background: var(--bg-panel); }
+.sqlp-solution pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.sqlp-table td, .dbw-sql { overflow-wrap: anywhere; }
+.dbw-sql { font-size: 0.85rem; }
+.dbw-verdict { border-left: 3px solid currentColor; padding-left: 0.75rem; }
+.dbw-label { display: inline-flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.dbw-lsm { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0.75rem; margin: 0.75rem 0; }
+.dbw-box { border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; background: var(--bg-panel); min-width: 0; }
+.dbw-entries { list-style: none; padding: 0; margin: 0; }
+.dbw-run { padding: 0.25rem 0; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.dbw-log li { overflow-wrap: anywhere; }
+.dbw-bars { display: grid; gap: 0.35rem; margin: 0.75rem 0; }
+.dbw-bar-row { display: grid; grid-template-columns: 4rem minmax(0, 1fr) 3rem; align-items: center; gap: 0.5rem; }
+.dbw-bar-track { background: var(--code-bg); border-radius: 4px; height: 0.9rem; overflow: hidden; }
+.dbw-bar { background: var(--accent); height: 100%; }
+.dbw-bar.hot { background: var(--danger); }
+.dbw-steps { margin: 0.75rem 0; padding-left: 1.5rem; display: grid; gap: 0.5rem; }
+.dbw-steps li { border-left: 3px solid var(--border); padding: 0.25rem 0.6rem; background: var(--bg-panel); border-radius: 4px; }
+.dbw-steps li.dbw-step-a { border-left-color: var(--accent); }
+.dbw-steps li.dbw-step-b { border-left-color: #fbbf24; margin-left: 1.25rem; }
+.dbw-who { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-h); }
+.dbw-steps .dbw-sql { display: block; font-family: var(--mono); white-space: pre-wrap; }
+.dbw-result { display: block; margin-top: 0.2rem; font-style: italic; }

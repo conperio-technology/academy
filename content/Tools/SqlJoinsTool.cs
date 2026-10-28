@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlJoinsTool : ITool
 {
     public string Id => "sql-joins";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 110;
     public string Title => "SQL Joins: Combining Tables";
     public string OneLiner => "Real data lives in more than one table on purpose -- a JOIN is how you ask a question that spans both without duplicating data everywhere.";
     public string KeyTakeaway =>

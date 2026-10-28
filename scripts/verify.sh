@@ -41,7 +41,7 @@ if has_step build && [[ -z "${SKIP_BUILD:-}" ]]; then
 fi
 
 if has_step checks; then
-  for script in check-glossary check-complexity-gym check-plc-st; do
+  for script in check-glossary check-complexity-gym check-plc-st check-sql-practice; do
     run "$script" node "$REPO/client/scripts/$script.mjs"
   done
   # Parallel branches append to index.css; a bad conflict resolution leaves a brace open,

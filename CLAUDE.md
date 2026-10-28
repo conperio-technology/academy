@@ -58,6 +58,7 @@ the result: `npm run build && node scripts/serve.mjs --port 5802` (serves `dist/
 | `node scripts/check-glossary.mjs` (`client/`) | glossary: duplicate terms, see-also targets, lesson ids exist, no dashes |
 | `node scripts/check-complexity-gym.mjs` (`client/`) | Complexity Gym snippet bank |
 | `node scripts/check-plc-st.mjs` (`client/`) | PLC Structured Text interpreter, exercises, simulator programs |
+| `node scripts/check-sql-practice.mjs` (`client/`) | SQL practice problems (solutions and accepted alternatives agree) and every live SQL example, with Node's built-in SQLite |
 | `node scripts/verify-solutions.mjs --base <url>` (`client/`) | every reference solution passes its own tests in the browser graders (C# on WebAssembly, Python via Pyodide), CodePolicy rejects a banned call, a runaway loop is stopped; complexity answers selectable |
 | `node scripts/check-overflow.mjs --base <url>` (`client/`) | no lesson scrolls sideways at 390px or 1300px |
 | `node scripts/check-site.mjs --base <url>` (`client/`) | a served build end to end: requests stay under the base path, C# graded and recorded, progress, review, export/import, deep links |
@@ -104,8 +105,8 @@ the camelCase kind in the `ToolKind` union in `client/src/types.ts` + a render l
 `client/src/components/ComplexityCheck.tsx` + reference solutions
 `content/Solutions/<id>.csx` and `<id>.py` that pass the concept's own tests.
 
-**Placement:** the sidebar sorts sections by `content/SectionOrder.cs` (18 sections,
-0 "Start Here" to 17 "Industrial & Embedded Systems"; an unlisted section sorts last), then by
+**Placement:** the sidebar sorts sections by `content/SectionOrder.cs` (19 sections,
+0 "Start Here" to 18 "Industrial & Embedded Systems"; an unlisted section sorts last), then by
 each item's `Order` (default 100), ties keeping registry order. Tracks group in order of
 their first item, so each track uses its own band of numbers (e.g. Programming: basics 0-99,
 intermediate 1000s, advanced 2000s, cheat sheets 5000s; a lesson at 1000 is followed by its

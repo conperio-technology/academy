@@ -3,8 +3,9 @@ namespace DsaAcademy.Content.Tools;
 public class SqlTransactionsTool : ITool
 {
     public string Id => "sql-transactions";
-    public string Section => "Professional Dev Skills";
+    public string Section => "Databases";
     public string Track => "sql";
+    public int Order => 180;
     public string Title => "SQL Transactions & ACID";
     public string OneLiner => "A bank transfer is two UPDATEs. A transaction is what stops a crash between them from losing money.";
     public string KeyTakeaway =>

@@ -29,9 +29,13 @@ export const SECTION_INFO: Record<string, { blurb: string; why: string }> = {
     blurb: "Structuring code: classes, interfaces, dependency injection, SOLID, and the design patterns interviewers expect you to recognize.",
     why: "Knowing the algorithm is half the job; the other half is shaping the code around it so it stays easy to change.",
   },
+  Databases: {
+    blurb: "Relational databases and SQL with live queries in your browser: SELECT, joins, grouping, subqueries and CTEs, NULL and CASE, window functions, schema design, indexes, transactions and isolation levels, plus 16 graded SQL practice problems. Then how databases store data (pages, B-trees, LSM trees, the write-ahead log), ORMs and connection pools, and NoSQL: key-value, document, wide-column and graph stores and how to model data for them.",
+    why: "Almost every application stores its data in a database, SQL is asked in most backend and data interviews, and choosing and modeling a datastore is a core system design skill.",
+  },
   "Professional Dev Skills": {
-    blurb: "Skills a working developer needs regardless of language: SQL with live queries, Git's staging and branching model, Git in a team with pull requests and merge strategies, testing, and engineering with AI assistants without handing over your judgement.",
-    why: "Almost every real job touches a database and a Git repo from day one.",
+    blurb: "Skills a working developer needs regardless of language: Git's staging and branching model, Git in a team with pull requests and merge strategies, testing, and engineering with AI assistants without handing over your judgement.",
+    why: "Almost every real job touches a Git repo from day one, and tests are how a team changes code without fear.",
   },
   "Linux & the Command Line": {
     blurb: "A real Linux system running right in your browser: files, permissions, pipes and processes, then shell scripting, text processing with grep, sed and awk, systemd services and logs, packages, cron, SSH keys, disks, and containers.",

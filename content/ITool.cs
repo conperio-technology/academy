@@ -228,6 +228,18 @@ public enum ToolKind
     LangPackaging,
     BlockReps,
     BugLog,
+    DbIntro,
+    DbSubqueriesCtes,
+    DbNullsCaseSets,
+    DbWindowFunctions,
+    DbIsolationAnomalies,
+    SqlPracticeJoins,
+    SqlPracticeAggregation,
+    SqlPracticeWindows,
+    DbStorageEngines,
+    DbOrmsConnectionPools,
+    DbNosqlFamilies,
+    DbNosqlModeling,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,

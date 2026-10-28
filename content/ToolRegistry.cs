@@ -258,6 +258,18 @@ public static class ToolRegistry
         new LangCheatSheetCSharpTool(),
         new LangCheatSheetPythonTool(),
         new LangTranslationTableTool(),
+        new DbIntroTool(),
+        new DbSubqueriesCtesTool(),
+        new DbNullsCaseSetsTool(),
+        new DbWindowFunctionsTool(),
+        new DbIsolationAnomaliesTool(),
+        new SqlPracticeJoinsTool(),
+        new SqlPracticeAggregationTool(),
+        new SqlPracticeWindowsTool(),
+        new DbStorageEnginesTool(),
+        new DbOrmsConnectionPoolsTool(),
+        new DbNosqlFamiliesTool(),
+        new DbNosqlModelingTool(),
     ];
 
     private static readonly Dictionary<string, ITool> ById = All.ToDictionary(t => t.Id);

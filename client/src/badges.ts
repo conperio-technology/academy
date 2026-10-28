@@ -28,6 +28,7 @@ const SECTION_BADGE_NAMES: Record<string, string> = {
   "Concurrency & Memory": "Race Winner",
   "Data Structures & Algorithms": "Algorithmist",
   "Software Design & OOP": "Architect",
+  Databases: "Query Master",
   "Professional Dev Skills": "Professional",
   "Linux & the Command Line": "Shell Wizard",
   "Windows & PowerShell": "Admin Rights",
