@@ -78,6 +78,8 @@ export const IT_CS_FAMILIES: PathFamily[] = [
       "hash-table-internals",
       "binary-search-array",
       "sorting-insertion-sort",
+      "sorting-merge-sort",
+      "sorting-quicksort",
       "graph-bfs-traversal",
     ],
   },

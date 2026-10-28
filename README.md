@@ -344,9 +344,9 @@ space, with Practice, Explain it (write your reasoning, then grade it against a 
 modes. The bank lives in `client/src/complexityGymData.ts`; `node scripts/check-complexity-gym.mjs`
 (from `client/`) validates it.
 
-Then Fundamentals (11 concepts) + Building Blocks (35) + Trees (6) + Graphs (4) + Sorting (5) + Dynamic
-Programming (4) + a Patterns track (70) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
-160 gradable concepts in total, each (except the building blocks) with a
+Then Fundamentals (11 concepts) + Building Blocks (35) + Trees (6) + Graphs (4) + Sorting (9) + Dynamic
+Programming (4) + a Patterns track (96) + Greedy (7), Math (6), Bits (7) and Range Queries (5):
+190 gradable concepts in total, each (except the building blocks) with a
 canned step-through visualizer, a "key takeaway" callout, a Monaco editor, and
 test-driven completion tracking (plus one reference Tool, Hashing, slotted
 in right after Two Sum, and a Pattern Recognition Drill at the end of the section):
@@ -409,7 +409,9 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
 - Sorting: Bubble Sort, Insertion Sort, Selection Sort (the three classic O(n²) ones),
   Merge Two Sorted Arrays and Quick Sort Partition (the core primitives behind merge
   sort's and quicksort's O(n log n)) — backs up the sorting table on the Big O page with
-  real, gradeable lessons instead of just reference data
+  real, gradeable lessons instead of just reference data. Then the full sorts: Merge Sort,
+  Quicksort (middle pivot, so sorted input stays O(n log n)), Heap Sort (in-place heap, O(1)
+  space) and Counting Sort (O(n + k), no comparisons)
 - **Dynamic Programming**: Fibonacci with Memoization (top-down, reuses CallStack —
   directly paired against the plain-recursion Fibonacci above: same n, but repeat
   subtrees become instant `[cached]` frames) and Climbing Stairs (bottom-up
@@ -452,7 +454,18 @@ in right after Two Sum, and a Pattern Recognition Drill at the end of the sectio
   Intervals (greedy), Search in Rotated Sorted Array and Split Array Largest Sum (binary
   search on the answer), Group Anagrams, Minimum Window Substring and KMP string search. A lists and graphs batch adds
   Reverse a Linked List, Linked List Cycle II, Remove Nth Node From End and Merge Two Sorted Lists
-  (pointer rewiring), Course Schedule, Clone Graph, Word Ladder and Is Graph Bipartite
+  (pointer rewiring), Course Schedule, Clone Graph, Word Ladder and Is Graph Bipartite.
+  A core interview batch adds Sort Colors (three-way partition), Quickselect for the Kth
+  Largest, Spiral Order, Rotate Image and Set Matrix Zeroes (matrix boundaries and in-place
+  markers), Invert a Binary Tree, Right Side View, Build a Tree From Preorder and Inorder,
+  Serialize and Deserialize a Binary Tree, Binary Tree Maximum Path Sum, Word Break, Decode
+  Ways and Partition Equal Subset Sum (DP), Cheapest Flights Within K Stops (Bellman-Ford
+  rounds) and Alien Dictionary (rules from sorted words, then a topological sort), Largest
+  Rectangle in Histogram (monotonic stack) and Evaluate Reverse Polish Notation, Combination
+  Sum and Generate Parentheses (backtracking), Longest Consecutive Sequence, Product of Array
+  Except Self, Encode and Decode Strings (length-prefixed framing), Insert Delete GetRandom
+  O(1) and a Time-Based Key-Value Store (design problems), and Fisher-Yates Shuffle and
+  Reservoir Sampling (randomized, with the random draws given so they can be graded)
 
 - **Greedy, Math and Bits** (three tracks after Patterns, each opened by an explainer tool):
   **Greedy Algorithms** (break greedy coin change, interval rules that fail, fractional vs 0/1
@@ -504,8 +517,9 @@ Rotated Sorted Array (after Search a Rotated Sorted Array), Subsets When the Inp
 Every Course (after Topological Sort), Replace Words with Their Shortest Root (after Trie: Prefix
 Search), Daily Temperatures (after Next Greater Element), Redundant Connection (after Count
 Connected Components), Kth Smallest Value in a BST (after Validate a BST), Coin Change II (after
-Coin Change), Reverse Part of a Linked List (after Reverse a Singly Linked List) and Maximum
-Product Subarray (after Kadane's Maximum Subarray).
+Coin Change), Reverse Part of a Linked List (after Reverse a Singly Linked List), Maximum
+Product Subarray (after Kadane's Maximum Subarray), Binary Tree Maximum Path Sum (after Diameter
+of a Binary Tree) and Partition Equal Subset Sum (after 0/1 Knapsack).
 
 Seven visualizer kinds: Array, LinkedList, Stack, HashMap, CallStack, Tree, and Graph.
 CallStack is a literal trace of real recursive push/pop execution (see

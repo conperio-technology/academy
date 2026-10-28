@@ -71,6 +71,10 @@ public static class ConceptRegistry
         new SortingSelectionSort(),
         new SortingMergeTwoSortedArrays(),
         new SortingQuickSortPartition(),
+        new SortingMergeSort(),
+        new SortingQuickSort(),
+        new SortingHeapSort(),
+        new SortingCountingSort(),
         new DpFibonacciMemo(),
         new DpClimbingStairs(),
         new DpLongestIncreasingSubsequence(),
@@ -88,6 +92,7 @@ public static class ConceptRegistry
         new TwoPointersSortedTwoSum(),
         new TwoPointersThreeSum(), // transfer exercise
         new TwoPointersTrappingRainWater(),
+        new SortingSortColors(),
         new FastSlowPointersMiddle(),
         new LinkedListReverse(),
         new LinkedListReverseBetween(), // transfer exercise
@@ -100,8 +105,11 @@ public static class ConceptRegistry
         new StringMinWindow(),
         new MonotonicStackNextGreater(),
         new MonotonicStackDailyTemperatures(), // transfer exercise
+        new MonotonicStackLargestRectangle(),
         new SlidingWindowMaximum(),
+        new StackEvaluateRpn(),
         new PrefixSumsRangeQuery(),
+        new ArrayProductExceptSelf(),
         new HashMapSubarraySumK(), // transfer exercise
         new MergeIntervals(),
         new IntervalsListIntersections(), // transfer exercise
@@ -110,23 +118,38 @@ public static class ConceptRegistry
         new IntervalsNonOverlapping(),
         new TopKHeap(),
         new HeapKClosestPoints(), // transfer exercise
+        new QuickselectKthLargest(),
         new HeapMergeKSorted(),
         new HeapRunningMedian(),
         new DesignMinStack(),
         new DesignLruCache(),
+        new DesignRandomizedSet(),
+        new DesignTimeMap(),
+        new RandomShuffle(),
+        new RandomReservoirSampling(),
         new TreeValidateBst(),
         new TreeKthSmallestBst(), // transfer exercise
         new TreeDiameter(),
         new TreeLowestCommonAncestor(),
+        new TreeInvert(),
+        new TreeRightSideView(),
+        new TreeBuildFromTraversals(),
+        new TreeSerializeDeserialize(),
+        new TreeMaxPathSum(), // transfer exercise
         new UnionFindComponents(),
         new UnionFindRedundantConnection(), // transfer exercise
         new GridNumberOfIslands(),
         new GridMaxAreaIsland(), // transfer exercise
         new GridRottingOranges(),
+        new MatrixSpiralOrder(),
+        new MatrixRotateImage(),
+        new MatrixSetZeroes(),
         new GraphMinimumSpanningTree(),
+        new GraphCheapestFlights(),
         new TopologicalSort(),
         new GraphParallelCourses(), // transfer exercise
         new GraphCourseSchedule(),
+        new GraphAlienDictionary(),
         new GraphClone(),
         new LinkedListCopyRandom(), // transfer exercise
         new GraphWordLadder(),
@@ -136,17 +159,24 @@ public static class ConceptRegistry
         new DpHouseRobberCircular(), // transfer exercise
         new DpStockCooldown(),
         new Knapsack01(),
+        new DpPartitionEqualSubset(), // transfer exercise
         new DpCoinChange(),
         new DpCoinChangeWays(), // transfer exercise
+        new DpWordBreak(),
+        new DpDecodeWays(),
         new DpEditDistance(),
         new DpLongestCommonSubsequence(),
         new TriePrefixCount(),
         new TrieReplaceWords(), // transfer exercise
         new StringGroupAnagrams(),
+        new HashMapLongestConsecutive(),
+        new StringEncodeDecode(),
         new StringKmpSearch(),
         new BacktrackingSubsets(),
         new BacktrackingSubsetsWithDuplicates(), // transfer exercise
         new BacktrackingPermutations(),
+        new BacktrackingCombinationSum(),
+        new BacktrackingGenerateParentheses(),
         new BacktrackingWordSearch(),
         new BacktrackingNQueens(),
         new BitManipulationCountSetBits(),
