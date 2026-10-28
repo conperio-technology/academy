@@ -16,6 +16,8 @@ export function HashMapVisualizer({ steps }: Props) {
 
   const array = (step.state.array as number[]) ?? [];
   const hashMap = (step.state.hashMap as [number, number][]) ?? [];
+  // Optional: a concept whose map holds something other than value -> index names it.
+  const mapLabel = (step.state.mapLabel as string | undefined) ?? "map (value → index)";
   const highlighted = new Set(step.highlightIndices);
 
   return (
@@ -30,7 +32,7 @@ export function HashMapVisualizer({ steps }: Props) {
       </div>
 
       <div className="hashmap-visual">
-        <span className="stack-label">map (value → index)</span>
+        <span className="stack-label">{mapLabel}</span>
         <div className="hashmap-entries">
           {hashMap.length === 0 && <span className="stack-empty">empty</span>}
           {hashMap.map(([key, value], i) => (
