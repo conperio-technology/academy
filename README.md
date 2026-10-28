@@ -203,6 +203,10 @@ underneath Concurrency & Memory (which it links to rather than repeating):
 - **Text Encoding: ASCII, Unicode, UTF-8 and UTF-16**: type text and see code points, UTF-8 and
   UTF-16 bytes, the UTF-8 bit layout and surrogate math, three string lengths, three ways to
   reverse a string, and NFC vs NFD
+- **Virtualization: Hypervisors, VMs and Containers**: type 1 and 2 hypervisors, VMs vs
+  containers, snapshots, live migration, overcommit and thin provisioning
+- **How a Computer Boots**: a step-through from power button to login (UEFI, POST, Secure Boot,
+  GRUB, kernel and initramfs, systemd), BIOS/MBR vs UEFI/GPT, and a boot failure table
 
 ### Programming in C# & Python
 
@@ -677,6 +681,10 @@ reviewing generated diffs, testing, debugging when the AI is wrong, secrets, and
 yourself, with a code review of a generated change containing seven planted problems and eight
 "what would you do?" situations.
 
+And **IT Service Management** (IT service management): incidents, requests, problems and
+changes in plain English, severity levels, SLAs, SLOs and error budgets, running a major
+incident, blameless postmortems and the 5 whys.
+
 ### Linux & the Command Line
 
 A real Linux machine boots inside the page (the v86 x86 emulator running a tiny kernel and a
@@ -752,6 +760,11 @@ Ten more lessons, in the tracks "local networks", "routing", "firewalls & VPNs" 
 - **Firewalls and Ports**, **VPNs and Tunnels**
 - **Network Troubleshooting Toolkit**: six broken-network tickets solved by running ping, ip,
   nslookup, traceroute, curl and ss and reading their real output
+- **IPv6**: reading and shortening addresses, address types, /64 subnets, SLAAC, NDP and dual
+  stack, with an address drill (compress, expand, /64 network, type) checked against Python's
+  `ipaddress`
+- **Email Delivery and Authentication**: an SMTP conversation, MX records, the envelope sender vs
+  From:, and an SPF, DKIM and DMARC checker for spoofed and legitimate mail, with alignment
 
 ### System Design
 
@@ -809,6 +822,9 @@ After System Design: where those building blocks run, and how code gets there.
 
 - **Cloud Fundamentals**: IaaS, PaaS and SaaS, a shared responsibility explorer, and a zones and
   regions failure simulator
+- **Cloud Networking and IAM**: VPCs, public and private subnets, NAT gateways, security groups
+  vs network ACLs, IAM roles and policies with an allow/deny evaluator, serverless cold starts,
+  and the AWS, Azure and Google Cloud names side by side
 - **Container Images and Registries**: tags vs digests simulator, a multi-stage Dockerfile for a React client and an ASP.NET Core API
 - **Kubernetes in Practice**: label selectors and readiness, probes, requests and limits, pod statuses
 - **CI/CD Pipelines**: a GitHub Actions workflow (passes actionlint) and a pipeline simulator
@@ -816,6 +832,9 @@ After System Design: where those building blocks run, and how code gets there.
   replace, drift and rename; the Azure examples pass `terraform validate` and `bicep build`
 - **Observability**: an alert you tune on a latency graph, a trace waterfall and the matching logs,
   real jq queries over JSON logs
+- **Backups, RAID and Disaster Recovery**: a restore planner for full, incremental and
+  differential backups, a RAID calculator where you fail disks, 3-2-1 and immutable copies, RPO
+  and RTO, a backup script with a restore test, and DR strategies
 
 ### AI & Machine Learning
 

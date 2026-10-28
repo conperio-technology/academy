@@ -273,6 +273,13 @@ public static class ToolRegistry
         new SecCryptoFundamentalsTool(),
         new SecWebSessionsIdentityTool(),
         new SdConsensusClocksTool(),
+        new CloudBackupsDrTool(),
+        new CloudNetworkingIamTool(),
+        new VirtualizationVmsTool(),
+        new BootProcessTool(),
+        new ItsmIncidentsChangesTool(),
+        new NetEmailAuthTool(),
+        new NetIpv6Tool(),
     ];
 
     private static readonly Dictionary<string, ITool> ById = All.ToDictionary(t => t.Id);

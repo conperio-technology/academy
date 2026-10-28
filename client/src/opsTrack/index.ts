@@ -37,6 +37,13 @@ import { dbNosqlModeling } from "./databases/nosqlModeling.ts";
 import { secCrypto } from "./security/crypto.ts";
 import { secWebIdentity } from "./security/webIdentity.ts";
 import { sdConsensus } from "./systemDesign/consensus.ts";
+import { backupsDr } from "./cloud/backupsDr.ts";
+import { cloudNetworkingIam } from "./cloud/networkingIam.ts";
+import { virtualization } from "./fundamentals/virtualization.ts";
+import { bootProcess } from "./fundamentals/boot.ts";
+import { itsm } from "./professional/itsm.ts";
+import { emailAuth } from "./networking/email.ts";
+import { ipv6 } from "./networking/ipv6.ts";
 
 // Which data file each IT operations lesson renders (components/tools/OpsLesson.tsx).
 export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
@@ -79,4 +86,11 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   secCryptoFundamentals: secCrypto,
   secWebSessionsIdentity: secWebIdentity,
   sdConsensusClocks: sdConsensus,
+  cloudBackupsDr: backupsDr,
+  cloudNetworkingIam: cloudNetworkingIam,
+  virtualizationVms: virtualization,
+  bootProcess: bootProcess,
+  itsmIncidentsChanges: itsm,
+  netEmailAuth: emailAuth,
+  netIpv6: ipv6,
 };

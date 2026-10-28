@@ -341,7 +341,14 @@ export type ToolKind =
   | "dbNosqlModeling"
   | "secCryptoFundamentals"
   | "secWebSessionsIdentity"
-  | "sdConsensusClocks";
+  | "sdConsensusClocks"
+  | "cloudBackupsDr"
+  | "cloudNetworkingIam"
+  | "virtualizationVms"
+  | "bootProcess"
+  | "itsmIncidentsChanges"
+  | "netEmailAuth"
+  | "netIpv6";
 
 export interface ToolDetail {
   id: string;

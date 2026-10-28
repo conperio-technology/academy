@@ -243,6 +243,13 @@ public enum ToolKind
     SecCryptoFundamentals,
     SecWebSessionsIdentity,
     SdConsensusClocks,
+    CloudBackupsDr,
+    CloudNetworkingIam,
+    VirtualizationVms,
+    BootProcess,
+    ItsmIncidentsChanges,
+    NetEmailAuth,
+    NetIpv6,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,
