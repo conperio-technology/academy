@@ -288,6 +288,7 @@ public static class ToolRegistry
         new DataAnalyticsWarehousesTool(),
         new ProbabilityCountingTool(),
         new AgileScrumKanbanTool(),
+        new MemorySafetyTool(),
     ];
 
     private static readonly Dictionary<string, ITool> ById = All.ToDictionary(t => t.Id);
