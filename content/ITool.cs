@@ -258,6 +258,7 @@ public enum ToolKind
     DataAnalyticsWarehouses,
     ProbabilityCounting,
     AgileScrumKanban,
+    MemorySafety,
 }
 
 // A reference/calculator lesson: explanation + key takeaway + an interactive widget,

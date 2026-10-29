@@ -356,7 +356,8 @@ export type ToolKind =
   | "architectureStyles"
   | "dataAnalyticsWarehouses"
   | "probabilityCounting"
-  | "agileScrumKanban";
+  | "agileScrumKanban"
+  | "memorySafety";
 
 export interface ToolDetail {
   id: string;

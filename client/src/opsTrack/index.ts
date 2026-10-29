@@ -50,6 +50,7 @@ import { architectureStyles } from "./foundations/architecture.ts";
 import { analytics } from "./foundations/analytics.ts";
 import { probability } from "./foundations/probability.ts";
 import { agile } from "./foundations/agile.ts";
+import { memorySafety } from "./foundations/memorySafety.ts";
 
 // Which data file each IT operations lesson renders (components/tools/OpsLesson.tsx).
 export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
@@ -105,4 +106,5 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   dataAnalyticsWarehouses: analytics,
   probabilityCounting: probability,
   agileScrumKanban: agile,
+  memorySafety: memorySafety,
 };
