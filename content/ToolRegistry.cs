@@ -266,6 +266,7 @@ public static class ToolRegistry
         new SqlPracticeJoinsTool(),
         new SqlPracticeAggregationTool(),
         new SqlPracticeWindowsTool(),
+        new SqlJoinLadderTool(),
         new DbStorageEnginesTool(),
         new DbOrmsConnectionPoolsTool(),
         new DbNosqlFamiliesTool(),

@@ -22,7 +22,7 @@ function lastResult(db: SqlJsDatabase, sql: string): RowsResult {
   return results.length ? results[results.length - 1] : { columns: [], values: [] };
 }
 
-function ResultTable({ result }: { result: RowsResult }) {
+export function ResultTable({ result }: { result: RowsResult }) {
   if (result.columns.length === 0) return <p className="gate-note">The query ran and returned no rows.</p>;
   return (
     <>

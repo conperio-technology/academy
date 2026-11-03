@@ -335,6 +335,7 @@ export type ToolKind =
   | "sqlPracticeJoins"
   | "sqlPracticeAggregation"
   | "sqlPracticeWindows"
+  | "sqlJoinLadder"
   | "dbStorageEngines"
   | "dbOrmsConnectionPools"
   | "dbNosqlFamilies"
