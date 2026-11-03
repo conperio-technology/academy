@@ -8,6 +8,7 @@ import { CopyButton } from "./LangShared";
 import { OPS_WIDGETS } from "./ops";
 import { SQL_SAMPLE_SCHEMA } from "../../sqlSampleData";
 import { SHOP_SCHEMA } from "../../sqlPracticeData";
+import { LADDER_SCHEMA } from "../../sqlLadderData";
 
 // Renders one IT operations lesson (Linux administration, Windows & PowerShell, Cloud &
 // DevOps) from its data file in src/opsTrack/: prose, code with real output, tables,
@@ -16,6 +17,8 @@ import { SHOP_SCHEMA } from "../../sqlPracticeData";
 const LinuxLab = lazy(() => import("./LinuxLab"));
 const SqlPlayground = lazy(() => import("./SqlPlayground").then((m) => ({ default: m.SqlPlayground })));
 const SqlPractice = lazy(() => import("./SqlPractice").then((m) => ({ default: m.SqlPractice })));
+const JoinLadder = lazy(() => import("./JoinLadder").then((m) => ({ default: m.JoinLadder })));
+const SQL_SCHEMAS = { sample: SQL_SAMPLE_SCHEMA, shop: SHOP_SCHEMA, ladder: LADDER_SCHEMA };
 
 const LANG_LABEL: Record<CodeLang, string> = {
   bash: "bash",
@@ -194,7 +197,16 @@ function Part({ part }: { part: OpsPart }) {
           <h3>{part.title}</h3>
           {part.intro && <p className="lt-p">{withInlineCode(part.intro)}</p>}
           <Suspense fallback={<p className="status-text">Loading the SQL editor…</p>}>
-            <SqlPlayground schemaSql={part.schema === "shop" ? SHOP_SCHEMA : SQL_SAMPLE_SCHEMA} starterQuery={part.query} />
+            <SqlPlayground schemaSql={SQL_SCHEMAS[part.schema ?? "sample"]} starterQuery={part.query} />
+          </Suspense>
+        </div>
+      );
+    case "joinLadder":
+      return (
+        <div className="crypto-section">
+          <h3>{part.title}</h3>
+          <Suspense fallback={<p className="status-text">Loading the SQL editor…</p>}>
+            <JoinLadder />
           </Suspense>
         </div>
       );

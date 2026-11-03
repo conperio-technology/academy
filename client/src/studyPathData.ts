@@ -209,6 +209,7 @@ export const IT_CS_FAMILIES: PathFamily[] = [
       "sql-practice-aggregation",
       "db-window-functions",
       "sql-practice-windows",
+      "sql-join-ladder",
       "sql-schema-design",
       "sql-indexes",
       "sql-transactions",

@@ -844,6 +844,7 @@ export const TARGETS: Record<PlanTarget, Adjustment> = {
           tool("sql-practice-joins", 40),
           tool("sql-practice-aggregation", 40),
           tool("sql-practice-windows", 50),
+          tool("sql-join-ladder", 45),
         ],
       },
       { phase: 2, tasks: [read("security-authn-authz", "system design", 30), read("sec-web-sessions-identity", "system design", 30), walkthrough("notificationSystem", "sd-interview-notification-system")] },

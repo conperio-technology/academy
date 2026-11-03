@@ -3753,3 +3753,11 @@ button.ns-line:disabled { opacity: 1; }
 .backup-day.backup-need { border-color: var(--accent); }
 .backup-day.backup-future { opacity: 0.45; border-style: dashed; }
 .iam-stmt { font-family: var(--mono); font-size: 0.75rem; overflow-wrap: anywhere; min-width: 0; }
+
+/* SQL Join Ladder (components/tools/JoinLadder.tsx) */
+.jl-rungs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); gap: 0.4rem; margin: 0.75rem 0; }
+.jl-rung { display: flex; align-items: center; gap: 0.4rem; text-align: left; font-size: 0.85rem; white-space: normal; }
+.jl-rung.active { border-color: var(--accent); color: var(--accent); }
+.jl-rung.cleared .jl-rung-num { color: var(--accent-strong); }
+.jl-rung-num { font-weight: 700; min-width: 1.1rem; }
+.jl-rung-count { margin-left: auto; font-size: 0.75rem; opacity: 0.8; }

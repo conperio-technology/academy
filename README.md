@@ -641,6 +641,14 @@ and "reset data" rebuilds the database from its seed.
   reference query run on fresh copies of the database and the rows are compared
   (`sqlPracticeData.ts`, `components/tools/SqlPractice.tsx`); passing a whole set marks the lesson
   done, kept in the browser under `history:sql-practice`
+- **SQL Join Ladder: Generated Join Practice**: about 390 SELECT questions generated from
+  templates over a bigger ladder database (30 customers, 30 products, 90 orders, 16 employees,
+  60 reviews; `sqlLadderData.ts`), in eight rungs: one table, two tables, three tables, four or
+  more, outer joins, self joins, aggregates over joins, and mixed anti-join and CTE questions.
+  The question text and reference query come from the same values (`sqlLadder.ts`); a question
+  is kept only if its reference returns rows and its trap, if any, really gives a different
+  answer. Passing three questions clears a rung, kept in the browser under `history:join-ladder`
+  (`components/tools/JoinLadder.tsx`)
 - **How a Database Stores Data: Pages, B-Trees, LSM Trees and the WAL**: pages and the buffer
   pool, write-ahead logging and recovery, B+ trees vs LSM trees with an LSM simulator (memtable,
   flushes, compaction, read path), row vs column stores
@@ -657,7 +665,8 @@ and "reset data" rebuilds the database from its seed.
 The SQL Basics, Joins and Aggregation lessons share one `employees`/`departments` dataset
 (`sqlSampleData.ts`); the practice problems and several examples use the shop database in
 `sqlPracticeData.ts`. `client/scripts/check-sql-practice.mjs` runs every reference solution,
-every accepted alternative and every live example with Node's built-in SQLite.
+every accepted alternative, every live example and every generated Join Ladder question with
+Node's built-in SQLite.
 
 ### Professional Dev Skills
 

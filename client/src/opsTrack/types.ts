@@ -143,13 +143,14 @@ export interface LabPart {
 
 // A live SQL editor over one of the shared sample databases (components/tools/SqlPlayground.tsx).
 // "sample" is the employees and departments database of the first SQL lessons; "shop" is the
-// customers, orders and products database in sqlPracticeData.ts.
+// customers, orders and products database in sqlPracticeData.ts; "ladder" is the bigger
+// database of the SQL Join Ladder in sqlLadderData.ts.
 export interface SqlPart {
   kind: "sql";
   title: string;
   intro?: string;
   query: string;
-  schema?: "sample" | "shop";
+  schema?: "sample" | "shop" | "ladder";
 }
 
 // A set of SQL problems checked by running the learner's query and the reference query on the
@@ -160,7 +161,13 @@ export interface SqlPracticePart {
   set: string;
 }
 
-export type OpsPart = SqlPart | SqlPracticePart | CodePart | TextPart | TermsPart | TablePart | StepsPart | WalkthroughPart | WidgetPart | LabPart;
+// The SQL Join Ladder's generated questions (components/tools/JoinLadder.tsx, sqlLadder.ts).
+export interface JoinLadderPart {
+  kind: "joinLadder";
+  title: string;
+}
+
+export type OpsPart = SqlPart | SqlPracticePart | JoinLadderPart | CodePart | TextPart | TermsPart | TablePart | StepsPart | WalkthroughPart | WidgetPart | LabPart;
 
 // A multiple-choice check. `answer` plus the distractors are shown shuffled.
 export interface QuizItem {

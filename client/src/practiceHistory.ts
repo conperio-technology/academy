@@ -256,6 +256,31 @@ export function recordSqlPracticeAttempt(problemId: string, passed: boolean): Re
   return all;
 }
 
+// ---- SQL Join Ladder: the generated questions passed (id -> ISO date of the first pass) and
+// the number of checks run. A rung is cleared by passing PASSES_TO_CLEAR different questions on
+// it (components/tools/JoinLadder.tsx). ----
+
+const JOIN_LADDER_KEY = "history:join-ladder";
+
+export interface JoinLadderProgress {
+  passed: Record<string, string>;
+  attempts: number;
+}
+
+export function loadJoinLadder(): JoinLadderProgress {
+  const p = read<JoinLadderProgress>(JOIN_LADDER_KEY, { passed: {}, attempts: 0 });
+  if (!p || typeof p !== "object" || typeof p.passed !== "object" || p.passed === null) return { passed: {}, attempts: 0 };
+  return { passed: p.passed, attempts: typeof p.attempts === "number" ? p.attempts : 0 };
+}
+
+export function recordJoinLadderAttempt(questionId: string, passed: boolean): JoinLadderProgress {
+  const p = loadJoinLadder();
+  const next: JoinLadderProgress = { passed: { ...p.passed }, attempts: p.attempts + 1 };
+  if (passed && !next.passed[questionId]) next.passed[questionId] = new Date().toISOString();
+  write(JOIN_LADDER_KEY, next);
+  return next;
+}
+
 // ---- Micro850 hands-on labs: the "check yourself" ticks per lab, by item text (so
 // reordering a checklist keeps the ticks). Kept in this browser only, like the PLC
 // exercise history. ----

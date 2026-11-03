@@ -236,6 +236,7 @@ public enum ToolKind
     SqlPracticeJoins,
     SqlPracticeAggregation,
     SqlPracticeWindows,
+    SqlJoinLadder,
     DbStorageEngines,
     DbOrmsConnectionPools,
     DbNosqlFamilies,

@@ -29,7 +29,7 @@ import { dbSubqueriesCtes } from "./databases/subqueriesCtes.ts";
 import { dbNullsCaseSets } from "./databases/nullsCaseSets.ts";
 import { dbWindowFunctions } from "./databases/windowFunctions.ts";
 import { dbIsolation } from "./databases/isolation.ts";
-import { sqlPracticeAggregation, sqlPracticeJoins, sqlPracticeWindows } from "./databases/practice.ts";
+import { sqlJoinLadder, sqlPracticeAggregation, sqlPracticeJoins, sqlPracticeWindows } from "./databases/practice.ts";
 import { dbStorage } from "./databases/storage.ts";
 import { dbOrms } from "./databases/orms.ts";
 import { dbNosqlFamilies } from "./databases/nosqlFamilies.ts";
@@ -86,6 +86,7 @@ export const OPS_LESSONS: Partial<Record<ToolKind, OpsLessonData>> = {
   sqlPracticeJoins: sqlPracticeJoins,
   sqlPracticeAggregation: sqlPracticeAggregation,
   sqlPracticeWindows: sqlPracticeWindows,
+  sqlJoinLadder: sqlJoinLadder,
   dbStorageEngines: dbStorage,
   dbOrmsConnectionPools: dbOrms,
   dbNosqlFamilies: dbNosqlFamilies,
